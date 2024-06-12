@@ -37,6 +37,8 @@ Then just make.
 
 Inputs and outputs are stereo WAV files, 22 KHz, 16-bit, signed integer.
 
+The output is 100% wet.
+
 ```
 $ sox i_feel_so_liberated.wav -t wav -e signed-integer -b 16 -r 22050 input.wav
 $ ./midiverb midiverb.rom 21 input.wav output.wav
@@ -44,6 +46,7 @@ channels=2, sample_rate=22050, num=198636
 ```
 
 The programs are indexed from 1 in the same way as they are on the original unit.
+
 
 ### List of programs
 
