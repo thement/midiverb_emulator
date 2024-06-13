@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Midiverb Effect Demo</title>
+</head>
+<body>
+  <h1>Midiverb Effect Demo</h1>
+  <img src="panel.jpg"><br><br><br>
+  <button id="startButton">Start Audio</button>
+  <button id="stopButton">Stop Audio</button>
+  <select id="effectProgram">
+<option value="1">.2 Sec SMALL BRIGHT</option>
+<option value="2">.2 Sec SMALL WARM</option>
+<option value="3">.2 Sec MEDIUM BRIGHT</option>
+<option value="4">.3 Sec SMALL BRIGHT</option>
+<option value="5">.3 Sec SMALL WARM</option>
+<option value="6">.4 Sec MEDIUM BRIGHT</option>
+<option value="7">.4 Sec MEDIUM WARM</option>
+<option value="8">.6 Sec SMALL BRIGHT</option>
+<option value="9">.6 Sec MEDIUM WARM</option>
+<option value="10">.6 Sec MEDIUM DARK</option>
+<option value="11">.8 Sec SMALL BRIGHT</option>
+<option value="12">.8 Sec LARGE WARM</option>
+<option value="13">1.0 Sec SMALL WARM</option>
+<option value="14">1.0 Sec MEDIUM WARM</option>
+<option value="15">1.0 Sec LARGE BRIGHT</option>
+<option value="16">1.2 Sec MEDIUM WARM</option>
+<option value="17">1.2 Sec SMALL WARM</option>
+<option value="18">1.2 Sec SMALL BRIGHT</option>
+<option value="19">1.4 Sec LARGE WARM</option>
+<option value="20">1.4 Sec LARGE DARK</option>
+<option value="21">1.4 Sec MEDIUM WARM</option>
+<option value="22">1.6 Sec SMALL DARK</option>
+<option value="23">1.6 Sec LARGE BRIGHT</option>
+<option value="24">1.6 Sec MEDIUM BRIGHT</option>
+<option value="25">1.8 Sec LARGE DARK</option>
+<option value="26">1.8 Sec LARGE BRIGHT</option>
+<option value="27">1.8 Sec MEDIUM WARM</option>
+<option value="28">2.0 Sec LARGE BRIGHT</option>
+<option value="29">2.0 Sec MEDIUM WARM</option>
+<option value="30">2.0 Sec LARGE WARM</option>
+<option value="31">2.5 Sec MEDIUM WARM</option>
+<option value="32">2.5 Sec LARGE BRIGHT</option>
+<option value="33">2.5 Sec MEDIUM DARK</option>
+<option value="34">2.8 Sec SMALL BRIGHT</option>
+<option value="35">2.8 Sec MEDIUM BRIGHT</option>
+<option value="36">3.0 Sec LARGE BRIGHT</option>
+<option value="37">3.0 Sec LARGE WARM</option>
+<option value="38">3.0 Sec MEDIUM DARK</option>
+<option value="39">3.5 Sec LARGE BRIGHT</option>
+<option value="40">3.5 Sec MEDIUM WARM</option>
+<option value="41">4.0 Sec LARGE DARK</option>
+<option value="42">4.0 Sec MEDIUM BRIGHT</option>
+<option value="43">5 Sec LARGE WARM</option>
+<option value="44">8 Sec LARGE BRIGHT</option>
+<option value="45">8 Sec LARGE WARM</option>
+<option value="46">10 Sec LARGE BRIGHT</option>
+<option value="47">10 Sec LARGE WARM</option>
+<option value="48">16 Sec LARGE DARK</option>
+<option value="49">18 Sec EX. LARGE BRIGHT</option>
+<option value="50">20 Sec EX. LARGE DARK</option>
+<option value="51">Gated 100 MS  </option>
+<option value="52">Gated 150 MS  </option>
+<option value="53">Gated 200 MS  </option>
+<option value="54">Gated 250 MS  </option>
+<option value="55">Gated 300 MS  </option>
+<option value="56">Gated 350 MS  </option>
+<option value="57">Gated 400 MS  </option>
+<option value="58">Gated 500 MS  </option>
+<option value="59">Gated 600 MS  </option>
+<option value="60">REVERSE - 300 MS  </option>
+<option value="61">REVERSE - 400 MS  </option>
+<option value="62">REVERSE - 500 MS  </option>
+<option value="63">REVERSE - 600 MS  </option>
+<option value="64">DEFEAT  </option>
+<option value="65">ECHO LONG FLAT AMBI</option>
+<option value="66">ECHO LONG FLAT THICK</option>
+<option value="67">ECHO LONG HPF </option>
+<option value="68">ECHO LONG HPF WIDE</option>
+<option value="69">ECHO LONG BPF AMBI</option>
+<option value="70">ECHO LONG LPF WIDE</option>
+<option value="71">ECHO MED FLAT AMBI</option>
+<option value="72">ECHO MED FLAT WIDE</option>
+<option value="73">ECHO MED HPF AMBI</option>
+<option value="74">ECHO MED BPF AMBI</option>
+<option value="75">ECHO MED LPF AMBI</option>
+<option value="76">ECHO MED LPF WIDE</option>
+<option value="77">ECHO MED FLAT THICK</option>
+<option value="78">ECHO SHORT FLAT </option>
+<option value="79">ECHO SHORT LPF AMBI</option>
+<option value="80">ECHO SHORT HPF AMBI</option>
+<option value="81">ECHO SHORT BPF AMBI</option>
+<option value="82">ECHO SHORT FLAT </option>
+<option value="83">ECHO SHORT FLAT WIDE</option>
+<option value="84">ECHO XSHORT FLAT </option>
+<option value="85">ECHO XSHORT BPF WIDE</option>
+<option value="86">2TAP MED FLAT AMBI</option>
+<option value="87">2TAP MED HPF AMBI</option>
+<option value="88">2TAP MED BPF AMBI</option>
+<option value="89">2TAP MED FLAT THICK</option>
+<option value="90">2TAP SHORT FLAT WIDE</option>
+<option value="91">2TAP SHORT HPF PAN</option>
+<option value="92">2TAP SHORT BPF AMBI</option>
+<option value="93">2TAP SHORT LPF AMBI</option>
+<option value="94">2TAP XSHORT FLAT WIDE</option>
+<option value="95">3TAP MED FLAT PAN</option>
+<option value="96">3TAP SHORT FLAT PAN</option>
+<option value="97">3TAP SHORT LPF AMBI</option>
+<option value="98">3TAP SHORT BPF AMBI</option>
+<option value="99">3TAP SHORT HPF AMBI</option>
+<option value="100">3TAP XSHORT FLAT AMBI</option>
+<option value="101">REGEN MED FLAT </option>
+<option value="102">REGEN MED HPF AMBI</option>
+<option value="103">REGEN MED BPF AMBI</option>
+<option value="104">REGEN MED LPF AMBI</option>
+<option value="105">REGEN SHORT FLAT </option>
+<option value="106">REGEN XSHORT FLAT </option>
+<option value="107">SLAP1   </option>
+<option value="108">SLAP2   </option>
+<option value="109">SLAP3   </option>
+<option value="110">SLAP4   </option>
+<option value="111">SLAP5   </option>
+<option value="112">REVERB SHORT GATE </option>
+<option value="113">REVERB MEDIUM WARM </option>
+<option value="114">REVERB MEDIUM BLOOM </option>
+<option value="115">REVERB MEDIUM PAN </option>
+<option value="116">REVERB LONG HPF </option>
+<option value="117">REVERB REVERSE  </option>
+<option value="118">REVERB REVERSE REGEN </option>
+<option value="119">MULTITAP PAN  </option>
+<option value="120">MULTITAP REVERB  </option>
+<option value="121">MULTITAP REVERSE PAN </option>
+<option value="122">THICKENER   </option>
+<option value="123">THICKENER DENSE  </option>
+<option value="124">STEREOGEN AMBIENT  </option>
+<option value="125">STEREOGEN THICK  </option>
+<option value="126">STEREOGEN WIDE  </option>
+<option value="127">STEREOGEN XWIDE  </option>
+<option value="128">DEFEAT   </option>
+    </script>
+  </select>
+  <label for="dryWetMix">Dry/Wet Mix:</label>
+  <input type="range" id="dryWetMix" name="dryWetMix" min="0" max="100" value="50">
+  <button id="uploadButton">Upload Custom WAV File</button>
+  <input type="file" id="fileInput" style="display: none;">
+  <script>
+  function Filterx2() {
+    // Initial state variables instead of arrays
+    this.xv0 = 0; this.xv1 = 0; this.xv2 = 0; this.xv3 = 0; this.xv4 = 0;
+    this.yv0 = 0; this.yv1 = 0; this.yv2 = 0; this.yv3 = 0; this.yv4 = 0;
+
+    // The gain constant
+    var GAIN = 1.481376007e+01;
+
+    // The function to process one sample and return the output
+    this.run = function(x) {
+        // Shift the 'xv' values
+        this.xv0 = this.xv1; this.xv1 = this.xv2; this.xv2 = this.xv3; this.xv3 = this.xv4;
+        this.xv4 = x / GAIN;
+        // Shift the 'yv' values
+        this.yv0 = this.yv1; this.yv1 = this.yv2; this.yv2 = this.yv3; this.yv3 = this.yv4;
+        this.yv4 = (this.xv0 + this.xv4) + 4 * (this.xv1 + this.xv3) + 6 * this.xv2
+            + (-0.0206514245 * this.yv0) + (0.0842337122 * this.yv1)
+            + (-0.5343006371 * this.yv2) + (0.3906414532 * this.yv3);
+
+        return this.yv4;
+    };
+  }
+
+    class Machine {
+      constructor() {
+        this.ProgramLength = 128;
+        this.DramLength = 16 * 1024;
+        this.address = 0;
+        this.program = new Uint16Array(this.ProgramLength);
+        this.dram = new Int16Array(this.DramLength);
+        this.acc = 0;
+      }
+
+      async loadMachine(path, programNum) {
+        try {
+          const response = await fetch(path);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const buffer = await response.arrayBuffer();
+          const byteView = new Uint8Array(buffer);
+          const offset = this.ProgramLength * (programNum - 1) * 2;
+          for (let i = 0; i < this.ProgramLength; i++) {
+            this.program[i] = byteView[offset + 2 * i] | (byteView[offset + 2 * i + 1] << 8);
+          }
+        } catch (error) {
+          console.error(`Failed to load machine: ${error}`);
+        }
+      }
+
+      resetMachine() {
+        this.dram.fill(0);
+        this.acc = 0;
+        this.address = 0;
+      }
+
+      runMachineTick(input) {
+        let acc = this.acc;
+        let address = this.address;
+        let output = { s: [0, 0] };
+
+        for (let pc = 0; pc < 128; pc++) {
+          const prevInstruction = this.program[(pc + 126) % 128];
+          const instruction = this.program[(pc + 127) % 128];
+          const opcode = (prevInstruction >> 14) & 0x3;
+          const offset = instruction & 0x3FFF;
+
+          let newAcc = acc;
+          let data, sgn;
+          switch (opcode) {
+            case 0:
+              data = this.dram[address];
+              sgn = data < 0 ? 1 : 0;
+              newAcc = newAcc + (data >> 1) + sgn;
+              break;
+            case 1:
+              data = this.dram[address];
+              sgn = data < 0 ? 1 : 0;
+              newAcc = (data >> 1) + sgn;
+              break;
+            case 2:
+              data = newAcc;
+              sgn = data < 0 ? 1 : 0;
+              this.dram[address] = data;
+              newAcc = newAcc + (data >> 1) + sgn;
+              break;
+            case 3:
+              data = ~newAcc;
+              sgn = data < 0 ? 1 : 0;
+              this.dram[address] = data;
+              newAcc = (data >> 1) + sgn;
+              break;
+          }
+	  //console.log(`op=${opcode} pc=${pc} addr=${address.toString(16).padStart(8, '0')} data=${data} acc=${newAcc}`);
+
+          if (pc === 0x60) {
+            output.s[0] = data;
+          } else if (pc === 0x70) {
+            output.s[1] = data;
+          } else if (pc === 0) {
+            this.dram[address] = input;
+          } else {
+            acc = newAcc;
+          }
+
+          address = (address + offset) % this.DramLength;
+        }
+        this.acc = acc;
+        this.address = address;
+
+        return output;
+      }
+
+      runEffect(leftIn, rightIn) {
+        const mono_sample = (leftIn + rightIn) >> 5;
+        const output = this.runMachineTick(mono_sample);
+
+        const left_out = this.clip(output.s[0] * 16);
+        const right_out = this.clip(output.s[1] * 16);
+
+        return [left_out, right_out];
+      }
+
+      clip(input) {
+        if (input > 32767) {
+          return 32767;
+        } else if (input < -32768) {
+          return -32768;
+        } else {
+          return input;
+        }
+      }
+    }
+
+    let audioPath = 'example.wav'; // Default audio file path
+    let currentProgram = 1; // Default effect program
+    const machine = new Machine();
+    let audioCtx = null;
+    let source = null;
+    let processor = null;
+    let dryWetMix = 0.5; // Default to 50% wet signal
+    let downSamplingFilter0 = new Filterx2();
+    let downSamplingFilter1 = new Filterx2();
+    let upSamplingFilter0 = new Filterx2();
+    let upSamplingFilter1 = new Filterx2();
+
+    async function startAudio() {
+      if (audioCtx !== null) {
+        audioCtx.close(); // Close any existing audio context
+      }
+
+      await machine.loadMachine('midiverb.rom', currentProgram);
+      machine.resetMachine();
+
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const response = await fetch(audioPath);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+      source = audioCtx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.loop = true; // Make it repeat forever
+
+      processor = audioCtx.createScriptProcessor(4096, 2, 2);
+      processor.onaudioprocess = (audioProcessingEvent) => {
+        const inputBuffer = audioProcessingEvent.inputBuffer;
+        const outputBuffer = audioProcessingEvent.outputBuffer;
+
+	let last_left = 0;
+	let last_right = 0;
+        for (let sample = 0; sample < inputBuffer.length; sample++) {
+          const left = inputBuffer.numberOfChannels > 0 ? inputBuffer.getChannelData(0)[sample] : 0;
+	  const left_ds = downSamplingFilter0.run(left);
+          const right = inputBuffer.numberOfChannels > 1 ? inputBuffer.getChannelData(1)[sample] : 0;
+	  const right_ds = downSamplingFilter1.run(right);
+	  if (sample % 2 == 0) {
+	    const [left_out, right_out] = machine.runEffect((left_ds * 32767.0)|0, (right_ds * 32767.0)|0);
+	    last_left = left_out / 32767.0;
+	    last_right = right_out / 32767.0;
+	  }
+	  let left_us = upSamplingFilter0.run(last_left);
+	  let right_us = upSamplingFilter1.run(last_right);
+
+          outputBuffer.getChannelData(0)[sample] = (1 - dryWetMix) * left + dryWetMix * left_us;
+          outputBuffer.getChannelData(1)[sample] = (1 - dryWetMix) * right + dryWetMix * right_us;
+        }
+      };
+
+      source.connect(processor);
+      processor.connect(audioCtx.destination);
+      source.start(0);
+    }
+
+    function stopAudio() {
+      if (source !== null) {
+        source.stop();
+      }
+      if (processor !== null) {
+        processor.disconnect();
+      }
+      if (audioCtx !== null) {
+        audioCtx.close();
+      }
+    }
+
+    document.getElementById('startButton').addEventListener('click', startAudio);
+    document.getElementById('stopButton').addEventListener('click', stopAudio);
+
+    document.getElementById('effectProgram').addEventListener('change', (event) => {
+      currentProgram = parseInt(event.target.value);
+      machine.loadMachine('midiverb.rom', currentProgram)
+        .then(() => machine.resetMachine());
+    });
+
+    document.getElementById('dryWetMix').addEventListener('input', (event) => {
+      dryWetMix = event.target.value / 100;
+    });
+
+    document.getElementById('uploadButton').addEventListener('click', () => {
+      document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', (event) => {
+      if (event.target.files.length > 0) {
+        const file = event.target.files[0];
+        audioPath = URL.createObjectURL(file);
+        stopAudio(); // Stop any existing audio
+        startAudio(); // Restart audio with the new file
+      }
+    });
+  </script>
+  <br><br><br>
+<pre>
+sources at <a href="https://github.com/thement/midiverb_emulator">https://github.com/thement/midiverb_emulator</a>
+code by thement at ibawizard do net
+</body>
+</html>
