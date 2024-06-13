@@ -99,24 +99,24 @@ void run_machine_tick(Machine *machine, int16_t input, Sample *output) {
             case 0: // sumhlf
                 data = machine->dram[address];
                 sgn = data < 0 ? 1 : 0;
-                new_acc = new_acc + data / 2 + sgn;
+                new_acc = new_acc + (data >> 1) + sgn;
                 break;
             case 1: // ldhlf
                 data = machine->dram[address];
                 sgn = data < 0 ? 1 : 0;
-                new_acc = data / 2 + sgn;
+                new_acc = (data >> 1) + sgn;
                 break;
             case 2: // strpos
                 data = new_acc;
                 sgn = data < 0 ? 1 : 0;
                 machine->dram[address] = data;
-                new_acc = new_acc + data / 2 + sgn;
+                new_acc = new_acc + (data >> 1) + sgn;
                 break;
             case 3: // strneg
                 data = ~new_acc;
                 sgn = data < 0 ? 1 : 0;
                 machine->dram[address] = data;
-                new_acc = data / 2 + sgn;
+                new_acc = (data >> 1) + sgn;
                 break;
         }
         //printf("op=%d pc=%d addr=%08x data=%d acc=%d\n", opcode, pc, machine->address, data, new_acc);
