@@ -2,6 +2,7 @@
 
 ![Panel](panel.jpg)
 
+<h3>There's a <a href="http://ibawizard.net/midiverb">WEB DEMO</a> now!</h3>
 This is an emulator for the original MIDIVERB and MIDIFEX effect units made by Alesis.
 
 This emulator is based on reverse engineering work done by [Paul Schreiber of SynthTech](https://www.youtube.com/@MOTMguy). If you are into synthesizers and electronics, it's a must watch!
