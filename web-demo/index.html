@@ -9,6 +9,7 @@
   <h1>Midiverb Emulator Demo</h1>
   <img src="panel.jpg"><br><br><br>
   <button id="startButton">Start Audio</button>
+  <button id="pauseButton">Mute effect input</button>
   <button id="stopButton">Stop Audio</button>
   <select id="effectProgram">
 <option value="1">.2 Sec SMALL BRIGHT</option>
@@ -141,8 +142,13 @@
 <option value="128">DEFEAT   </option>
     </script>
   </select>
-  <label for="dryWetMix">Dry/Wet Mix:</label>
+  <br>
   <input type="range" id="dryWetMix" name="dryWetMix" min="0" max="100" value="50">
+  <label for="dryWetMix">Mixing desk Dry/Wet Mix</label>
+  <br>
+  <input type="range" id="feedbackAmount" name="feedbackAmount" min="0" max="250" value="0">
+  <label for="feedbackAmount">Mixing desk Feedback (DANGEROUS, goes to 250%)</label>
+  <br>
   <button id="uploadButton">Upload Custom WAV File</button>
   <input type="file" id="fileInput" style="display: none;">
   <script>
@@ -177,6 +183,7 @@
         this.program = new Uint16Array(this.ProgramLength);
         this.dram = new Int16Array(this.DramLength);
         this.acc = 0;
+	this.last_output = 0;
       }
 
       async loadMachine(path, programNum) {
@@ -259,12 +266,14 @@
         return output;
       }
 
-      runEffect(leftIn, rightIn) {
-        const mono_sample = (leftIn + rightIn) >> 5;
+      runEffect(leftIn, rightIn, feedbackAmount) {
+        const mono_sample = (leftIn + rightIn + this.last_output * feedbackAmount) >> 5;
         const output = this.runMachineTick(mono_sample);
 
         const left_out = this.clip(output.s[0] * 16);
         const right_out = this.clip(output.s[1] * 16);
+
+        this.last_output = (left_out + right_out) / 2;
 
         return [left_out, right_out];
       }
@@ -287,6 +296,8 @@
     let source = null;
     let processor = null;
     let dryWetMix = 0.5; // Default to 50% wet signal
+    let isPaused = false;
+    let feedbackAmount = 0.0;
     let downSamplingFilter0 = new Filterx2();
     let downSamplingFilter1 = new Filterx2();
     let upSamplingFilter0 = new Filterx2();
@@ -309,20 +320,24 @@
       source.buffer = audioBuffer;
       source.loop = true; // Make it repeat forever
 
+      let last_left = 0;
+      let last_right = 0;
       processor = audioCtx.createScriptProcessor(4096, 2, 2);
       processor.onaudioprocess = (audioProcessingEvent) => {
         const inputBuffer = audioProcessingEvent.inputBuffer;
         const outputBuffer = audioProcessingEvent.outputBuffer;
 
-	let last_left = 0;
-	let last_right = 0;
         for (let sample = 0; sample < inputBuffer.length; sample++) {
-          const left = inputBuffer.numberOfChannels > 0 ? inputBuffer.getChannelData(0)[sample] : 0;
+          let left = inputBuffer.numberOfChannels > 0 ? inputBuffer.getChannelData(0)[sample] : 0;
+          let right = inputBuffer.numberOfChannels > 1 ? inputBuffer.getChannelData(1)[sample] : 0;
+          if (isPaused) {
+            left = 0;
+            right = 0;
+          }
 	  const left_ds = downSamplingFilter0.run(left);
-          const right = inputBuffer.numberOfChannels > 1 ? inputBuffer.getChannelData(1)[sample] : 0;
 	  const right_ds = downSamplingFilter1.run(right);
 	  if (sample % 2 == 0) {
-	    const [left_out, right_out] = machine.runEffect((left_ds * 32767.0)|0, (right_ds * 32767.0)|0);
+	    const [left_out, right_out] = machine.runEffect((left_ds * 32767.0)|0, (right_ds * 32767.0)|0, feedbackAmount);
 	    last_left = left_out / 32767.0;
 	    last_right = right_out / 32767.0;
 	  }
@@ -351,8 +366,19 @@
       }
     }
 
+    function pauseAudio() {
+      isPaused = !isPaused; // Toggle pause state
+      if (isPaused) {
+        document.getElementById('pauseButton').innerText = 'Unmute effect input';
+      } else {
+        document.getElementById('pauseButton').innerText = 'Mute effect input';
+      }
+    }
+
+
     document.getElementById('startButton').addEventListener('click', startAudio);
     document.getElementById('stopButton').addEventListener('click', stopAudio);
+    document.getElementById('pauseButton').addEventListener('click', pauseAudio);
 
     document.getElementById('effectProgram').addEventListener('change', (event) => {
       currentProgram = parseInt(event.target.value);
@@ -362,6 +388,9 @@
 
     document.getElementById('dryWetMix').addEventListener('input', (event) => {
       dryWetMix = event.target.value / 100;
+    });
+    document.getElementById('feedbackAmount').addEventListener('input', (event) => {
+      feedbackAmount = event.target.value / 100;
     });
 
     document.getElementById('uploadButton').addEventListener('click', () => {
