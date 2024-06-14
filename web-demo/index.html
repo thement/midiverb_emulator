@@ -143,14 +143,19 @@
     </script>
   </select>
   <br>
+  <br>
   <input type="range" id="dryWetMix" name="dryWetMix" min="0" max="100" value="50">
   <label for="dryWetMix">Mixing desk Dry/Wet Mix</label>
+  <br>
   <br>
   <input type="range" id="feedbackAmount" name="feedbackAmount" min="0" max="250" value="0">
   <label for="feedbackAmount">Mixing desk Feedback (DANGEROUS, goes to 250%)</label>
   <br>
+  <br>
   <button id="uploadButton">Upload Custom WAV File</button>
   <input type="file" id="fileInput" style="display: none;">
+<br>
+  <div id="disassemblyContainer"></div>
   <script>
   function Filterx2() {
     // Initial state variables instead of arrays
@@ -183,7 +188,7 @@
         this.program = new Uint16Array(this.ProgramLength);
         this.dram = new Int16Array(this.DramLength);
         this.acc = 0;
-	this.last_output = 0;
+        this.last_output = 0;
       }
 
       async loadMachine(path, programNum) {
@@ -246,7 +251,7 @@
               newAcc = (data >> 1) + sgn;
               break;
           }
-	  //console.log(`op=${opcode} pc=${pc} addr=${address.toString(16).padStart(8, '0')} data=${data} acc=${newAcc}`);
+          //console.log(`op=${opcode} pc=${pc} addr=${address.toString(16).padStart(8, '0')} data=${data} acc=${newAcc}`);
 
           if (pc === 0x60) {
             output.s[0] = data;
@@ -286,6 +291,72 @@
         } else {
           return input;
         }
+      }
+
+      decodeInstruction(pc, address, prev, curr) {
+          let op = prev >> 14;
+          let offset = curr & 0x3fff;
+          let instruction;
+          let data;
+          let comment;
+
+          switch (op) {
+              case 0b00:
+                  instruction = `sumhlf 0x${address.toString(16).padStart(4, '0')}`;
+                  data = `DRAM[0x${address.toString(16).padStart(4, '0')}]`;
+                  comment = `Acc = Acc + ${data}/2 + sgn`;
+                  break;
+              case 0b01:
+                  instruction = `ldhlf  0x${address.toString(16).padStart(4, '0')}`;
+                  data = `DRAM[0x${address.toString(16).padStart(4, '0')}]`;
+                  comment = `Acc = ${data}/2 + sgn`;
+                  break;
+              case 0b10:
+                  instruction = `strpos 0x${address.toString(16).padStart(4, '0')}`;
+                  data = `Acc`;
+                  comment = `DRAM[0x${address.toString(16).padStart(4, '0')}] = ${data}, Acc = Acc + ${data}/2 + sgn`;
+                  break;
+              case 0b11:
+                  data = `~Acc`;
+                  instruction = `strneg 0x${address.toString(16).padStart(4, '0')}`;
+                  comment = `DRAM[0x${address.toString(16).padStart(4, '0')}] = ${data}, Acc = ${data}/2 + sgn`;
+                  break;
+              default:
+                  instruction = "unknown";
+                  comment = "";
+                  break;
+          }
+
+          if (pc === 0x00) {
+              comment = `DRAM[0x${address.toString(16).padStart(4, '0')}] = Input`;
+          } else if (pc === 0x60) {
+              comment = `Left = ${data}`;
+          } else if (pc === 0x70) {
+              comment = `Right = ${data}`;
+          }
+
+          return {
+              instructionLine: `${pc.toString(16).padStart(2, '0')} ${op} ${curr.toString(16).padStart(4, '0')}   ${instruction}    ${comment}`,
+              newAddress: (address + offset) & 0x3fff
+          };
+      }
+
+      disassemble() {
+          let disassembledInstructions = [];
+          let address = 0;
+
+          for (let pc = 0; pc < 128; pc++) {
+              let prev = this.program[(pc + 126) % 128];
+              let curr = this.program[(pc + 127) % 128];
+              let result = this.decodeInstruction(pc, address, prev, curr);
+              disassembledInstructions.push(result.instructionLine);
+              address = result.newAddress;
+          }
+
+          return {
+              disassembledInstructions,
+              endAddress: address
+          };
       }
     }
 
@@ -334,15 +405,15 @@
             left = 0;
             right = 0;
           }
-	  const left_ds = downSamplingFilter0.run(left);
-	  const right_ds = downSamplingFilter1.run(right);
-	  if (sample % 2 == 0) {
-	    const [left_out, right_out] = machine.runEffect((left_ds * 32767.0)|0, (right_ds * 32767.0)|0, feedbackAmount);
-	    last_left = left_out / 32767.0;
-	    last_right = right_out / 32767.0;
-	  }
-	  let left_us = upSamplingFilter0.run(last_left);
-	  let right_us = upSamplingFilter1.run(last_right);
+          const left_ds = downSamplingFilter0.run(left);
+          const right_ds = downSamplingFilter1.run(right);
+          if (sample % 2 == 0) {
+            const [left_out, right_out] = machine.runEffect((left_ds * 32767.0)|0, (right_ds * 32767.0)|0, feedbackAmount);
+            last_left = left_out / 32767.0;
+            last_right = right_out / 32767.0;
+          }
+          let left_us = upSamplingFilter0.run(last_left);
+          let right_us = upSamplingFilter1.run(last_right);
 
           outputBuffer.getChannelData(0)[sample] = (1 - dryWetMix) * left + dryWetMix * left_us;
           outputBuffer.getChannelData(1)[sample] = (1 - dryWetMix) * right + dryWetMix * right_us;
@@ -383,8 +454,17 @@
     document.getElementById('effectProgram').addEventListener('change', (event) => {
       currentProgram = parseInt(event.target.value);
       machine.loadMachine('midiverb.rom', currentProgram)
-        .then(() => machine.resetMachine());
+        .then(() => {
+          machine.resetMachine();
+          displayDisassembly(currentProgram); // Add this line
+        });
     });
+
+    function displayDisassembly(programNumber) {
+      const disassembled = machine.disassemble().disassembledInstructions;
+      const disassemblyContainer = document.getElementById('disassemblyContainer');
+      disassemblyContainer.innerHTML = `<h3>Program #${programNumber}</h3><pre>${disassembled.join('\n')}</pre>`;
+    }
 
     document.getElementById('dryWetMix').addEventListener('input', (event) => {
       dryWetMix = event.target.value / 100;
