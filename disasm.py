@@ -64,20 +64,16 @@ import sys
 # - Writes to DRAM are either Accumulator or binary inverse of Accumulator
 # 
 
-def disassemble_dsp(byte_list, prog):
-    def decode_instruction(pc, op, byte1, byte2, address):
-        # Extract address bits
-        a7_a0 = byte1
-        a13_a8 = byte2 & 0x3F
-        offset = (a13_a8 << 8) | a7_a0
-
-        # Determine the instruction
+def disassemble_dsp(program):
+    def decode_instruction(pc, address, prev, this):
+        op = prev >> 14
+        offset = this & 0x3fff
         if op == 0b00:
             instruction = f"sumhlf 0x{address:04x}"
             data = f"DRAM[0x{address:04x}]"
             comment = f"Acc = Acc + {data}/2 + sgn"
         elif op == 0b01:
-            instruction = f"ldhlf 0x{address:04x}"
+            instruction = f"ldhlf  0x{address:04x}"
             data = f"DRAM[0x{address:04x}]"
             comment = f"Acc = {data}/2 + sgn"
         elif op == 0b10:
@@ -93,39 +89,23 @@ def disassemble_dsp(byte_list, prog):
             comment = ""
 
         if pc == 0x00:
-            if op == 0b00:
-                comment = f"DRAM[0x{address:04x}] = Input, Acc = Acc + Input/2 + sgn"
-            else:
-                comment = f"DRAM[0x{address:04x}] = Input, Acc = Input/2 + sgn"
+            comment = f"DRAM[0x{address:04x}] = Input"
         elif pc == 0x60:
             comment = f'Left = {data}'
         elif pc == 0x70:
             comment = f'Right = {data}'
 
-        return f"P{prog}: {pc:02x} {op} {byte2:02x}{byte1:02x}  {instruction}\t\t{comment}", (address + offset) & 0x3fff
-        #return f"{pc:02x} {byte2:02x}{byte1:02x}  {instruction}\t\t{comment}", (address + offset) & 0x3fff
-
-    # Ensure the byte list length is even
-    if len(byte_list) % 2 != 0:
-        raise ValueError("The byte list length must be even.")
+        return f"{pc:02x} {op} {this:04x}   {instruction}    {comment}", (address + offset) & 0x3fff
 
     disassembled_instructions = []
-
-    # Iterate over the byte list in pairs
     address = 0
     for pc in range(0, 128):
-        # Extract operation bits
-        i = (pc + 126) % 128 * 2
-        op = (byte_list[i+1] >> 6) & 0x03
-        j = (pc + 127) % 128 * 2
-        byte1 = byte_list[j]
-        byte2 = byte_list[j+1]
-        instruction, address = decode_instruction(pc, op, byte1, byte2, address)
+        prev = program[(pc + 126) % 128]
+        this = program[(pc + 127) % 128]
+        instruction, address = decode_instruction(pc, address, prev, this)
         disassembled_instructions.append(instruction)
 
-    print(f'end offset 0x{address:x}')
-
-    return disassembled_instructions
+    return disassembled_instructions, address
 
 def read_256_bytes_at_offset(file_path, n):
     offset = n * 256
@@ -152,10 +132,13 @@ def main():
         sys.exit(1)
 
     byte_list = read_256_bytes_at_offset(sys.argv[1], prog - 1)
+    word_list = [int.from_bytes(byte_list[i:i+2], 'little') for i in range(0, len(byte_list), 2)]
 
-    disassembled_instructions = disassemble_dsp(byte_list, prog)
+    print(f"Program #{prog}")
+    disassembled_instructions, address = disassemble_dsp(word_list)
     for instr in disassembled_instructions:
         print(instr)
+    print(f'End address 0x{address:x}')
 
 if __name__ == "__main__":
     main()
