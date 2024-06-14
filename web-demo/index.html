@@ -155,7 +155,14 @@
   <button id="uploadButton">Upload Custom WAV File</button>
   <input type="file" id="fileInput" style="display: none;">
 <br>
+<br>
   <div id="disassemblyContainer"></div>
+  <br><br><br>
+<pre>
+sources at <a href="https://github.com/thement/midiverb_emulator">https://github.com/thement/midiverb_emulator</a>
+code by thement at ibawizard do net
+</pre>
+<button id="fillDramButton">Fill DRAM with Random Numbers</button> - LOUD! Check how it sounds right after Power-On 
   <script>
   function Filterx2() {
     // Initial state variables instead of arrays
@@ -212,6 +219,12 @@
         this.dram.fill(0);
         this.acc = 0;
         this.address = 0;
+      }
+
+      fillDramWithRandomNumbers() {
+        for (let i = 0; i < this.DramLength; i++) {
+          this.dram[i] = Math.floor(Math.random() * 0xFFFF) - 0x8000;
+        }
       }
 
       runMachineTick(input) {
@@ -477,6 +490,10 @@
       document.getElementById('fileInput').click();
     });
 
+    document.getElementById('fillDramButton').addEventListener('click', () => {
+      machine.fillDramWithRandomNumbers();
+    });
+
     document.getElementById('fileInput').addEventListener('change', (event) => {
       if (event.target.files.length > 0) {
         const file = event.target.files[0];
@@ -486,9 +503,5 @@
       }
     });
   </script>
-  <br><br><br>
-<pre>
-sources at <a href="https://github.com/thement/midiverb_emulator">https://github.com/thement/midiverb_emulator</a>
-code by thement at ibawizard do net
 </body>
 </html>
