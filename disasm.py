@@ -64,7 +64,23 @@ import sys
 # - Writes to DRAM are either Accumulator or binary inverse of Accumulator
 # 
 
+
+def run_decoder(ar_before_aw, aw, all_ar):
+    delay_line = 0
+    for k in reversed(sorted(all_ar | aw)):
+        if k in all_ar and not k in ar_before_aw:
+            delay_line += 1
+            print(f'0x{k:x} temp variable starting line {delay_line}')
+        elif k in ar_before_aw:
+            print(f'0x{k:x} reads delay line {delay_line}')
+        elif k in aw:
+            delay_line += 1
+            print(f'0x{k:x} starts delay line {delay_line}')
+
 def disassemble_dsp(program):
+    ar = set([])
+    all_ar = set([])
+    aw = set([])
     def decode_instruction(pc, address, prev, this):
         op = prev >> 14
         offset = this & 0x3fff
@@ -72,18 +88,26 @@ def disassemble_dsp(program):
             instruction = f"sumhlf 0x{address:04x}"
             data = f"DRAM[0x{address:04x}]"
             comment = f"Acc = Acc + {data}/2 + sgn"
+            if not address in aw:
+                ar.add(address)
+            all_ar.add(address)
         elif op == 0b01:
             instruction = f"ldhlf  0x{address:04x}"
             data = f"DRAM[0x{address:04x}]"
             comment = f"Acc = {data}/2 + sgn"
+            if not address in aw:
+                ar.add(address)
+            all_ar.add(address)
         elif op == 0b10:
             instruction = f"strpos 0x{address:04x}"
             data = "Acc"
             comment = f"DRAM[0x{address:04x}] = {data}, Acc = Acc + {data}/2 + sgn"
+            aw.add(address)
         elif op == 0b11:
             data = "~Acc"
             instruction = f"strneg 0x{address:04x}"
             comment = f"DRAM[0x{address:04x}] = {data}, Acc = {data}/2 + sgn"
+            aw.add(address)
         else:
             instruction = "unknown"
             comment = ""
@@ -104,7 +128,14 @@ def disassemble_dsp(program):
         this = program[(pc + 127) % 128]
         instruction, address = decode_instruction(pc, address, prev, this)
         disassembled_instructions.append(instruction)
+    for instr in disassembled_instructions:
+        print(instr)
+    print(sorted(ar))
+    print(sorted(aw))
+    print(ar & aw)
+    run_decoder(ar, aw, all_ar)
 
+    #return disassembled_instructions, address
     return disassembled_instructions, address
 
 def read_256_bytes_at_offset(file_path, n):
@@ -136,8 +167,6 @@ def main():
 
     print(f"Program #{prog}")
     disassembled_instructions, address = disassemble_dsp(word_list)
-    for instr in disassembled_instructions:
-        print(instr)
     print(f'End address 0x{address:x}')
 
 if __name__ == "__main__":
