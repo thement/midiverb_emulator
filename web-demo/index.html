@@ -243,25 +243,21 @@ code by thement at ibawizard do net
           switch (opcode) {
             case 0:
               data = this.dram[address];
-              sgn = data < 0 ? 1 : 0;
-              newAcc = newAcc + (data >> 1) + sgn;
+              newAcc = Math.floor(newAcc + data / 2) ;
               break;
             case 1:
               data = this.dram[address];
-              sgn = data < 0 ? 1 : 0;
-              newAcc = (data >> 1) + sgn;
+              newAcc = Math.floor(data / 2);
               break;
             case 2:
               data = newAcc;
-              sgn = data < 0 ? 1 : 0;
               this.dram[address] = data;
-              newAcc = newAcc + (data >> 1) + sgn;
+              newAcc = newAcc + Math.floor(data / 2);
               break;
             case 3:
-              data = ~newAcc;
-              sgn = data < 0 ? 1 : 0;
+              data = -newAcc;
               this.dram[address] = data;
-              newAcc = (data >> 1) + sgn;
+              newAcc = Math.floor(data / 2);
               break;
           }
           //console.log(`op=${opcode} pc=${pc} addr=${address.toString(16).padStart(8, '0')} data=${data} acc=${newAcc}`);
