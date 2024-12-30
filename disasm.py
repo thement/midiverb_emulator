@@ -1,4 +1,3 @@
-import sys
 # examples
 #
 # 1 rom = 64 programs, each 128 instr * 2 bytes
@@ -64,48 +63,306 @@ import sys
 # - Writes to DRAM are either Accumulator or binary inverse of Accumulator
 # 
 
+import sys
+from enum import Enum
+from dataclasses import dataclass
+from typing import Optional
+
+class DSPInstruction(Enum):
+    OUTPUT_LEFT = "output_left"
+    OUTPUT_RIGHT = "output_right"
+    INPUT = "input"
+    SUMHLF = "sumhlf"
+    LDHLF = "ldhlf"
+    STRPOS = "strpos"
+    STRNEG = "strneg"
+    STORE = "store"
+    STOREN = "storen"
+    ADDHLF = "addhlf"
+    NEGHLF = "neghlf"
+
+@dataclass(frozen=True)
+class Instruction:
+    opcode: DSPInstruction
+    pc: int
+    addr: Optional[int] = None
+
+    def uses_defines(self):
+        uses = set()
+        defines = set()
+
+        if self.opcode == DSPInstruction.SUMHLF:
+            uses.add(self.addr)
+            uses.add("Acc")
+            defines.add("Acc")
+        elif self.opcode == DSPInstruction.LDHLF:
+            uses.add(self.addr)
+            defines.add("Acc")
+        elif self.opcode in {DSPInstruction.STRPOS, DSPInstruction.STRNEG}:
+            uses.add("Acc")
+            defines.add(self.addr)
+            defines.add("Acc")
+        elif self.opcode in {DSPInstruction.STORE, DSPInstruction.STOREN}:
+            uses.add("Acc")
+            defines.add(self.addr)
+        elif self.opcode in {DSPInstruction.ADDHLF, DSPInstruction.NEGHLF}:
+            uses.add("Acc")
+            defines.add("Acc")
+        elif self.opcode == DSPInstruction.INPUT:
+            uses.add("Input")
+            defines.add(self.addr)
+        elif self.opcode == DSPInstruction.OUTPUT_LEFT:
+            uses.add(self.addr)
+            defines.add("Left")
+        elif self.opcode == DSPInstruction.OUTPUT_RIGHT:
+            uses.add(self.addr)
+            defines.add("Right")
+        else:
+            raise Exception('unhandled case variant')
+
+        return uses, defines
+
+    def pretty_string(self):
+        addr_str = f"0x{self.addr:04x}" if self.addr is not None else "None"
+
+        if self.opcode == DSPInstruction.SUMHLF:
+            return f"Acc = Acc + DRAM[{addr_str}]/2 + sgn"
+        elif self.opcode == DSPInstruction.LDHLF:
+            return f"Acc = DRAM[{addr_str}]/2 + sgn"
+        elif self.opcode == DSPInstruction.STRPOS:
+            return f"DRAM[{addr_str}] = Acc, Acc = Acc + Acc/2 + sgn"
+        elif self.opcode == DSPInstruction.STRNEG:
+            return f"DRAM[{addr_str}] = ~Acc, Acc = ~Acc/2 + sgn"
+        elif self.opcode == DSPInstruction.INPUT:
+            return f"DRAM[{addr_str}] = Input"
+        elif self.opcode == DSPInstruction.OUTPUT_LEFT:
+            return f"Left = DRAM[{addr_str}]"
+        elif self.opcode == DSPInstruction.OUTPUT_RIGHT:
+            return f"Right = DRAM[{addr_str}]"
+        elif self.opcode == DSPInstruction.STORE:
+            return f"DRAM[{addr_str}] = Acc"
+        elif self.opcode == DSPInstruction.STOREN:
+            return f"DRAM[{addr_str}] = ~Acc"
+        elif self.opcode == DSPInstruction.ADDHLF:
+            return f"Acc = Acc + Acc/2 + sgn"
+        elif self.opcode == DSPInstruction.NEGHLF:
+            return f"Acc = ~Acc/2 + sgn"
+        else:
+            return "Unknown instruction"
+
+class DelayLine:
+    def __init__(self, addr, tap_addrs):
+        self.taps = [(addr - tap_addr) & 0x3fff for tap_addr in tap_addrs]
+        self.length = max(self.taps)
+        self.tap_addrs = tap_addrs
+        self.addr = addr
+        self.id = None
+
+    def __str__(self):
+        return (f"DelayLine(id={self.id},addr={self.addr}, tap_addrs={self.tap_addrs}, "
+                f"taps={self.taps}, length={self.length})")
+
+
+class DelayLineStorage:
+    def __init__(self):
+        self.lines = []
+        self.read_addrs = {}
+        self.write_addrs = {}
+        self.tmp = set()
+
+    def add(self, line):
+        i = len(self.lines)
+        line.id = i
+        self.lines.append(line)
+        for addr in line.tap_addrs:
+            self.read_addrs[addr] = i
+        self.write_addrs[line.addr] = i
+
+    def add_tmp(self, addr):
+        self.tmp.add(addr)
+
+    @staticmethod
+    def get_tmp_name(addr):
+        return f"tmp{addr}"
+
+    def format_address(self, addr):
+        if addr in self.tmp:
+            return self.get_tmp_name(addr)
+        id = self.read_addrs.get(addr)
+        if id is not None:
+            line = self.lines[id]
+            offset = (line.addr - addr) & 0x3fff
+            return f"LINE({line.id}, {line.addr}, {offset})"
+        id = self.write_addrs[addr]
+        line = self.lines[id]
+        return f"WRITE_LINE({line.id}, {line.addr})"
+
+def analyze(address, encoded_instructions):
+    assert address == 1, "address counter doesn't end up offseted by 1 - analysis expects that"
+
+    print('-- Pass 1: Find uses/defines of the whole program')
+    prev_used = set()
+    prev_defined = set()
+    for instr in encoded_instructions:
+        uses, defines = instr.uses_defines()
+        prev_used |= uses - prev_defined
+        prev_defined |= defines
+
+    print('Program used:', prev_used)
+    print('Program defined:', prev_defined)
+
+    print('-- Pass 2: Calculate which addresses start a delay line and get used on following samples')
+    used_address = {x for x in prev_used if isinstance(x, int)}
+    defined_address = {x for x in prev_defined if isinstance(x, int)}
+    memory_locations = [{'addr': num, 'write': False} for num in used_address] + \
+                       [{'addr': num, 'write': True} for num in defined_address]
+    memory_locations.sort(key=lambda x: x['addr'])
+    print('Read/write locations:', memory_locations)
+
+    # Calculate all delay lines
+    n = len(memory_locations)
+    delay_line_storage = DelayLineStorage()
+    not_read = set()
+    used_writes = set()
+    for i, location in enumerate(memory_locations):
+        if location['write']:
+            taps = []
+            j = (i - 1) % n
+            while j != i:
+                if memory_locations[j]['write']:
+                    break
+                taps.append(memory_locations[j]['addr'])
+                j = (j - 1) % n
+            if len(taps) == 0:
+                not_read.add(location['addr'])
+                delay_line_storage.add_tmp(location['addr'])
+            else:
+                used_writes.add(location['addr'])
+                delay_line = DelayLine(addr=location['addr'], tap_addrs=taps)
+                delay_line_storage.add(delay_line)
+
+    print('Writes not read:', not_read)
+    print('Writes read:', used_writes)
+
+    print('-- Pass 3: Eliminate dead instructions')
+    will_be_needed = used_writes | set(['Left', 'Right'])
+    pass3_instructions = []
+    # Accumulator is probably not used in between iterations, but just in case...
+    if 'Acc' in prev_used:
+        will_be_needed.add('Acc')
+
+    for instr in reversed(encoded_instructions):
+        uses, defines = instr.uses_defines()
+        if defines.isdisjoint(will_be_needed):
+            print('// eliminated:', instr.pretty_string())
+            pass
+        else:
+            will_be_needed = (will_be_needed - defines) | uses
+            print(instr.pretty_string())
+            pass3_instructions.append(instr)
+    pass3_instructions = reversed(pass3_instructions)
+
+    print('-- Pass 4: Output C program')
+    for line in delay_line_storage.lines:
+        print(f"// Delay line {line.id}: length={line.length}, taps={line.taps}")
+    print('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])')
+    print('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])')
+    print('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {')
+    local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp]
+    local_vars_str = ', '.join(local_vars)
+    print(f'\tint16_t {local_vars_str};')
+
+    for instr in pass3_instructions:
+        if instr.addr is not None:
+            addr_str = delay_line_storage.format_address(instr.addr)
+        else:
+            addr_str = None
+
+        if instr.opcode == DSPInstruction.SUMHLF:
+            s = f"Acc = Acc + {addr_str}/2"
+        elif instr.opcode == DSPInstruction.LDHLF:
+            s = f"Acc = {addr_str}/2"
+        elif instr.opcode == DSPInstruction.INPUT:
+            s = f"{addr_str} = input"
+        elif instr.opcode == DSPInstruction.OUTPUT_LEFT:
+            addr_str = delay_line_storage.format_address(instr.addr)
+            s = f"*out_left = {addr_str}"
+        elif instr.opcode == DSPInstruction.OUTPUT_RIGHT:
+            s = f"*out_right = {addr_str}"
+        elif instr.opcode == DSPInstruction.STORE:
+            s = f"{addr_str} = Acc"
+        elif instr.opcode == DSPInstruction.STOREN:
+            s = f"{addr_str} = -Acc"
+        elif instr.opcode == DSPInstruction.ADDHLF:
+            s = f"Acc = Acc + Acc/2"
+        elif instr.opcode == DSPInstruction.NEGHLF:
+            s = f"Acc = -Acc/2"
+        else:
+            raise Exception("Unexpected instruction")
+        print(f"\t{s};")
+    print('}')
+
+
 def disassemble_dsp(program):
     def decode_instruction(pc, address, prev, this):
         op = prev >> 14
         offset = this & 0x3fff
         if op == 0b00:
-            instruction = f"sumhlf 0x{address:04x}"
-            data = f"DRAM[0x{address:04x}]"
-            comment = f"Acc = Acc + {data}/2 + sgn"
+            name = f"sumhlf 0x{address:04x}"
+            comment = f"Acc = Acc + DRAM[0x{address:04x}]/2 + sgn"
+            instr = [Instruction(DSPInstruction.SUMHLF, addr=address, pc=pc)]
         elif op == 0b01:
-            instruction = f"ldhlf  0x{address:04x}"
-            data = f"DRAM[0x{address:04x}]"
-            comment = f"Acc = {data}/2 + sgn"
+            name = f"ldhlf  0x{address:04x}"
+            comment = f"Acc = DRAM[0x{address:04x}]/2 + sgn"
+            instr = [Instruction(DSPInstruction.LDHLF, addr=address, pc=pc)]
         elif op == 0b10:
-            instruction = f"strpos 0x{address:04x}"
-            data = "Acc"
-            comment = f"DRAM[0x{address:04x}] = {data}, Acc = Acc + {data}/2 + sgn"
+            name = f"strpos 0x{address:04x}"
+            comment = f"DRAM[0x{address:04x}] = Acc, Acc = Acc + Acc/2 + sgn"
+            # Break the instruction into two virtual instructions for simpler analysis later
+            #instr = Instruction(DSPInstruction.STRPOS, addr=address, pc=pc)
+            instr = [
+                Instruction(DSPInstruction.STORE, addr=address, pc=pc),
+                Instruction(DSPInstruction.ADDHLF, pc=pc),
+            ]
         elif op == 0b11:
-            data = "~Acc"
-            instruction = f"strneg 0x{address:04x}"
-            comment = f"DRAM[0x{address:04x}] = {data}, Acc = {data}/2 + sgn"
+            name = f"strneg 0x{address:04x}"
+            comment = f"DRAM[0x{address:04x}] = ~Acc, Acc = ~Acc/2 + sgn"
+            # Break the instruction into two virtual instructions for simpler analysis later
+            #instr = Instruction(DSPInstruction.STRNEG, addr=address, pc=pc)
+            instr = [
+                Instruction(DSPInstruction.STOREN, addr=address, pc=pc),
+                Instruction(DSPInstruction.NEGHLF, pc=pc),
+            ]
         else:
-            instruction = "unknown"
+            name = "unknown"
             comment = ""
 
         if pc == 0x00:
+            assert op == 0
             comment = f"DRAM[0x{address:04x}] = Input"
+            instr = [Instruction(DSPInstruction.INPUT, addr=address, pc=pc)]
         elif pc == 0x60:
-            comment = f'Left = {data}'
+            assert op == 0
+            comment = f'Left = DRAM[0x{address:04x}]'
+            instr = [Instruction(DSPInstruction.OUTPUT_LEFT, addr=address, pc=pc)]
         elif pc == 0x70:
-            comment = f'Right = {data}'
+            assert op == 0
+            comment = f'Right = DRAM[0x{address:04x}]'
+            instr = [Instruction(DSPInstruction.OUTPUT_RIGHT, addr=address, pc=pc)]
 
-        return f"{pc:02x} {op} {this:04x}   {instruction}    {comment}", (address + offset) & 0x3fff
+        return f"{pc:02x} {op} {this:04x}   {name}    {comment}", (address + offset) & 0x3fff, instr
 
     disassembled_instructions = []
+    encoded_instructions = []
     address = 0
     for pc in range(0, 128):
         prev = program[(pc + 126) % 128]
         this = program[(pc + 127) % 128]
-        instruction, address = decode_instruction(pc, address, prev, this)
-        disassembled_instructions.append(instruction)
+        text, address, instructions = decode_instruction(pc, address, prev, this)
+        disassembled_instructions.append(text)
+        encoded_instructions += instructions
 
-    return disassembled_instructions, address
+    return disassembled_instructions, address, encoded_instructions
 
 def read_256_bytes_at_offset(file_path, n):
     offset = n * 256
@@ -135,10 +392,12 @@ def main():
     word_list = [int.from_bytes(byte_list[i:i+2], 'little') for i in range(0, len(byte_list), 2)]
 
     print(f"Program #{prog}")
-    disassembled_instructions, address = disassemble_dsp(word_list)
+    disassembled_instructions, address, encoded_instructions = disassemble_dsp(word_list)
     for instr in disassembled_instructions:
         print(instr)
     print(f'End address 0x{address:x}')
+
+    analyze(address, encoded_instructions)
 
 if __name__ == "__main__":
     main()
