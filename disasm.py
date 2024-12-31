@@ -64,6 +64,7 @@
 # 
 
 import sys
+import argparse
 from enum import Enum
 from dataclasses import dataclass
 from typing import Optional
@@ -197,7 +198,7 @@ class DelayLineStorage:
         line = self.lines[id]
         return f"WRITE_LINE({line.id}, {line.addr})"
 
-def analyze(address, encoded_instructions):
+def analyze(address, encoded_instructions, output_filename):
     assert address == 1, "address counter doesn't end up offseted by 1 - analysis expects that"
 
     print('-- Pass 1: Find uses/defines of the whole program')
@@ -262,46 +263,46 @@ def analyze(address, encoded_instructions):
             pass3_instructions.append(instr)
     pass3_instructions = reversed(pass3_instructions)
 
-    print('-- Pass 4: Output C program')
-    for line in delay_line_storage.lines:
-        print(f"// Delay line {line.id}: length={line.length}, taps={line.taps}")
-    print('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])')
-    print('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])')
-    print('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {')
-    local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp]
-    local_vars_str = ', '.join(local_vars)
-    print(f'\tint16_t {local_vars_str};')
+    print(f'-- Pass 4: Output C program to {output_filename}')
+    with open(output_filename, 'w') as f:
+        for line in delay_line_storage.lines:
+            f.write(f"// Delay line {line.id}: length={line.length}, taps={line.taps}\n")
+        f.write('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])\n')
+        f.write('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])\n')
+        f.write('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {\n')
+        local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp]
+        local_vars_str = ', '.join(local_vars)
+        f.write(f'\tint16_t {local_vars_str};\n')
 
-    for instr in pass3_instructions:
-        if instr.addr is not None:
-            addr_str = delay_line_storage.format_address(instr.addr)
-        else:
-            addr_str = None
+        for instr in pass3_instructions:
+            if instr.addr is not None:
+                addr_str = delay_line_storage.format_address(instr.addr)
+            else:
+                addr_str = None
 
-        if instr.opcode == DSPInstruction.SUMHLF:
-            s = f"Acc = Acc + {addr_str}/2"
-        elif instr.opcode == DSPInstruction.LDHLF:
-            s = f"Acc = {addr_str}/2"
-        elif instr.opcode == DSPInstruction.INPUT:
-            s = f"{addr_str} = input"
-        elif instr.opcode == DSPInstruction.OUTPUT_LEFT:
-            addr_str = delay_line_storage.format_address(instr.addr)
-            s = f"*out_left = {addr_str}"
-        elif instr.opcode == DSPInstruction.OUTPUT_RIGHT:
-            s = f"*out_right = {addr_str}"
-        elif instr.opcode == DSPInstruction.STORE:
-            s = f"{addr_str} = Acc"
-        elif instr.opcode == DSPInstruction.STOREN:
-            s = f"{addr_str} = -Acc"
-        elif instr.opcode == DSPInstruction.ADDHLF:
-            s = f"Acc = Acc + Acc/2"
-        elif instr.opcode == DSPInstruction.NEGHLF:
-            s = f"Acc = -Acc/2"
-        else:
-            raise Exception("Unexpected instruction")
-        print(f"\t{s};")
-    print('}')
-
+            if instr.opcode == DSPInstruction.SUMHLF:
+                s = f"Acc = Acc + {addr_str}/2"
+            elif instr.opcode == DSPInstruction.LDHLF:
+                s = f"Acc = {addr_str}/2"
+            elif instr.opcode == DSPInstruction.INPUT:
+                s = f"{addr_str} = input"
+            elif instr.opcode == DSPInstruction.OUTPUT_LEFT:
+                addr_str = delay_line_storage.format_address(instr.addr)
+                s = f"*out_left = {addr_str}"
+            elif instr.opcode == DSPInstruction.OUTPUT_RIGHT:
+                s = f"*out_right = {addr_str}"
+            elif instr.opcode == DSPInstruction.STORE:
+                s = f"{addr_str} = Acc"
+            elif instr.opcode == DSPInstruction.STOREN:
+                s = f"{addr_str} = -Acc"
+            elif instr.opcode == DSPInstruction.ADDHLF:
+                s = f"Acc = Acc + Acc/2"
+            elif instr.opcode == DSPInstruction.NEGHLF:
+                s = f"Acc = -Acc/2"
+            else:
+                raise Exception("Unexpected instruction")
+            f.write(f"\t{s};\n")
+        f.write('}\n')
 
 def disassemble_dsp(program):
     def decode_instruction(pc, address, prev, this):
@@ -374,30 +375,31 @@ def read_256_bytes_at_offset(file_path, n):
     integer_list = list(byte_data)
     return integer_list
 
+def validate_program_number(value):
+    ivalue = int(value)
+    if 1 <= ivalue <= 64:
+        return ivalue
+    raise argparse.ArgumentTypeError(f"Program number must be an integer between 1 and 64, got {value}")
+
 def main():
-    if len(sys.argv) != 3:
-        print("Usage: python script.py <filename> <program_number>")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Decompile MidiVerb program and optionally convert it to C.")
+    parser.add_argument("filename", help="Input ROM filename")
+    parser.add_argument("program_number", type=validate_program_number, help="Program number (1-64)")
+    parser.add_argument("-c", "--convert", metavar="output_c_file", help="Convert program to C and save to the specified filename")
 
-    try:
-        prog = int(sys.argv[2])
-    except ValueError:
-        print("Program number must be an integer.")
-        sys.exit(1)
-    if prog < 1 or prog > 64:
-        print("Program number must be from range 1-64.")
-        sys.exit(1)
+    args = parser.parse_args()
 
-    byte_list = read_256_bytes_at_offset(sys.argv[1], prog - 1)
+    byte_list = read_256_bytes_at_offset(args.filename, args.program_number - 1)
     word_list = [int.from_bytes(byte_list[i:i+2], 'little') for i in range(0, len(byte_list), 2)]
 
-    print(f"Program #{prog}")
+    print(f"Program #{args.program_number}")
     disassembled_instructions, address, encoded_instructions = disassemble_dsp(word_list)
     for instr in disassembled_instructions:
         print(instr)
     print(f'End address 0x{address:x}')
 
-    analyze(address, encoded_instructions)
+    if args.convert:
+        analyze(address, encoded_instructions, args.convert)
 
 if __name__ == "__main__":
     main()
