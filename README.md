@@ -6,13 +6,14 @@
 This is an emulator for the original MIDIVERB and MIDIFEX effect units made by Alesis.
 
 
-This emulator is based on reverse engineering work done by [Eric Brombaugh](https://github.com/emeb) and there's a series of videos presenting this work by [Paul Schreiber](https://www.youtube.com/@MOTMguy). If you are into synthesizers and electronics, it's a must watch!
+This emulator is based on [reverse engineering work](https://github.com/emeb/MIDIVerb_RE) done by [Eric Brombaugh](https://github.com/emeb) and there's a series of videos presenting this work by [Paul Schreiber](https://www.youtube.com/@MOTMguy). If you are into synthesizers and electronics, it's a must watch!
 
 * https://www.youtube.com/watch?v=z4cIt1VPAjU
 * https://www.youtube.com/watch?v=JNPpU08YZjk
 * https://www.youtube.com/watch?v=5DYbirWuBaU
 
-<h3>Update 16.7.2025:</h3> All materials from the videos are now open source! It includes all the stuff - schematics of Midiverb, disassembler, compiler and emulator - check [https://github.com/emeb/MIDIVerb_RE](https://github.com/emeb/MIDIVerb_RE).
+<b>Update 16.7.2025:</b> All materials from the videos are now open source! It includes all the stuff - schematics of Midiverb, disassembler, compiler and emulator - check [https://github.com/emeb/MIDIVerb_RE](https://github.com/emeb/MIDIVerb_RE).
+
 
 So far this is only a standalone C program that processes .WAV files, but in future it will be adapted into plugins/VCVRack module/Raspberry Pi Pico device.
 
