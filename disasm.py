@@ -259,16 +259,18 @@ class Accumulator:
                 else:
                     return f"{k} * {float(v)}"
         terms = [multiplicand(k, v) for k, v in self.terms.items()]
+        if len(terms) == 0:
+            return "0"
         return " + ".join(terms)
 
     def __neg__(self):
         return Accumulator({ k: -v for k, v in self.terms.items() })
 
     def __mul__(self, other):
-        return Accumulator({ k: v * other for k, v in self.terms.items() })
+        return Accumulator({ k: v * other for k, v in self.terms.items() if abs(v) > 0.00001 })
 
     def __truediv__(self, other):
-        return Accumulator({ k: v / other for k, v in self.terms.items() })
+        return Accumulator({ k: v / other for k, v in self.terms.items() if abs(v) > 0.00001 })
 
     def __add__(self, other):
         new = Accumulator(self.terms.copy())
