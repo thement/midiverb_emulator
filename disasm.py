@@ -280,8 +280,22 @@ class Accumulator:
         return self
 
 
-def analyze(address, encoded_instructions, output_filename):
+def analyze(address, encoded_instructions, output_filename, unoptimized=False):
     assert address == 1, "address counter doesn't end up offseted by 1 - analysis expects that"
+
+    if unoptimized:
+        print(f'-- Saving (unoptimized) code into {output_filename}')
+        with open(output_filename, 'w') as f:
+            f.write('#define MEM(a) (DRAM[(ptr + a) & 0x3fff])\n')
+            f.write('#define Sgn(a) ((a) < 0 ? 1 : 0)\n')
+            f.write('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) {\n')
+            f.write(f'\tint16_t Acc, Data;\n')
+
+            for instr in encoded_instructions:
+                s = instr.c_string()
+                f.write(f'\t{s};\n')
+            f.write('}\n')
+        return
 
     print('-- Pass 1: Find uses/defines of the whole program')
     prev_used = set()
@@ -412,18 +426,6 @@ def analyze(address, encoded_instructions, output_filename):
         flush_acc()
         f.write('}\n')
 
-    print(f'-- Pass 5: Write the original C')
-    with open('x' + output_filename, 'w') as f:
-        f.write('#define MEM(a) (DRAM[(ptr + a) & 0x3fff])\n')
-        f.write('#define Sgn(a) ((a) < 0 ? 1 : 0)\n')
-        f.write('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) {\n')
-        f.write(f'\tint16_t Acc, Data;\n')
-
-        for instr in encoded_instructions:
-            s = instr.c_string()
-            f.write(f'\t{s};\n')
-        f.write('}\n')
-
 
 def disassemble_dsp(program):
     def decode_instruction(pc, address, prev, this):
@@ -503,24 +505,25 @@ def validate_program_number(value):
     raise argparse.ArgumentTypeError(f"Program number must be an integer between 1 and 64, got {value}")
 
 def main():
-    parser = argparse.ArgumentParser(description="Decompile MidiVerb program and optionally convert it to C.")
+    parser = argparse.ArgumentParser(description="Disassemble MidiVerb program and optionally decompile it to C.")
     parser.add_argument("filename", help="Input ROM filename")
     parser.add_argument("program_number", type=validate_program_number, help="Program number (1-64)")
-    parser.add_argument("-c", "--convert", metavar="output_c_file", help="Convert program to C and save to the specified filename")
+    parser.add_argument("-d", "--decompile", metavar="output_c_file", help="Decompile effect program to C and save to the specified filename")
+    parser.add_argument("-U", "--unoptimized", action='store_true', help="Do not optimize the resulting C file")
 
     args = parser.parse_args()
 
     byte_list = read_256_bytes_at_offset(args.filename, args.program_number - 1)
     word_list = [int.from_bytes(byte_list[i:i+2], 'little') for i in range(0, len(byte_list), 2)]
 
-    print(f"Program #{args.program_number}")
+    print(f"-- Disassembling program #{args.program_number}")
     disassembled_instructions, address, encoded_instructions = disassemble_dsp(word_list)
     for instr in disassembled_instructions:
         print(instr)
-    print(f'End address 0x{address:x}')
+    print(f'-- End address 0x{address:x}')
 
-    if args.convert:
-        analyze(address, encoded_instructions, args.convert)
+    if args.decompile:
+        analyze(address, encoded_instructions, args.decompile, args.unoptimized)
 
 if __name__ == "__main__":
     main()
