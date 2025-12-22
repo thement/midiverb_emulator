@@ -300,6 +300,8 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
             s = instr.c_string()
             f.write(f'\t{s};\n')
         f.write('}\n')
+        f.write('#undef MEM\n')
+        f.write('#undef Sgn\n')
         return
 
     print('-- Pass 1: Find uses/defines of the whole program')
@@ -430,6 +432,8 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
             f.write(f"\t{s};\n")
     flush_acc()
     f.write('}\n')
+    f.write('#undef LINE\n')
+    f.write('#undef WRITE_LINE\n')
 
 
 def disassemble_dsp(program):
@@ -558,6 +562,13 @@ def main():
             else:
                 function_name = 'effect'
             decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic)
+
+    if len(decode) > 1:
+        f = decompiler_output
+        f.write('void (*effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) = {\n')
+        for program_number in decode:
+            f.write(f'\teffect_{program_number},\n')
+        f.write('};\n')
 
 if __name__ == "__main__":
     main()
