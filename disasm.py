@@ -242,7 +242,7 @@ class Accumulator:
         terms={name: Fraction(a, b)}
         return Accumulator(terms)
 
-    def __str__(self):
+    def to_string(self, integer_arithmetic=False):
         def multiplicand(k, v):
             if v == Fraction(1, 1):
                 return k
@@ -253,7 +253,10 @@ class Accumulator:
             elif v.numerator == -1:
                 return f"-{k} / {v.denominator}"
             else:
-                return f"{k} * {float(v)}"
+                if integer_arithmetic:
+                    return f"{k} * {v.numerator} / {v.denominator}"
+                else:
+                    return f"{k} * {float(v)}"
         terms = [multiplicand(k, v) for k, v in self.terms.items()]
         return " + ".join(terms)
 
@@ -280,7 +283,7 @@ class Accumulator:
         return self
 
 
-def analyze(address, encoded_instructions, output_filename, unoptimized=False):
+def analyze(address, encoded_instructions, output_filename, unoptimized=False, integer_arithmetic=False):
     assert address == 1, "address counter doesn't end up offseted by 1 - analysis expects that"
 
     if unoptimized:
@@ -374,7 +377,8 @@ def analyze(address, encoded_instructions, output_filename, unoptimized=False):
         def flush_acc():
             nonlocal acc
             if acc is not None:
-                f.write(f'\tAcc = {acc};\n')
+                acc_str = acc.to_string(integer_arithmetic)
+                f.write(f'\tAcc = {acc_str};\n')
                 acc = None
         def default_acc():
             nonlocal acc
@@ -509,7 +513,8 @@ def main():
     parser.add_argument("filename", help="Input ROM filename")
     parser.add_argument("program_number", type=validate_program_number, help="Program number (1-64)")
     parser.add_argument("-d", "--decompile", metavar="output_c_file", help="Decompile effect program to C and save to the specified filename")
-    parser.add_argument("-U", "--unoptimized", action='store_true', help="Do not optimize the resulting C file")
+    parser.add_argument("-U", "--unoptimized", action='store_true', help="Do not optimize the resulting C function with dead-code elimination and constant-folding")
+    parser.add_argument("-i", "--integer-arithmetic", action='store_true', help="Use integer arithmetic instead of float-point arithmetic")
 
     args = parser.parse_args()
 
@@ -523,7 +528,7 @@ def main():
     print(f'-- End address 0x{address:x}')
 
     if args.decompile:
-        analyze(address, encoded_instructions, args.decompile, args.unoptimized)
+        analyze(address, encoded_instructions, args.decompile, args.unoptimized, args.integer_arithmetic)
 
 if __name__ == "__main__":
     main()
