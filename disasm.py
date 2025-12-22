@@ -286,14 +286,14 @@ class Accumulator:
         return self
 
 
-def decompile(end_address, encoded_instructions, f, unoptimized=False, integer_arithmetic=False):
+def decompile(end_address, encoded_instructions, function_name, f, unoptimized=False, integer_arithmetic=False):
     assert end_address == 1, "address counter doesn't end up offseted by 1 - decompiler expects that"
 
     if unoptimized:
         print(f'-- Saving (unoptimized) code into a file')
         f.write('#define MEM(a) (DRAM[(ptr + a) & 0x3fff])\n')
         f.write('#define Sgn(a) ((a) < 0 ? 1 : 0)\n')
-        f.write('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) {\n')
+        f.write(f'void {function_name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) {{\n')
         f.write(f'\tint16_t Acc, Data;\n')
 
         for instr in encoded_instructions:
@@ -369,7 +369,7 @@ def decompile(end_address, encoded_instructions, f, unoptimized=False, integer_a
         f.write(f"// Delay line {line.id}: length={line.length}, taps={line.taps}\n")
     f.write('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])\n')
     f.write('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])\n')
-    f.write('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {\n')
+    f.write(f'void {function_name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {{\n')
     local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp]
     local_vars_str = ', '.join(local_vars)
     f.write(f'\tint16_t {local_vars_str};\n')
@@ -553,7 +553,11 @@ def main():
         print(f'-- End address 0x{end_address:x}')
 
         if decompiler_output is not None:
-            decompile(end_address, encoded_instructions, decompiler_output, args.unoptimized, args.integer_arithmetic)
+            if len(decode) > 1:
+                function_name = f'effect_{program_number}'
+            else:
+                function_name = 'effect'
+            decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic)
 
 if __name__ == "__main__":
     main()
