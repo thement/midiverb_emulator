@@ -284,21 +284,20 @@ class Accumulator:
         return self
 
 
-def decompile(end_address, encoded_instructions, output_filename, unoptimized=False, integer_arithmetic=False):
+def decompile(end_address, encoded_instructions, f, unoptimized=False, integer_arithmetic=False):
     assert end_address == 1, "address counter doesn't end up offseted by 1 - decompiler expects that"
 
     if unoptimized:
-        print(f'-- Saving (unoptimized) code into {output_filename}')
-        with open(output_filename, 'w') as f:
-            f.write('#define MEM(a) (DRAM[(ptr + a) & 0x3fff])\n')
-            f.write('#define Sgn(a) ((a) < 0 ? 1 : 0)\n')
-            f.write('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) {\n')
-            f.write(f'\tint16_t Acc, Data;\n')
+        print(f'-- Saving (unoptimized) code into a file')
+        f.write('#define MEM(a) (DRAM[(ptr + a) & 0x3fff])\n')
+        f.write('#define Sgn(a) ((a) < 0 ? 1 : 0)\n')
+        f.write('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) {\n')
+        f.write(f'\tint16_t Acc, Data;\n')
 
-            for instr in encoded_instructions:
-                s = instr.c_string()
-                f.write(f'\t{s};\n')
-            f.write('}\n')
+        for instr in encoded_instructions:
+            s = instr.c_string()
+            f.write(f'\t{s};\n')
+        f.write('}\n')
         return
 
     print('-- Pass 1: Find uses/defines of the whole program')
@@ -363,73 +362,72 @@ def decompile(end_address, encoded_instructions, output_filename, unoptimized=Fa
             pass3_instructions.append(instr)
     pass3_instructions = reversed(pass3_instructions)
 
-    print(f'-- Pass 4: Output C program to {output_filename}')
-    with open(output_filename, 'w') as f:
-        for line in delay_line_storage.lines:
-            f.write(f"// Delay line {line.id}: length={line.length}, taps={line.taps}\n")
-        f.write('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])\n')
-        f.write('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])\n')
-        f.write('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {\n')
-        local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp]
-        local_vars_str = ', '.join(local_vars)
-        f.write(f'\tint16_t {local_vars_str};\n')
+    print(f'-- Pass 4: Output C program into a file')
+    for line in delay_line_storage.lines:
+        f.write(f"// Delay line {line.id}: length={line.length}, taps={line.taps}\n")
+    f.write('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])\n')
+    f.write('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])\n')
+    f.write('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {\n')
+    local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp]
+    local_vars_str = ', '.join(local_vars)
+    f.write(f'\tint16_t {local_vars_str};\n')
 
-        acc = None
-        def flush_acc():
-            nonlocal acc
-            if acc is not None:
-                acc_str = acc.to_string(integer_arithmetic)
-                f.write(f'\tAcc = {acc_str};\n')
-                acc = None
-        def default_acc():
-            nonlocal acc
-            if acc is None:
-                acc = Accumulator.term('Acc', 1, 1)
+    acc = None
+    def flush_acc():
+        nonlocal acc
+        if acc is not None:
+            acc_str = acc.to_string(integer_arithmetic)
+            f.write(f'\tAcc = {acc_str};\n')
+            acc = None
+    def default_acc():
+        nonlocal acc
+        if acc is None:
+            acc = Accumulator.term('Acc', 1, 1)
 
-        for instr in pass3_instructions:
-            s = None
-            if instr.addr is not None:
-                addr_str = delay_line_storage.format_address(instr.addr)
-            else:
-                addr_str = None
-            #f.write(f'// {instr}, addr_str = {addr_str}, opcode = {instr.opcode}\n');
+    for instr in pass3_instructions:
+        s = None
+        if instr.addr is not None:
+            addr_str = delay_line_storage.format_address(instr.addr)
+        else:
+            addr_str = None
+        #f.write(f'// {instr}, addr_str = {addr_str}, opcode = {instr.opcode}\n');
 
-            #flush_acc()
-            if instr.opcode == DSPInstruction.SUMHLF:
-                #s = f"Acc = Acc + {addr_str}/2"
-                default_acc()
-                acc += Accumulator.term(addr_str, 1, 2)
-            elif instr.opcode == DSPInstruction.LDHLF:
-                #s = f"Acc = {addr_str}/2"
-                acc = Accumulator.term(addr_str, 1, 2)
-            elif instr.opcode == DSPInstruction.INPUT:
-                flush_acc()
-                s = f"{addr_str} = input"
-            elif instr.opcode == DSPInstruction.OUTPUT_LEFT:
-                s = f"*out_left = {addr_str}"
-            elif instr.opcode == DSPInstruction.OUTPUT_RIGHT:
-                s = f"*out_right = {addr_str}"
-            elif instr.opcode == DSPInstruction.STORE:
-                flush_acc()
-                s = f"{addr_str} = Acc"
-            elif instr.opcode == DSPInstruction.STOREN:
-                flush_acc()
-                s = f"{addr_str} = -Acc"
-            elif instr.opcode == DSPInstruction.ADDHLF:
-                #s = f"Acc = Acc + Acc/2"
-                default_acc()
-                acc += acc / 2
-            elif instr.opcode == DSPInstruction.NEGHLF:
-                #s = f"Acc = -Acc/2"
-                default_acc()
-                acc = (-acc) / 2
-            else:
-                raise Exception('unhandled instruction')
-                pass
-            if s is not None:
-                f.write(f"\t{s};\n")
-        flush_acc()
-        f.write('}\n')
+        #flush_acc()
+        if instr.opcode == DSPInstruction.SUMHLF:
+            #s = f"Acc = Acc + {addr_str}/2"
+            default_acc()
+            acc += Accumulator.term(addr_str, 1, 2)
+        elif instr.opcode == DSPInstruction.LDHLF:
+            #s = f"Acc = {addr_str}/2"
+            acc = Accumulator.term(addr_str, 1, 2)
+        elif instr.opcode == DSPInstruction.INPUT:
+            flush_acc()
+            s = f"{addr_str} = input"
+        elif instr.opcode == DSPInstruction.OUTPUT_LEFT:
+            s = f"*out_left = {addr_str}"
+        elif instr.opcode == DSPInstruction.OUTPUT_RIGHT:
+            s = f"*out_right = {addr_str}"
+        elif instr.opcode == DSPInstruction.STORE:
+            flush_acc()
+            s = f"{addr_str} = Acc"
+        elif instr.opcode == DSPInstruction.STOREN:
+            flush_acc()
+            s = f"{addr_str} = -Acc"
+        elif instr.opcode == DSPInstruction.ADDHLF:
+            #s = f"Acc = Acc + Acc/2"
+            default_acc()
+            acc += acc / 2
+        elif instr.opcode == DSPInstruction.NEGHLF:
+            #s = f"Acc = -Acc/2"
+            default_acc()
+            acc = (-acc) / 2
+        else:
+            raise Exception('unhandled instruction')
+            pass
+        if s is not None:
+            f.write(f"\t{s};\n")
+    flush_acc()
+    f.write('}\n')
 
 
 def disassemble_dsp(program):
@@ -536,6 +534,11 @@ def main():
     else:
         decode = range(1, len(programs) + 1)
 
+    if args.decompile is not None:
+        decompiler_output = open(args.decompile, 'w')
+    else:
+        decompiler_output = None
+
     for program_number in decode:
         program = programs.get(program_number)
         if program is None:
@@ -547,8 +550,8 @@ def main():
             print(instr)
         print(f'-- End address 0x{end_address:x}')
 
-        if args.decompile:
-            decompile(end_address, encoded_instructions, args.decompile, args.unoptimized, args.integer_arithmetic)
+        if decompiler_output is not None:
+            decompile(end_address, encoded_instructions, decompiler_output, args.unoptimized, args.integer_arithmetic)
 
 if __name__ == "__main__":
     main()
