@@ -65,6 +65,7 @@
 
 import sys
 import argparse
+import struct
 from enum import Enum
 from dataclasses import dataclass
 from typing import Optional
@@ -283,8 +284,8 @@ class Accumulator:
         return self
 
 
-def analyze(address, encoded_instructions, output_filename, unoptimized=False, integer_arithmetic=False):
-    assert address == 1, "address counter doesn't end up offseted by 1 - analysis expects that"
+def decompile(end_address, encoded_instructions, output_filename, unoptimized=False, integer_arithmetic=False):
+    assert end_address == 1, "address counter doesn't end up offseted by 1 - decompiler expects that"
 
     if unoptimized:
         print(f'-- Saving (unoptimized) code into {output_filename}')
@@ -492,43 +493,62 @@ def disassemble_dsp(program):
 
     return disassembled_instructions, address, encoded_instructions
 
-def read_256_bytes_at_offset(file_path, n):
-    offset = n * 256
-    with open(file_path, 'rb') as file:
-        file.seek(offset)  # Move the file pointer to the offset
-        byte_data = file.read(256)  # Read the 256 bytes at the specified offset
 
-    # Convert the byte data to a list of integers
-    integer_list = list(byte_data)
-    return integer_list
+class Programs:
+    PROGRAM_LEN = 256
 
-def validate_program_number(value):
-    ivalue = int(value)
-    if 1 <= ivalue <= 64:
-        return ivalue
-    raise argparse.ArgumentTypeError(f"Program number must be an integer between 1 and 64, got {value}")
+    def __init__(self, path):
+        programs = []
+
+        with open(path, 'rb') as file:
+            while True:
+                b = file.read(Programs.PROGRAM_LEN)
+                if len(b) < Programs.PROGRAM_LEN:
+                    break
+                program = list(struct.unpack('<128H', b))
+                programs.append(program)
+
+        self.programs = programs
+
+    def get(self, n):
+        if n >= 1 and n <= len(self.programs):
+            return self.programs[n - 1]
+        else:
+            return None
+
+    def __len__(self):
+        return len(self.programs)
+
 
 def main():
     parser = argparse.ArgumentParser(description="Disassemble MidiVerb program and optionally decompile it to C.")
-    parser.add_argument("filename", help="Input ROM filename")
-    parser.add_argument("program_number", type=validate_program_number, help="Program number (1-64)")
-    parser.add_argument("-d", "--decompile", metavar="output_c_file", help="Decompile effect program to C and save to the specified filename")
+    parser.add_argument("-d", "--decompile", metavar="output.c", help="Decompile effect program to C and save to the specified filename")
     parser.add_argument("-U", "--unoptimized", action='store_true', help="Do not optimize the resulting C function with dead-code elimination and constant-folding")
     parser.add_argument("-i", "--integer-arithmetic", action='store_true', help="Use integer arithmetic instead of float-point arithmetic")
+    parser.add_argument("rompath", help="Input ROM file")
+    parser.add_argument("program_number", nargs='?', type=int, default=None, help="Program number (usually 1-64)")
 
     args = parser.parse_args()
 
-    byte_list = read_256_bytes_at_offset(args.filename, args.program_number - 1)
-    word_list = [int.from_bytes(byte_list[i:i+2], 'little') for i in range(0, len(byte_list), 2)]
+    programs = Programs(args.rompath)
+    if args.program_number is not None:
+        decode = [args.program_number]
+    else:
+        decode = range(1, len(programs) + 1)
 
-    print(f"-- Disassembling program #{args.program_number}")
-    disassembled_instructions, address, encoded_instructions = disassemble_dsp(word_list)
-    for instr in disassembled_instructions:
-        print(instr)
-    print(f'-- End address 0x{address:x}')
+    for program_number in decode:
+        program = programs.get(program_number)
+        if program is None:
+            raise Exception(f"Program #{program_number} not found, only {len(programs)} programs available")
 
-    if args.decompile:
-        analyze(address, encoded_instructions, args.decompile, args.unoptimized, args.integer_arithmetic)
+        print(f"-- Disassembling program #{program_number}")
+        disassembled_instructions, end_address, encoded_instructions = disassemble_dsp(program)
+        for instr in disassembled_instructions:
+            print(instr)
+        print(f'-- End address 0x{end_address:x}')
+
+        if args.decompile:
+            decompile(end_address, encoded_instructions, args.decompile, args.unoptimized, args.integer_arithmetic)
 
 if __name__ == "__main__":
     main()
