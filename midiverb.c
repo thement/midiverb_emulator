@@ -197,6 +197,10 @@ int16_t clip(int32_t input) {
     }
 }
 
+#ifdef USE_C_EFFECT
+#include "effect.h"
+#endif
+
 int main(int argc, char *argv[]) {
     if (argc < 5) {
         fprintf(stderr, "Usage: %s <program_file> <program_no> <input_wav> <output_wav>\n", argv[0]);
@@ -247,7 +251,11 @@ int main(int argc, char *argv[]) {
         // Remove 4 bits to reduce it from 16-bit and 1 bit to average.
         int16_t mono_sample = (left + right) >> 5;
 
+#ifdef USE_C_EFFECT
+        effect(mono_sample, &output.s[0], &output.s[1], machine.dram, i / 2);
+#else
         run_machine_tick(&machine, mono_sample, &output);
+#endif
 
         // Output is 12-bit stereo, which should be expanded to 16-bit (with clipping).
         output_samples[i] = clip(output.s[0] * 16);     // Left channel
