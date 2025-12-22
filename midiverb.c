@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <sndfile.h>
+#include "utils.h"
 
 enum {
     DramLength = 16*1024,
@@ -26,20 +27,6 @@ typedef struct {
 } Sample;
 
 
-// Error handling functions
-void pexit(const char *msg) {
-    perror(msg);
-    exit(EXIT_FAILURE);
-}
-
-void die(const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    vfprintf(stderr, fmt, args);
-    va_end(args);
-    exit(EXIT_FAILURE);
-}
-
 void load_machine(Machine *machine, const char *path, int program_num) {
     // Erase the whole Machine
     memset(machine, 0, sizeof(Machine));
@@ -47,14 +34,14 @@ void load_machine(Machine *machine, const char *path, int program_num) {
     // Open the file
     int fd = open(path, O_RDONLY);
     if (fd < 0) {
-        die("Failed to open file: %s\n", strerror(errno));
+        die("Failed to open file: %s", strerror(errno));
     }
 
     // Seek to the correct offset
     off_t offset = ProgramLength * program_num * sizeof(uint16_t);
     if (lseek(fd, offset, SEEK_SET) == (off_t)-1) {
         close(fd);
-        die("Failed to seek in file: %s\n", strerror(errno));
+        die("Failed to seek in file: %s", strerror(errno));
     }
 
     // Read ProgramLength number of bytes
@@ -62,11 +49,11 @@ void load_machine(Machine *machine, const char *path, int program_num) {
     ssize_t bytes_read = read(fd, buffer, sizeof(buffer));
     if (bytes_read < 0) {
         close(fd);
-        die("Failed to read from file: %s\n", strerror(errno));
+        die("Failed to read from file: %s", strerror(errno));
     }
     if (bytes_read != sizeof(buffer)) {
         close(fd);
-        die("Unexpected end of file\n");
+        die("Unexpected end of file");
     }
 
     // Assemble little-endian uint16_t values from bytes
@@ -145,7 +132,7 @@ void load_wav_file(const char *filename, int16_t **samples, sf_count_t *num_samp
     SF_INFO sfinfo;
     SNDFILE *infile = sf_open(filename, SFM_READ, &sfinfo);
     if (!infile) {
-        die("Failed to open input file: %s\n", sf_strerror(NULL));
+        die("Failed to open input file: %s", sf_strerror(NULL));
     }
 
     *sample_rate = sfinfo.samplerate;
@@ -155,13 +142,13 @@ void load_wav_file(const char *filename, int16_t **samples, sf_count_t *num_samp
     *samples = (int16_t *)malloc(*num_samples * sizeof(int16_t));
     if (!*samples) {
         sf_close(infile);
-        die("Failed to allocate memory for input samples\n");
+        die("Failed to allocate memory for input samples");
     }
 
     if (sf_read_short(infile, *samples, *num_samples) != *num_samples) {
         free(*samples);
         sf_close(infile);
-        die("Failed to read samples from input file\n");
+        die("Failed to read samples from input file");
     }
 
     sf_close(infile);
@@ -176,12 +163,12 @@ void write_wav_file(const char *filename, int16_t *samples, sf_count_t num_sampl
 
     SNDFILE *outfile = sf_open(filename, SFM_WRITE, &sfinfo);
     if (!outfile) {
-        die("Failed to open output file: %s\n", sf_strerror(NULL));
+        die("Failed to open output file: %s", sf_strerror(NULL));
     }
 
     if (sf_write_short(outfile, samples, num_samples) != num_samples) {
         sf_close(outfile);
-        die("Failed to write samples to output file\n");
+        die("Failed to write samples to output file");
     }
 
     sf_close(outfile);
@@ -231,14 +218,14 @@ int main(int argc, char *argv[]) {
 
     if (channels != 2) {
         free(input_samples);
-        die("Input WAV file must be stereo\n");
+        die("Input WAV file must be stereo");
     }
 
     // Prepare output samples
     int16_t *output_samples = (int16_t *)malloc(num_samples * sizeof(int16_t));
     if (!output_samples) {
         free(input_samples);
-        die("Failed to allocate memory for output samples\n");
+        die("Failed to allocate memory for output samples");
     }
 
     Sample output;
