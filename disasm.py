@@ -68,6 +68,7 @@ import argparse
 from enum import Enum
 from dataclasses import dataclass
 from typing import Optional
+from fractions import Fraction
 
 class DSPInstruction(Enum):
     OUTPUT_LEFT = "output_left"
@@ -151,6 +152,36 @@ class Instruction:
         else:
             return "Unknown instruction"
 
+    def c_string(self):
+        addr_str = f"0x{self.addr:04x}" if self.addr is not None else "None"
+
+        if self.opcode == DSPInstruction.SUMHLF:
+            return f"Data = MEM({addr_str}); Acc = Acc + (Data >> 1) + Sgn(Data)"
+        elif self.opcode == DSPInstruction.LDHLF:
+            return f"Data = MEM({addr_str}); Acc = (Data >> 1) + Sgn(Data)"
+        elif self.opcode == DSPInstruction.STRPOS:
+            return f"MEM({addr_str}) = Acc; Acc = Acc + (Acc >> 1) + Sgn(Acc)"
+        elif self.opcode == DSPInstruction.STRNEG:
+            return f"MEM({addr_str}) = ~Acc; Acc = ~(Acc >> 1) + Sgn(~Acc)"
+        elif self.opcode == DSPInstruction.INPUT:
+            return f"MEM({addr_str}) = input"
+        elif self.opcode == DSPInstruction.OUTPUT_LEFT:
+            return f"*out_left = MEM({addr_str})"
+        elif self.opcode == DSPInstruction.OUTPUT_RIGHT:
+            return f"*out_right = MEM({addr_str})"
+        elif self.opcode == DSPInstruction.STORE:
+            return f"MEM({addr_str}) = Acc"
+        elif self.opcode == DSPInstruction.STOREN:
+            return f"MEM({addr_str}) = ~Acc"
+        elif self.opcode == DSPInstruction.ADDHLF:
+            return f"Acc = Acc + (Acc >> 1) + Sgn(Acc)"
+        elif self.opcode == DSPInstruction.NEGHLF:
+            return f"Acc = ~(Acc >> 1) + Sgn(~Acc)"
+
+        else:
+            return "Unknown instruction"
+
+
 class DelayLine:
     def __init__(self, addr, tap_addrs):
         self.taps = [(addr - tap_addr) & 0x3fff for tap_addr in tap_addrs]
@@ -197,6 +228,57 @@ class DelayLineStorage:
         id = self.write_addrs[addr]
         line = self.lines[id]
         return f"WRITE_LINE({line.id}, {line.addr})"
+
+class Accumulator:
+    def __init__(self, terms):
+        self.terms = terms
+
+    @staticmethod
+    def empty():
+        return Accumulator(terms=dict())
+
+    @staticmethod
+    def term(name, a, b):
+        terms={name: Fraction(a, b)}
+        return Accumulator(terms)
+
+    def __str__(self):
+        def multiplicand(k, v):
+            if v == Fraction(1, 1):
+                return k
+            elif v == Fraction(-1, 1):
+                return f"-{k}"
+            elif v.numerator == 1:
+                return f"{k} / {v.denominator}"
+            elif v.numerator == -1:
+                return f"-{k} / {v.denominator}"
+            else:
+                return f"{k} * {float(v)}"
+        terms = [multiplicand(k, v) for k, v in self.terms.items()]
+        return " + ".join(terms)
+
+    def __neg__(self):
+        return Accumulator({ k: -v for k, v in self.terms.items() })
+
+    def __mul__(self, other):
+        return Accumulator({ k: v * other for k, v in self.terms.items() })
+
+    def __truediv__(self, other):
+        return Accumulator({ k: v / other for k, v in self.terms.items() })
+
+    def __add__(self, other):
+        new = Accumulator(self.terms.copy())
+        new += other
+        return new
+
+    def __iadd__(self, other):
+        for (k, v) in other.terms.items():
+            if self.terms.get(k) is None:
+                self.terms[k] = v
+            else:
+                self.terms[k] += v
+        return self
+
 
 def analyze(address, encoded_instructions, output_filename):
     assert address == 1, "address counter doesn't end up offseted by 1 - analysis expects that"
@@ -249,8 +331,8 @@ def analyze(address, encoded_instructions, output_filename):
     will_be_needed = used_writes | set(['Left', 'Right'])
     pass3_instructions = []
     # Accumulator is probably not used in between iterations, but just in case...
-    if 'Acc' in prev_used:
-        will_be_needed.add('Acc')
+    #if 'Acc' in prev_used:
+    #    will_be_needed.add('Acc')
 
     for instr in reversed(encoded_instructions):
         uses, defines = instr.uses_defines()
@@ -274,35 +356,74 @@ def analyze(address, encoded_instructions, output_filename):
         local_vars_str = ', '.join(local_vars)
         f.write(f'\tint16_t {local_vars_str};\n')
 
+        acc = None
+        def flush_acc():
+            nonlocal acc
+            if acc is not None:
+                f.write(f'\tAcc = {acc};\n')
+                acc = None
+        def default_acc():
+            nonlocal acc
+            if acc is None:
+                acc = Accumulator.term('Acc', 1, 1)
+
         for instr in pass3_instructions:
+            s = None
             if instr.addr is not None:
                 addr_str = delay_line_storage.format_address(instr.addr)
             else:
                 addr_str = None
+            #f.write(f'// {instr}, addr_str = {addr_str}, opcode = {instr.opcode}\n');
 
+            #flush_acc()
             if instr.opcode == DSPInstruction.SUMHLF:
-                s = f"Acc = Acc + {addr_str}/2"
+                #s = f"Acc = Acc + {addr_str}/2"
+                default_acc()
+                acc += Accumulator.term(addr_str, 1, 2)
             elif instr.opcode == DSPInstruction.LDHLF:
-                s = f"Acc = {addr_str}/2"
+                #s = f"Acc = {addr_str}/2"
+                acc = Accumulator.term(addr_str, 1, 2)
             elif instr.opcode == DSPInstruction.INPUT:
+                flush_acc()
                 s = f"{addr_str} = input"
             elif instr.opcode == DSPInstruction.OUTPUT_LEFT:
-                addr_str = delay_line_storage.format_address(instr.addr)
                 s = f"*out_left = {addr_str}"
             elif instr.opcode == DSPInstruction.OUTPUT_RIGHT:
                 s = f"*out_right = {addr_str}"
             elif instr.opcode == DSPInstruction.STORE:
+                flush_acc()
                 s = f"{addr_str} = Acc"
             elif instr.opcode == DSPInstruction.STOREN:
+                flush_acc()
                 s = f"{addr_str} = -Acc"
             elif instr.opcode == DSPInstruction.ADDHLF:
-                s = f"Acc = Acc + Acc/2"
+                #s = f"Acc = Acc + Acc/2"
+                default_acc()
+                acc += acc / 2
             elif instr.opcode == DSPInstruction.NEGHLF:
-                s = f"Acc = -Acc/2"
+                #s = f"Acc = -Acc/2"
+                default_acc()
+                acc = (-acc) / 2
             else:
-                raise Exception("Unexpected instruction")
-            f.write(f"\t{s};\n")
+                raise Exception('unhandled instruction')
+                pass
+            if s is not None:
+                f.write(f"\t{s};\n")
+        flush_acc()
         f.write('}\n')
+
+    print(f'-- Pass 5: Write the original C')
+    with open('x' + output_filename, 'w') as f:
+        f.write('#define MEM(a) (DRAM[(ptr + a) & 0x3fff])\n')
+        f.write('#define Sgn(a) ((a) < 0 ? 1 : 0)\n')
+        f.write('void effect(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) {\n')
+        f.write(f'\tint16_t Acc, Data;\n')
+
+        for instr in encoded_instructions:
+            s = instr.c_string()
+            f.write(f'\t{s};\n')
+        f.write('}\n')
+
 
 def disassemble_dsp(program):
     def decode_instruction(pc, address, prev, this):
