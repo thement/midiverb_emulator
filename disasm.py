@@ -563,7 +563,7 @@ def main():
                 function_name = 'effect'
             decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic)
 
-    if len(decode) > 1:
+    if decompiler_output is not None and len(decode) > 1:
         f = decompiler_output
         f.write('void (*effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) = {\n')
         for program_number in decode:
