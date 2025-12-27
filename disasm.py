@@ -520,6 +520,40 @@ class Programs:
     def __len__(self):
         return len(self.programs)
 
+def int_or_hex(value):
+    """Parse a string as int, supporting hex (0x) or decimal."""
+    try:
+        return int(value, 0)  # base=0 auto-detects 0x, 0o, etc.
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"{value!r} is not a valid int or hex value")
+
+def add16(ahi, alo, bhi, blo):
+    return (ahi + bhi + ((alo + blo) >> 8), (alo + blo) & 0xff)
+
+def sub16(ahi, alo, bhi, blo):
+    return (ahi + bhi + ((alo + blo) >> 8), (alo + blo) & 0xff)
+
+def apply_modulation(program, is_lfo_1, value, lfo_op):
+    with open('midiverb2_patches.rom', 'rb') as f:
+        patch = bytearray(f.read())
+    i = (value & 0xf0) + (0 if is_lfo_1 else 8)
+    patch = patch[i:]
+    if is_lfo_1:
+        sub = ((patch[1] << 8) | patch[0]) - (value >> 8)
+        add = ((patch[7] << 8) | patch[6]) + (value >> 8)
+        program[0x05] = sub & 0xff
+        program[0x06] = ((sub >> 8) & 0x3f) | 0x40
+        program[0x59] = patch[2]
+        program[0x5a] = patch[3]
+        program[0x5b] = patch[4]
+        program[0x5c] = patch[5]
+        program[0x5d] = add & 0xff
+        program[0x5e] = ((add >> 8) & 0x3f) | lfo_op
+    # TODO: lfo_2
+
+
+
+
 
 def main():
     parser = argparse.ArgumentParser(description="Disassemble MidiVerb program and optionally decompile it to C.")
@@ -527,6 +561,9 @@ def main():
     parser.add_argument("-U", "--unoptimized", action='store_true', help="Do not optimize the resulting C function with dead-code elimination and constant-folding")
     parser.add_argument("-i", "--integer-arithmetic", action='store_true', help="Use integer arithmetic instead of float-point arithmetic")
     parser.add_argument("-2", "--midiverb2", action='store_true', help="Assume the byte order is same as Midiverb 2")
+    parser.add_argument("--lfo1", type=int_or_hex, help="Apply LFO1 modulation (from modulation table)")
+    parser.add_argument("--lfo2", type=int_or_hex, help="Apply LFO2 modulation (from modulation table)")
+    parser.add_argument("--lfo-op", type=int_or_hex, help="LFO operator")
     parser.add_argument("rompath", help="Input ROM file")
     parser.add_argument("program_number", nargs='?', type=int, default=None, help="Program number (usually 1-64)")
 
@@ -549,6 +586,11 @@ def main():
             raise Exception(f"Program #{program_number} not found, only {len(programs)} programs available")
 
         print(f"-- Disassembling program #{program_number}")
+        program = list(program)
+        if args.lfo1 is not None:
+            apply_modulation(program, True, args.lfo1, args.lfo_op)
+        if args.lfo2 is not None:
+            apply_modulation(program, False, args.lfo2, args.lfo_op)
         memory_shift = 1 if args.midiverb2 else 2
         disassembled_instructions, end_address, encoded_instructions = disassemble_dsp(program, memory_shift)
         for instr in disassembled_instructions:
