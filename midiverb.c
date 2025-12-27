@@ -12,14 +12,15 @@
 
 enum {
     DramLength = 16*1024,
-    ProgramLength = 128,
+    ProgramLength = 256,
 };
 
 typedef struct {
     int address;
-    uint16_t program[ProgramLength];
+    uint8_t program[ProgramLength];
     int16_t dram[DramLength];
     int16_t acc;
+    int memory_shift;
 } Machine;
 
 typedef struct {
@@ -45,22 +46,15 @@ void load_machine(Machine *machine, const char *path, int program_num) {
     }
 
     // Read ProgramLength number of bytes
-    uint8_t buffer[ProgramLength * sizeof(uint16_t)];
-    ssize_t bytes_read = read(fd, buffer, sizeof(buffer));
+    ssize_t bytes_read = read(fd, machine->program, ProgramLength);
     if (bytes_read < 0) {
         close(fd);
         die("Failed to read from file: %s", strerror(errno));
     }
-    if (bytes_read != sizeof(buffer)) {
+    if (bytes_read != ProgramLength) {
         close(fd);
         die("Unexpected end of file");
     }
-
-    // Assemble little-endian uint16_t values from bytes
-    for (int i = 0; i < ProgramLength; i++) {
-        machine->program[i] = buffer[2 * i] | (buffer[2 * i + 1] << 8);
-    }
-
     // Close the file
     close(fd);
 }
@@ -69,20 +63,21 @@ void reset_machine(Machine *machine) {
     memset(machine->dram, 0, sizeof(machine->dram));
     machine->acc = 0;
     machine->address = 0;
+    machine->memory_shift = 2; /* 2 for midiverb 1, 1 for midiverb 2 */
 }
 
 void run_machine_tick(Machine *machine, int16_t input, Sample *output) {
     int acc = machine->acc;
     int address = machine->address;
     for (int pc = 0; pc < 128; pc++) {
-        uint16_t prev_instruction = machine->program[(pc + 126) % 128];
-        uint16_t instruction = machine->program[(pc + 127) % 128];
-        uint16_t opcode = (prev_instruction >> 14) & 0x3;
-        uint16_t offset = instruction & 0x3FFF;
+        unsigned operation = machine->program[(2 * pc - machine->memory_shift - 1) & 0xff] >> 6;
+        uint16_t offset_lo = machine->program[(2 * pc - machine->memory_shift + 0) & 0xff];
+        uint16_t offset_hi = machine->program[(2 * pc - machine->memory_shift + 1) & 0xff] & 0x3f;
+        uint16_t offset = (offset_hi << 8) | offset_lo;
 
         int16_t new_acc = acc;
         int16_t data, sgn;
-        switch (opcode) {
+        switch (operation) {
             case 0: // sumhlf
                 data = machine->dram[address];
                 sgn = data < 0 ? 1 : 0;
@@ -106,7 +101,7 @@ void run_machine_tick(Machine *machine, int16_t input, Sample *output) {
                 new_acc = (data >> 1) + sgn;
                 break;
         }
-        //printf("op=%d pc=%d addr=%08x data=%d acc=%d\n", opcode, pc, machine->address, data, new_acc);
+        //printf("op=%d pc=%d addr=%08x data=%d acc=%d\n", operation, pc, machine->address, data, new_acc);
 
         // Handle special pc values for storing output.
         // Do not update accumulator at those places.
