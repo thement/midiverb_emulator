@@ -436,10 +436,8 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
     f.write('#undef WRITE_LINE\n')
 
 
-def disassemble_dsp(program):
-    def decode_instruction(pc, address, prev, this):
-        op = prev >> 14
-        offset = this & 0x3fff
+def disassemble_dsp(program, memory_shift):
+    def decode_instruction(pc, address, op, offset):
         if op == 0b00:
             name = f"sumhlf 0x{address:04x}"
             comment = f"Acc = Acc + DRAM[0x{address:04x}]/2 + sgn"
@@ -483,15 +481,15 @@ def disassemble_dsp(program):
             comment = f'Right = DRAM[0x{address:04x}]'
             instr = [Instruction(DSPInstruction.OUTPUT_RIGHT, addr=address, pc=pc)]
 
-        return f"{pc:02x} {op} {this:04x}   {name}    {comment}", (address + offset) & 0x3fff, instr
+        return f"{pc:02x} {op} {offset:04x}   {name}    {comment}", (address + offset) & 0x3fff, instr
 
     disassembled_instructions = []
     encoded_instructions = []
     address = 0
     for pc in range(0, 128):
-        prev = program[(pc + 126) % 128]
-        this = program[(pc + 127) % 128]
-        text, address, instructions = decode_instruction(pc, address, prev, this)
+        op = program[(2 * pc - memory_shift - 1) % 256] >> 6
+        offset = ((program[(2 * pc - memory_shift + 1) % 256] & 0x3f) << 8) | program[(2 * pc - memory_shift) % 256]
+        text, address, instructions = decode_instruction(pc, address, op, offset)
         disassembled_instructions.append(text)
         encoded_instructions += instructions
 
@@ -509,8 +507,7 @@ class Programs:
                 b = file.read(Programs.PROGRAM_LEN)
                 if len(b) < Programs.PROGRAM_LEN:
                     break
-                program = list(struct.unpack('<128H', b))
-                programs.append(program)
+                programs.append(b)
 
         self.programs = programs
 
@@ -529,6 +526,7 @@ def main():
     parser.add_argument("-d", "--decompile", metavar="output.c", help="Decompile effect program to C and save to the specified filename")
     parser.add_argument("-U", "--unoptimized", action='store_true', help="Do not optimize the resulting C function with dead-code elimination and constant-folding")
     parser.add_argument("-i", "--integer-arithmetic", action='store_true', help="Use integer arithmetic instead of float-point arithmetic")
+    parser.add_argument("-2", "--midiverb2", action='store_true', help="Assume the byte order is same as Midiverb 2")
     parser.add_argument("rompath", help="Input ROM file")
     parser.add_argument("program_number", nargs='?', type=int, default=None, help="Program number (usually 1-64)")
 
@@ -551,7 +549,8 @@ def main():
             raise Exception(f"Program #{program_number} not found, only {len(programs)} programs available")
 
         print(f"-- Disassembling program #{program_number}")
-        disassembled_instructions, end_address, encoded_instructions = disassemble_dsp(program)
+        memory_shift = 1 if args.midiverb2 else 2
+        disassembled_instructions, end_address, encoded_instructions = disassemble_dsp(program, memory_shift)
         for instr in disassembled_instructions:
             print(instr)
         print(f'-- End address 0x{end_address:x}')
