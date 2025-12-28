@@ -27,36 +27,9 @@ typedef struct {
     int16_t s[2];
 } Sample;
 
-
 void load_machine(Machine *machine, const char *path, int program_num) {
-    // Erase the whole Machine
     memset(machine, 0, sizeof(Machine));
-
-    // Open the file
-    int fd = open(path, O_RDONLY);
-    if (fd < 0) {
-        die("Failed to open file: %s", strerror(errno));
-    }
-
-    // Seek to the correct offset
-    off_t offset = ProgramLength * program_num * sizeof(uint16_t);
-    if (lseek(fd, offset, SEEK_SET) == (off_t)-1) {
-        close(fd);
-        die("Failed to seek in file: %s", strerror(errno));
-    }
-
-    // Read ProgramLength number of bytes
-    ssize_t bytes_read = read(fd, machine->program, ProgramLength);
-    if (bytes_read < 0) {
-        close(fd);
-        die("Failed to read from file: %s", strerror(errno));
-    }
-    if (bytes_read != ProgramLength) {
-        close(fd);
-        die("Unexpected end of file");
-    }
-    // Close the file
-    close(fd);
+    read_bytes(path, (program_num - 1) * ProgramLength, ProgramLength, machine->program);
 }
 
 void reset_machine(Machine *machine) {
@@ -201,7 +174,7 @@ int main(int argc, char *argv[]) {
 
     // Load the machine
     Machine machine;
-    load_machine(&machine, program_file, program_no - 1);
+    load_machine(&machine, program_file, program_no);
     reset_machine(&machine);
 
     // Read input WAV file
