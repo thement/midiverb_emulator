@@ -216,7 +216,7 @@ class DelayLineStorage:
 
     @staticmethod
     def get_tmp_name(addr):
-        return f"tmp{addr}"
+        return f"tmp_{addr:x}"
 
     def format_address(self, addr):
         if addr in self.tmp:
