@@ -104,3 +104,13 @@ void MidiverbAudioProcessorEditor::resized()
     feedbackLabel.setBounds(feedbackArea.removeFromTop(20));
     feedbackSlider.setBounds(feedbackArea.reduced(10, 0));
 }
+
+void MidiverbAudioProcessorEditor::mouseDown(const juce::MouseEvent& e)
+{
+    if (e.mods.isPopupMenu())
+    {
+        juce::PopupMenu menu;
+        menu.addItem(1, juce::String("Build: ") + __DATE__ + " " + __TIME__, false);
+        menu.showMenuAsync(juce::PopupMenu::Options());
+    }
+}
