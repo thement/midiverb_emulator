@@ -234,9 +234,12 @@ int main(int argc, char *argv[]) {
     for (sf_count_t i = 0; i < num_samples; i += 2) {
         int16_t left = input_samples[i];
         int16_t right = input_samples[i + 1];
-        // Input should be 12-bit mono.
-        // Remove 4 bits to reduce it from 16-bit and 1 bit to average.
-        int16_t mono_sample = (left + right) >> 5;
+        // Input should be 13-bit mono
+        //
+        // Sample rate is 23.4 KHz: https://github.com/emeb/MIDIVerb_RE/blob/main/docs/MV_Slides.pdf
+        //
+        // Remove 3 bits to reduce it from 16-bit to 13-bit and then shift by 1 bit to average
+        int16_t mono_sample = (left + right) >> (3 + 1);
 
 #ifdef USE_C_EFFECT
         effect(mono_sample, &output.s[0], &output.s[1], machine.dram, i / 2);
@@ -244,9 +247,10 @@ int main(int argc, char *argv[]) {
         run_machine_tick(&machine, mono_sample, &output);
 #endif
 
-        // Output is 12-bit stereo, which should be expanded to 16-bit (with clipping).
-        output_samples[i] = clip(output.s[0] * 16);     // Left channel
-        output_samples[i + 1] = clip(output.s[1] * 16); // Right channel
+        // Output is 13-bit stereo, which should be expanded to 16-bit (with clipping)
+        // Some effects have gain > 1 which makes them clip at this point.
+        output_samples[i] = clip(output.s[0] << 3);
+        output_samples[i + 1] = clip(output.s[1] << 3);
         //printf("output=%d %d\n", output.s[0], output.s[1]);
     }
 
