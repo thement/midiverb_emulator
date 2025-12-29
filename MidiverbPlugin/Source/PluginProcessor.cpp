@@ -296,8 +296,8 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
             effects[programNo - 1](inputInt, &outLeftInt, &outRightInt, DRAM.data(), memoryPointer++);
 
-            float outL = saturate(outLeftInt / static_cast<float>(0x1fff));
-            float outR = saturate(outRightInt / static_cast<float>(0x1fff));
+            float outL = outLeftInt / static_cast<float>(0x1fff);
+            float outR = outRightInt / static_cast<float>(0x1fff);
 
             // Push to interpolation buffers
             outputBufferL.push(outL);
