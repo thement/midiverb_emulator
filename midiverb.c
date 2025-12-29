@@ -12,6 +12,7 @@
 #include "args.h"
 #include "dasp16.h"
 #include "wav.h"
+#include "rom.h"
 
 int16_t clip(int32_t input) {
     if (input > INT16_MAX) {
@@ -26,18 +27,39 @@ int16_t clip(int32_t input) {
 int main(int argc, char *argv[]) {
     Args args = parse_args(argc, argv);
 
-
-    if (args.program_number < 1 || args.program_number > 64) {
-        fprintf(stderr, "Program number must be in range 1-64 (where 64 is the DEFEAT program)\n");
-        exit(EXIT_FAILURE);
-    }
-
     if (args.rom_file == NULL)
-        die("rom not specified");
+        die("error: no rom specified");
+
+    // Detect ROM type
+    uint8_t signature[4];
+    RomType *rom_type;
+    read_bytes(args.rom_file, 0, 4, signature);
+
+    for (int i = 0; i < ARRAY_SIZE(rom_types); i++) {
+        rom_type = &rom_types[i];
+        if (memcmp(signature, rom_type->signature, sizeof(rom_type->signature)) == 0) {
+            fprintf(stderr, "detected ROM: %s\n", rom_type->name);
+            goto rom_detected;
+        }
+    }
+    rom_type = &rom_types[0];
+    fprintf(stderr, "warning: ROM was not recognized, assuming Midiverb I\n");
+rom_detected:
+
+    // Check program number is valid
+    int program_valid =
+        args.program_number >= rom_type->first_program_number &&
+        args.program_number <= rom_type->last_program_number;
+    if (!program_valid) {
+        die("error: program number #%d not valid, range is #%d to #%d",
+            args.program_number,
+            rom_type->first_program_number,
+            rom_type->last_program_number);
+    }
 
     // Load the machine
     Machine machine;
-    load_machine(&machine, args.rom_file, args.program_number);
+    load_rom(&machine, rom_type, args.rom_file, args.program_number);
     reset_machine(&machine);
 
     // Read input WAV file

@@ -29,3 +29,21 @@ static RomType rom_types[] = {
     { "MidiFex",    16384,  { 0x00, 0x00, 0xcd, 0x3f }, 1, 64, 0,	0,	0, 2, names_midifex, },
     { "MidiVerb 2", 32768,  { 0x02, 0x00, 0xee, 0x00 }, 0, 99, 0x1c00,	0x1b00, 1, 1, names_midiverb2, },
 };
+
+void load_rom(Machine *machine, RomType *rom_type, const char *path, int program_num) {
+    memset(machine, 0, sizeof(Machine));
+    reset_machine(machine);
+
+    machine->memory_shift = rom_type->memory_shift;
+
+    unsigned program_index = program_num - rom_type->first_program_number;
+    read_bytes(path, rom_type->offset_to_bytecode + program_index * ProgramLength, ProgramLength, machine->program);
+
+    if (rom_type->has_lfo) {
+	//read_bytes(path, rom_type->offset_to_interpolation_patch_table, ..., machine->...);
+    }
+
+    if (rom_type->effect_names) {
+	fprintf(stderr, "loaded effect: %s\n", rom_type->effect_names[program_index]);
+    }
+}

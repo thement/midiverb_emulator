@@ -75,10 +75,4 @@ void reset_machine(Machine *machine) {
     memset(machine->dram, 0, sizeof(machine->dram));
     machine->acc = 0;
     machine->address = 0;
-    machine->memory_shift = 2; /* 2 for midiverb 1, 1 for midiverb 2 */
-}
-
-void load_machine(Machine *machine, const char *path, int program_num) {
-    memset(machine, 0, sizeof(Machine));
-    read_bytes(path, (program_num - 1) * ProgramLength, ProgramLength, machine->program);
 }
