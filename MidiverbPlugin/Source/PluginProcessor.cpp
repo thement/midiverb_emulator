@@ -270,8 +270,9 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     auto* rightChannel = buffer.getWritePointer(1);
     int numSamples = buffer.getNumSamples();
 
-    float equalPowerDry = std::pow(1.0f - dryWet, 2.0f);
-    float equalPowerWet = std::pow(dryWet, 2.0f);
+    float angle = dryWet * 1.5707963f;  // π/2
+    float equalPowerDry = std::cos(angle);
+    float equalPowerWet = std::sin(angle);
 
     for (int i = 0; i < numSamples; i++)
     {
