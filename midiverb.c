@@ -9,6 +9,7 @@
 #include <stdarg.h>
 #include <sndfile.h>
 #include "utils.h"
+#include "args.h"
 
 enum {
     DramLength = 16*1024,
@@ -157,31 +158,27 @@ int16_t clip(int32_t input) {
 #endif
 
 int main(int argc, char *argv[]) {
-    if (argc < 5) {
-        fprintf(stderr, "Usage: %s <program_file> <program_no> <input_wav> <output_wav>\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
+    Args args = parse_args(argc, argv);
 
-    const char *program_file = argv[1];
-    int program_no = atoi(argv[2]);
-    const char *input_wav = argv[3];
-    const char *output_wav = argv[4];
 
-    if (program_no < 1 || program_no > 64) {
+    if (args.program_number < 1 || args.program_number > 64) {
         fprintf(stderr, "Program number must be in range 1-64 (where 64 is the DEFEAT program)\n");
         exit(EXIT_FAILURE);
     }
 
+    if (args.rom_file == NULL)
+        die("rom not specified");
+
     // Load the machine
     Machine machine;
-    load_machine(&machine, program_file, program_no);
+    load_machine(&machine, args.rom_file, args.program_number);
     reset_machine(&machine);
 
     // Read input WAV file
     int16_t *input_samples;
     sf_count_t num_samples;
     int sample_rate, channels;
-    load_wav_file(input_wav, &input_samples, &num_samples, &sample_rate, &channels);
+    load_wav_file(args.input_wav, &input_samples, &num_samples, &sample_rate, &channels);
     printf("channels=%d, sample_rate=%d, num=%ld\n", channels, sample_rate, (long)num_samples);
 
     if (channels != 2) {
@@ -223,7 +220,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Write output WAV file
-    write_wav_file(output_wav, output_samples, num_samples, sample_rate, channels);
+    write_wav_file(args.output_wav, output_samples, num_samples, sample_rate, channels);
 
     // Clean up
     free(input_samples);
