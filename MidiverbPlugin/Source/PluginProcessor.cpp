@@ -233,7 +233,8 @@ void MidiverbAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBloc
     // Reset effect state
     DRAM.fill(0);
     memoryPointer = 0;
-    wetOutput = 0.0f;
+    lastWetL = 0.0;
+    lastWetR = 0.0;
     phase = 0.0;
     lastFilteredInput = 0.0;
 }
@@ -279,8 +280,8 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         float dryL = leftChannel[i];
         float dryR = rightChannel[i];
 
-        // Sum to mono and apply anti-aliasing filter
-        double monoIn = (dryL + dryR) * 0.5;
+        // Sum to mono with feedback and apply anti-aliasing filter
+        double monoIn = (dryL + dryR) * 0.5 + (lastWetL + lastWetR) * 0.5 * feedback;
         double filtered = antiAliasFilter.process(monoIn);
 
         // Accumulate phase - process effect when we cross sample boundaries
@@ -290,15 +291,13 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             phase -= 1.0;
 
             // Process one effect sample at 24kHz
-            float effectIn = static_cast<float>(lastFilteredInput) + wetOutput * feedback;
-            int16_t inputInt = static_cast<int16_t>(saturate(effectIn) * 0x1fff);
+            int16_t inputInt = static_cast<int16_t>(saturate(lastFilteredInput) * 0x1fff);
             int16_t outLeftInt, outRightInt;
 
             effects[programNo - 1](inputInt, &outLeftInt, &outRightInt, DRAM.data(), memoryPointer++);
 
             float outL = saturate(outLeftInt / static_cast<float>(0x1fff));
             float outR = saturate(outRightInt / static_cast<float>(0x1fff));
-            wetOutput = (outL + outR) * 0.5f;
 
             // Push to interpolation buffers
             outputBufferL.push(outL);
@@ -313,6 +312,10 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         // Reconstruction filter
         wetL = reconstructFilterL.process(wetL);
         wetR = reconstructFilterR.process(wetR);
+
+        // Store for feedback
+        lastWetL = wetL;
+        lastWetR = wetR;
 
         // Dry/wet mix
         leftChannel[i] = static_cast<float>(dryL * equalPowerDry + wetL * equalPowerWet);

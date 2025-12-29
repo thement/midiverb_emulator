@@ -152,7 +152,8 @@ private:
     // Effect state
     std::array<int16_t, 0x4000> DRAM;
     int memoryPointer = 0;
-    float wetOutput = 0.0f;
+    double lastWetL = 0.0;
+    double lastWetR = 0.0;
 
     // Resampling state
     double hostSampleRate = 48000.0;
