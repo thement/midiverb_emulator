@@ -100,10 +100,9 @@ void effect_mix(
     float output_right = saturate(output_right_int / (float) 0x1fff);
 
     *wet_output = (output_left + output_right) / 2;
-    float equal_power_dry = powf(1.0 - dry_wet, 2.0);
-    float equal_power_wet = powf(dry_wet, 2.0);
-    *mixed_output_left = output_left * equal_power_wet + input_left * equal_power_dry;
-    *mixed_output_right = output_right * equal_power_wet + input_right * equal_power_dry;
+    float wet_dry = 1.0 - dry_wet;
+    *mixed_output_left = output_left * dry_wet + input_left * wet_dry;
+    *mixed_output_right = output_right * dry_wet + input_right * wet_dry;
 }
 
 int main(int argc, char *argv[]) {
