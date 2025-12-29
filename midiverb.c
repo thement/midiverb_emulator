@@ -194,29 +194,33 @@ int main(int argc, char *argv[]) {
     }
 
     Sample output;
+    float dry_wet_ratio = args.dry_wet_ratio;
+    float wet_dry_ratio = 1.0 - dry_wet_ratio;
 
     // Process each sample
     for (sf_count_t i = 0; i < num_samples; i += 2) {
-        int16_t left = input_samples[i];
-        int16_t right = input_samples[i + 1];
+        int16_t input_left = input_samples[i];
+        int16_t input_right = input_samples[i + 1];
         // Input should be 13-bit mono
         //
         // Sample rate is 23.4 KHz: https://github.com/emeb/MIDIVerb_RE/blob/main/docs/MV_Slides.pdf
         //
         // Remove 3 bits to reduce it from 16-bit to 13-bit and then shift by 1 bit to average
-        int16_t mono_sample = (left + right) >> (3 + 1);
+        int16_t input_mono = (input_left + input_right) >> (3 + 1);
 
 #ifdef USE_C_EFFECT
-        effect(mono_sample, &output.s[0], &output.s[1], machine.dram, i / 2);
+        effect(input_mono, &output.s[0], &output.s[1], machine.dram, i / 2);
 #else
-        run_machine_tick(&machine, mono_sample, &output);
+        run_machine_tick(&machine, input_mono, &output);
 #endif
 
         // Output is 13-bit stereo, which should be expanded to 16-bit (with clipping)
         // Some effects have gain > 1 which makes them clip at this point.
-        output_samples[i] = clip(output.s[0] << 3);
-        output_samples[i + 1] = clip(output.s[1] << 3);
-        //printf("output=%d %d\n", output.s[0], output.s[1]);
+        int32_t output_left = output.s[0] << 3;
+        int32_t output_right = output.s[1] << 3;
+
+        output_samples[i] = clip(output_left * dry_wet_ratio + input_left * wet_dry_ratio);
+        output_samples[i + 1] = clip(output_right * dry_wet_ratio + input_right * wet_dry_ratio);
     }
 
     // Write output WAV file
