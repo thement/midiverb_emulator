@@ -153,10 +153,6 @@ int16_t clip(int32_t input) {
     }
 }
 
-#ifdef USE_C_EFFECT
-#include "effect.h"
-#endif
-
 int main(int argc, char *argv[]) {
     Args args = parse_args(argc, argv);
 
@@ -208,11 +204,7 @@ int main(int argc, char *argv[]) {
         // Remove 3 bits to reduce it from 16-bit to 13-bit and then shift by 1 bit to average
         int16_t input_mono = (input_left + input_right) >> (3 + 1);
 
-#ifdef USE_C_EFFECT
-        effect(input_mono, &output.s[0], &output.s[1], machine.dram, i / 2);
-#else
         run_machine_tick(&machine, input_mono, &output);
-#endif
 
         // Output is 13-bit stereo, which should be expanded to 16-bit (with clipping)
         // Some effects have gain > 1 which makes them clip at this point.
