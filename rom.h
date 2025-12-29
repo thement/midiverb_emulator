@@ -40,7 +40,7 @@ void load_rom(Machine *machine, RomType *rom_type, const char *path, int program
     read_bytes(path, rom_type->offset_to_bytecode + program_index * ProgramLength, ProgramLength, machine->program);
 
     if (rom_type->has_lfo) {
-	//read_bytes(path, rom_type->offset_to_interpolation_patch_table, ..., machine->...);
+	read_bytes(path, rom_type->offset_to_interpolation_patch_table, InterpolationPatchTableLength, machine->interpolation_patch_table);
     }
 
     if (rom_type->effect_names) {

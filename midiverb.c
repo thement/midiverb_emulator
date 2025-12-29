@@ -8,11 +8,13 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <sndfile.h>
+#include <assert.h>
 #include "utils.h"
 #include "args.h"
 #include "dasp16.h"
 #include "wav.h"
 #include "rom.h"
+#include "lfo.h"
 
 int16_t clip(int32_t input) {
     if (input > INT16_MAX) {
@@ -62,6 +64,17 @@ rom_detected:
     load_rom(&machine, rom_type, args.rom_file, args.program_number);
     reset_machine(&machine);
 
+    // Initialize LFOs (if any)
+    Lfo lfo1, lfo2;
+    LfoPatch *lfo_patch;
+    int run_lfo = 0;
+    if (rom_type->has_lfo) {
+        if (init_lfo_for_program(args.program_number, &lfo1, &lfo2, &lfo_patch)) {
+            run_lfo = 1;
+            fprintf(stderr, "this effect has LFO\n");
+        }
+    }
+
     // Read input WAV file
     int16_t *input_samples;
     sf_count_t num_samples;
@@ -110,6 +123,14 @@ rom_detected:
 
         output_samples[i] = clip(output_left * dry_wet_ratio + input_left * wet_dry_ratio);
         output_samples[i + 1] = clip(output_right * dry_wet_ratio + input_right * wet_dry_ratio);
+
+        // Maybe run LFO; TODO: figure out the timing
+        if (i % 44 == 0 && run_lfo) {
+            uint32_t lfo1_value = lfo1.update(&lfo1);
+            uint32_t lfo2_value = lfo2.update(&lfo2);
+
+            patch_machine(&machine, lfo1_value, lfo2_value, lfo_patch->top1, lfo_patch->top2, lfo_patch->next_instr_opcode);
+        }
     }
 
     // Write output WAV file

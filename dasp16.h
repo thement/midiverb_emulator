@@ -1,6 +1,7 @@
 enum {
     DramLength = 16*1024,
     ProgramLength = 256,
+    InterpolationPatchTableLength = 256,
 };
 
 typedef struct {
@@ -9,6 +10,7 @@ typedef struct {
     int16_t dram[DramLength];
     int16_t acc;
     int memory_shift;
+    uint8_t interpolation_patch_table[InterpolationPatchTableLength];
 } Machine;
 
 typedef struct {
@@ -75,4 +77,41 @@ void reset_machine(Machine *machine) {
     memset(machine->dram, 0, sizeof(machine->dram));
     machine->acc = 0;
     machine->address = 0;
+}
+
+void patch_machine(Machine *machine, uint32_t lfo1_value, uint32_t lfo2_value, uint8_t top1, uint8_t top2, uint8_t next_instr_opcode) {
+    uint8_t *program = machine->program;
+    {
+        // Memory shift is the value of lfo (in 8.8 fixed point) plus some effect-specific offset
+        uint32_t memory_shift = lfo1_value | (((uint32_t)top1) << 16);
+        uint8_t *patch = &machine->interpolation_patch_table[memory_shift & 0xf0];
+        // First we subtract this offset from an instruction offset field: this will shift all
+        // subsequent memory accesses backward
+        int sub = ((patch[1] << 8) | patch[0]) - (memory_shift >> 8);
+        // Later we add the same offset, restoring the shift (so that balance over the whole
+        // program is restored
+        int add = ((patch[7] << 8) | patch[6]) + (memory_shift >> 8);
+        program[0x05] = sub & 0xff;
+        program[0x06] = ((sub >> 8) & 0x3f) | 0x40;
+        program[0x59] = patch[2];
+        program[0x5a] = patch[3];
+        program[0x5b] = patch[4];
+        program[0x5c] = patch[5];
+        program[0x5d] = add & 0xff;
+        program[0x5e] = ((add >> 8) & 0x3f) | next_instr_opcode;
+    }
+    {
+        uint32_t memory_shift = lfo2_value | (((uint32_t)top2) << 16);
+        uint8_t *patch = &machine->interpolation_patch_table[8 + (memory_shift & 0xf0)];
+        int sub = ((patch[1] << 8) | patch[0]) - (memory_shift >> 8);
+        int add = ((patch[7] << 8) | patch[6]) + (memory_shift >> 8);
+        program[0x5f] = sub & 0xff;
+        program[0x60] = ((sub >> 8) & 0x3f) | 0x40;
+        program[0xb3] = patch[2];
+        program[0xb4] = patch[3];
+        program[0xb5] = patch[4];
+        program[0xb6] = patch[5];
+        program[0xb7] = add & 0xff;
+        program[0xb8] = ((add >> 8) & 0x3f) | next_instr_opcode;
+    }
 }
