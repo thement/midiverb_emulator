@@ -91,13 +91,13 @@ void effect_mix(
         int *memory_pointer
 ) {
     float input = (input_left + input_right) / 2.0 + previous_wet_output * feedback;
-    int16_t input_int = saturate(input) * 0x7ff; // input is 12 bit
+    int16_t input_int = saturate(input) * 0x1fff; // input is 13 bits
     int16_t output_left_int, output_right_int;
 
     effects[program_no](input_int, &output_left_int, &output_right_int, DRAM, (*memory_pointer)++);
 
-    float output_left = saturate(output_left_int / (float) 0x7ff);
-    float output_right = saturate(output_right_int / (float) 0x7ff);
+    float output_left = saturate(output_left_int / (float) 0x1fff);
+    float output_right = saturate(output_right_int / (float) 0x1fff);
 
     *wet_output = (output_left + output_right) / 2;
     float equal_power_dry = powf(1.0 - dry_wet, 2.0);
