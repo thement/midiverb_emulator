@@ -44,10 +44,27 @@ MidiverbAudioProcessorEditor::MidiverbAudioProcessorEditor(MidiverbAudioProcesso
         audioProcessor.getAPVTS(), "feedback", feedbackSlider);
 
     setSize(500, 300);
+
+    startTimerHz(30);
 }
 
 MidiverbAudioProcessorEditor::~MidiverbAudioProcessorEditor()
 {
+    stopTimer();
+}
+
+void MidiverbAudioProcessorEditor::timerCallback()
+{
+    if (audioProcessor.getAndClearInputOverload())
+    {
+        showOverload = true;
+        repaint();
+    }
+    else if (showOverload)
+    {
+        showOverload = false;
+        repaint();
+    }
 }
 
 void MidiverbAudioProcessorEditor::paint(juce::Graphics& g)
@@ -58,6 +75,11 @@ void MidiverbAudioProcessorEditor::paint(juce::Graphics& g)
     g.setFont(20.0f);
     g.drawFittedText("Midiverb Emulator", getLocalBounds().removeFromTop(40),
                      juce::Justification::centred, 1);
+
+    // Input overload indicator
+    auto indicatorBounds = juce::Rectangle<float>(getWidth() - 25.0f, 10.0f, 15.0f, 15.0f);
+    g.setColour(showOverload ? juce::Colours::red : juce::Colours::darkred);
+    g.fillEllipse(indicatorBounds);
 }
 
 void MidiverbAudioProcessorEditor::resized()

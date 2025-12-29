@@ -282,6 +282,8 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
 
         // Sum to mono with feedback and apply anti-aliasing filter
         double monoIn = (dryL + dryR) * 0.5 + (lastWetL + lastWetR) * 0.5 * feedback;
+        if (std::abs(monoIn) > 1.0)
+            inputOverload.store(true, std::memory_order_relaxed);
         double filtered = antiAliasFilter.process(monoIn);
 
         // Accumulate phase - process effect when we cross sample boundaries

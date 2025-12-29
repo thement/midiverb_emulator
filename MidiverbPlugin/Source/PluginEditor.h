@@ -4,7 +4,8 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "PluginProcessor.h"
 
-class MidiverbAudioProcessorEditor : public juce::AudioProcessorEditor
+class MidiverbAudioProcessorEditor : public juce::AudioProcessorEditor,
+                                     private juce::Timer
 {
 public:
     explicit MidiverbAudioProcessorEditor(MidiverbAudioProcessor&);
@@ -14,6 +15,7 @@ public:
     void resized() override;
 
 private:
+    void timerCallback() override;
     MidiverbAudioProcessor& audioProcessor;
 
     // Program selector
@@ -30,6 +32,9 @@ private:
     juce::Slider feedbackSlider;
     juce::Label feedbackLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> feedbackAttachment;
+
+    // Input overload indicator
+    bool showOverload = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiverbAudioProcessorEditor)
 };

@@ -2,6 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <array>
+#include <atomic>
 #include <cstdint>
 #include <cmath>
 
@@ -145,6 +146,9 @@ public:
 
     static const char* getEffectName(int index);
 
+    // Input overload detection
+    bool getAndClearInputOverload() { return inputOverload.exchange(false); }
+
 private:
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
@@ -173,6 +177,9 @@ private:
 
     // Last input sample for effect (filtered, at host rate)
     double lastFilteredInput = 0.0;
+
+    // Input overload detection
+    std::atomic<bool> inputOverload{false};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiverbAudioProcessor)
 };
