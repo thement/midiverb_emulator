@@ -11,7 +11,6 @@ struct RomType {
     int has_lfo;
     int memory_shift;
     const char **effect_names;
-    //void (*effect)(implementation);
 };
 
 static const char *names_midiverb[] = {
@@ -23,12 +22,19 @@ static const char *names_midifex[] = {
 static const char *names_midiverb2[] = {
 #include "names-midiverb2.h"
 };
+static const char *names_internal[] = {
+#include "names-midiverb.h"
+#include "names-midifex.h"
+};
 
 static RomType rom_types[] = {
     { "MidiVerb",   16384,  { 0xff, 0x3c, 0x44, 0x3e }, 1, 64, 0,	0,	0, 2, names_midiverb },
     { "MidiFex",    16384,  { 0x00, 0x00, 0xcd, 0x3f }, 1, 64, 0,	0,	0, 2, names_midifex, },
     { "MidiVerb 2", 32768,  { 0x02, 0x00, 0xee, 0x00 }, 0, 99, 0x1c00,	0x1b00, 1, 1, names_midiverb2, },
 };
+
+static RomType internal_rom_type =
+    { "internal",   0,	    {},				1, 128, 0,	0,	0, 0, names_internal };
 
 void load_rom(Machine *machine, RomType *rom_type, const char *path, int program_num) {
     memset(machine, 0, sizeof(Machine));
@@ -41,9 +47,5 @@ void load_rom(Machine *machine, RomType *rom_type, const char *path, int program
 
     if (rom_type->has_lfo) {
 	read_bytes(path, rom_type->offset_to_interpolation_patch_table, InterpolationPatchTableLength, machine->interpolation_patch_table);
-    }
-
-    if (rom_type->effect_names) {
-	fprintf(stderr, "loaded effect: %s\n", rom_type->effect_names[program_index]);
     }
 }

@@ -9,12 +9,14 @@
 #include <stdarg.h>
 #include <sndfile.h>
 #include <assert.h>
+#include <stdbool.h>
 #include "utils.h"
 #include "args.h"
 #include "dasp16.h"
 #include "wav.h"
 #include "rom.h"
 #include "lfo.h"
+#include "all-effects.h"
 
 int16_t clip(int32_t input) {
     if (input > INT16_MAX) {
@@ -26,27 +28,37 @@ int16_t clip(int32_t input) {
     }
 }
 
-int main(int argc, char *argv[]) {
-    Args args = parse_args(argc, argv);
+RomType *detect_rom(const char *rom_file, bool *use_internal_effects) {
+    if (rom_file == NULL) {
+        fprintf(stderr, "no ROM specified, using internal effects\n");
+        *use_internal_effects = true;
+        return &internal_rom_type;
+    }
 
-    if (args.rom_file == NULL)
-        die("error: no rom specified");
+    *use_internal_effects = false;
 
     // Detect ROM type
     uint8_t signature[4];
-    RomType *rom_type;
-    read_bytes(args.rom_file, 0, 4, signature);
+    read_bytes(rom_file, 0, 4, signature);
 
     for (int i = 0; i < ARRAY_SIZE(rom_types); i++) {
-        rom_type = &rom_types[i];
+        RomType *rom_type = &rom_types[i];
         if (memcmp(signature, rom_type->signature, sizeof(rom_type->signature)) == 0) {
             fprintf(stderr, "detected ROM: %s\n", rom_type->name);
-            goto rom_detected;
+            return rom_type;
         }
     }
-    rom_type = &rom_types[0];
     fprintf(stderr, "warning: ROM was not recognized, assuming Midiverb I\n");
-rom_detected:
+    return &rom_types[0];
+}
+
+int main(int argc, char *argv[]) {
+    Args args = parse_args(argc, argv);
+    RomType *rom_type = NULL;
+    bool use_internal_effects = false;
+
+    // Get ROM type
+    rom_type = detect_rom(args.rom_file, &use_internal_effects);
 
     // Check program number is valid
     int program_valid =
@@ -58,10 +70,16 @@ rom_detected:
             rom_type->first_program_number,
             rom_type->last_program_number);
     }
+    int program_index = args.program_number - rom_type->first_program_number;
 
     // Load the machine
     Machine machine;
-    load_rom(&machine, rom_type, args.rom_file, args.program_number);
+    if (!use_internal_effects) {
+        load_rom(&machine, rom_type, args.rom_file, args.program_number);
+    }
+    if (rom_type->effect_names) {
+	fprintf(stderr, "loaded effect: %s\n", rom_type->effect_names[program_index]);
+    }
     reset_machine(&machine);
 
     // Initialize LFOs (if any)
@@ -114,7 +132,12 @@ rom_detected:
         // Remove 3 bits to reduce it from 16-bit to 13-bit
         int16_t input_mono = input_clipped >> 3;
 
-        run_machine_tick(&machine, input_mono, &output);
+        if (use_internal_effects) {
+            // Run decompiled version
+            effects[program_index](input_mono, &output.s[0], &output.s[1], machine.dram, machine.address++);
+        } else {
+            run_machine_tick(&machine, input_mono, &output);
+        }
 
         // Output is 13-bit stereo, which should be expanded to 16-bit (with clipping)
         // Some effects have gain > 1 which makes them clip at this point.
