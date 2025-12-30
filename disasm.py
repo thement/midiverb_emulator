@@ -318,8 +318,13 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
     print('-- Pass 2: Calculate which addresses start a delay line and get used on following samples')
     used_address = {x for x in prev_used if isinstance(x, int)}
     defined_address = {x for x in prev_defined if isinstance(x, int)}
-    memory_locations = [{'addr': num, 'write': False} for num in used_address] + \
-                       [{'addr': num, 'write': True} for num in defined_address]
+    memory_locations = []
+    for addr in used_address.union(defined_address):
+        memory_locations.append({
+            'addr': addr,
+            'write': addr in defined_address,
+            'read': addr in used_address,
+        })
     memory_locations.sort(key=lambda x: x['addr'])
     print('Read/write locations:', memory_locations)
 
@@ -333,9 +338,10 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
             taps = []
             j = (i - 1) % n
             while j != i:
+                if memory_locations[j]['read']:
+                    taps.append(memory_locations[j]['addr'])
                 if memory_locations[j]['write']:
                     break
-                taps.append(memory_locations[j]['addr'])
                 j = (j - 1) % n
             if len(taps) == 0:
                 not_read.add(location['addr'])
