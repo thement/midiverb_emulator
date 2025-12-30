@@ -128,11 +128,7 @@ cat midiverb.rom midifex.rom > both.rom
 python3 disasm.py -d all-effects.h -i both.rom
 ```
 
-There is also an `all-effects-test` command-line program that will run the decompiled effects very much like the midiverb emulator.
-
-```shell
-./all-effects-test 114 web-demo/example.wav out.wav 0.5 0.01
-```
+Midiverb emulator will by default use the decompiled effects if no ROMs are spcified.
 
 
 ### Midiverb VST3 plugin
@@ -148,9 +144,10 @@ It could be compiled also for Mac but I don't have a Mac.
 
 The effect ROM is not distributed with this program and you have to obtain it yourself. If you own a MIDIVERB/MIDIFEX unit and don't want to dump the EEPROM yourself, you might look for a synthesizer rom archive.
 
-This program was tested with the following roms
+This program was tested with the following roms:
 
 | MD5SUM | ROM name |
 |---|---|
 | 11a460c8e64d3325411bba0c11a2ae49  | midiverb.rom |
 | f06003307a93ec09c637146ecaa17948  | midifex.rom |
+| d503f74c239917b9888f247f979509ec  | midiverb2.rom |
