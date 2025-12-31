@@ -54,3 +54,4 @@ dkms.conf
 # JUCE Plugin build
 MidiverbPlugin/build/
 tags
+web-demo/*.rom

@@ -3,145 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Midiverb Emulator Demo</title>
+  <title>Midiverb I/II Emulator Demo</title>
 </head>
 <body>
-  <h1>Midiverb Emulator Demo</h1>
+  <h1>Midiverb I/II Emulator Demo</h1>
   <img src="panel.jpg"><br><br><br>
   <button id="startButton">Start Audio</button>
   <button id="pauseButton">Mute effect input</button>
   <button id="stopButton">Stop Audio</button>
-  <select id="effectProgram">
-<option value="1">.2 Sec SMALL BRIGHT</option>
-<option value="2">.2 Sec SMALL WARM</option>
-<option value="3">.2 Sec MEDIUM BRIGHT</option>
-<option value="4">.3 Sec SMALL BRIGHT</option>
-<option value="5">.3 Sec SMALL WARM</option>
-<option value="6">.4 Sec MEDIUM BRIGHT</option>
-<option value="7">.4 Sec MEDIUM WARM</option>
-<option value="8">.6 Sec SMALL BRIGHT</option>
-<option value="9">.6 Sec MEDIUM WARM</option>
-<option value="10">.6 Sec MEDIUM DARK</option>
-<option value="11">.8 Sec SMALL BRIGHT</option>
-<option value="12">.8 Sec LARGE WARM</option>
-<option value="13">1.0 Sec SMALL WARM</option>
-<option value="14">1.0 Sec MEDIUM WARM</option>
-<option value="15">1.0 Sec LARGE BRIGHT</option>
-<option value="16">1.2 Sec MEDIUM WARM</option>
-<option value="17">1.2 Sec SMALL WARM</option>
-<option value="18">1.2 Sec SMALL BRIGHT</option>
-<option value="19">1.4 Sec LARGE WARM</option>
-<option value="20">1.4 Sec LARGE DARK</option>
-<option value="21">1.4 Sec MEDIUM WARM</option>
-<option value="22">1.6 Sec SMALL DARK</option>
-<option value="23">1.6 Sec LARGE BRIGHT</option>
-<option value="24">1.6 Sec MEDIUM BRIGHT</option>
-<option value="25">1.8 Sec LARGE DARK</option>
-<option value="26">1.8 Sec LARGE BRIGHT</option>
-<option value="27">1.8 Sec MEDIUM WARM</option>
-<option value="28">2.0 Sec LARGE BRIGHT</option>
-<option value="29">2.0 Sec MEDIUM WARM</option>
-<option value="30">2.0 Sec LARGE WARM</option>
-<option value="31">2.5 Sec MEDIUM WARM</option>
-<option value="32">2.5 Sec LARGE BRIGHT</option>
-<option value="33">2.5 Sec MEDIUM DARK</option>
-<option value="34">2.8 Sec SMALL BRIGHT</option>
-<option value="35">2.8 Sec MEDIUM BRIGHT</option>
-<option value="36">3.0 Sec LARGE BRIGHT</option>
-<option value="37">3.0 Sec LARGE WARM</option>
-<option value="38">3.0 Sec MEDIUM DARK</option>
-<option value="39">3.5 Sec LARGE BRIGHT</option>
-<option value="40">3.5 Sec MEDIUM WARM</option>
-<option value="41">4.0 Sec LARGE DARK</option>
-<option value="42">4.0 Sec MEDIUM BRIGHT</option>
-<option value="43">5 Sec LARGE WARM</option>
-<option value="44">8 Sec LARGE BRIGHT</option>
-<option value="45">8 Sec LARGE WARM</option>
-<option value="46">10 Sec LARGE BRIGHT</option>
-<option value="47">10 Sec LARGE WARM</option>
-<option value="48">16 Sec LARGE DARK</option>
-<option value="49">18 Sec EX. LARGE BRIGHT</option>
-<option value="50">20 Sec EX. LARGE DARK</option>
-<option value="51">Gated 100 MS  </option>
-<option value="52">Gated 150 MS  </option>
-<option value="53">Gated 200 MS  </option>
-<option value="54">Gated 250 MS  </option>
-<option value="55">Gated 300 MS  </option>
-<option value="56">Gated 350 MS  </option>
-<option value="57">Gated 400 MS  </option>
-<option value="58">Gated 500 MS  </option>
-<option value="59">Gated 600 MS  </option>
-<option value="60">REVERSE - 300 MS  </option>
-<option value="61">REVERSE - 400 MS  </option>
-<option value="62">REVERSE - 500 MS  </option>
-<option value="63">REVERSE - 600 MS  </option>
-<option value="64">DEFEAT  </option>
-<option value="65">ECHO LONG FLAT AMBI</option>
-<option value="66">ECHO LONG FLAT THICK</option>
-<option value="67">ECHO LONG HPF </option>
-<option value="68">ECHO LONG HPF WIDE</option>
-<option value="69">ECHO LONG BPF AMBI</option>
-<option value="70">ECHO LONG LPF WIDE</option>
-<option value="71">ECHO MED FLAT AMBI</option>
-<option value="72">ECHO MED FLAT WIDE</option>
-<option value="73">ECHO MED HPF AMBI</option>
-<option value="74">ECHO MED BPF AMBI</option>
-<option value="75">ECHO MED LPF AMBI</option>
-<option value="76">ECHO MED LPF WIDE</option>
-<option value="77">ECHO MED FLAT THICK</option>
-<option value="78">ECHO SHORT FLAT </option>
-<option value="79">ECHO SHORT LPF AMBI</option>
-<option value="80">ECHO SHORT HPF AMBI</option>
-<option value="81">ECHO SHORT BPF AMBI</option>
-<option value="82">ECHO SHORT FLAT </option>
-<option value="83">ECHO SHORT FLAT WIDE</option>
-<option value="84">ECHO XSHORT FLAT </option>
-<option value="85">ECHO XSHORT BPF WIDE</option>
-<option value="86">2TAP MED FLAT AMBI</option>
-<option value="87">2TAP MED HPF AMBI</option>
-<option value="88">2TAP MED BPF AMBI</option>
-<option value="89">2TAP MED FLAT THICK</option>
-<option value="90">2TAP SHORT FLAT WIDE</option>
-<option value="91">2TAP SHORT HPF PAN</option>
-<option value="92">2TAP SHORT BPF AMBI</option>
-<option value="93">2TAP SHORT LPF AMBI</option>
-<option value="94">2TAP XSHORT FLAT WIDE</option>
-<option value="95">3TAP MED FLAT PAN</option>
-<option value="96">3TAP SHORT FLAT PAN</option>
-<option value="97">3TAP SHORT LPF AMBI</option>
-<option value="98">3TAP SHORT BPF AMBI</option>
-<option value="99">3TAP SHORT HPF AMBI</option>
-<option value="100">3TAP XSHORT FLAT AMBI</option>
-<option value="101">REGEN MED FLAT </option>
-<option value="102">REGEN MED HPF AMBI</option>
-<option value="103">REGEN MED BPF AMBI</option>
-<option value="104">REGEN MED LPF AMBI</option>
-<option value="105">REGEN SHORT FLAT </option>
-<option value="106">REGEN XSHORT FLAT </option>
-<option value="107">SLAP1   </option>
-<option value="108">SLAP2   </option>
-<option value="109">SLAP3   </option>
-<option value="110">SLAP4   </option>
-<option value="111">SLAP5   </option>
-<option value="112">REVERB SHORT GATE </option>
-<option value="113">REVERB MEDIUM WARM </option>
-<option value="114">REVERB MEDIUM BLOOM </option>
-<option value="115">REVERB MEDIUM PAN </option>
-<option value="116">REVERB LONG HPF </option>
-<option value="117">REVERB REVERSE  </option>
-<option value="118">REVERB REVERSE REGEN </option>
-<option value="119">MULTITAP PAN  </option>
-<option value="120">MULTITAP REVERB  </option>
-<option value="121">MULTITAP REVERSE PAN </option>
-<option value="122">THICKENER   </option>
-<option value="123">THICKENER DENSE  </option>
-<option value="124">STEREOGEN AMBIENT  </option>
-<option value="125">STEREOGEN THICK  </option>
-<option value="126">STEREOGEN WIDE  </option>
-<option value="127">STEREOGEN XWIDE  </option>
-<option value="128">DEFEAT   </option>
-    </script>
+  <br><br>
+  <label for="deviceSelect">Device: </label>
+  <select id="deviceSelect">
+    <option value="midiverb">MIDIVerb</option>
+    <option value="midifex">MIDIFex</option>
+    <option value="midiverb2" selected>MIDIVerb 2</option>
   </select>
+  <label for="effectProgram"> Effect: </label>
+  <select id="effectProgram"></select>
   <br>
   <br>
   <input type="range" id="dryWetMix" name="dryWetMix" min="0" max="100" value="50">
@@ -162,342 +40,691 @@
 sources at <a href="https://github.com/thement/midiverb_emulator">https://github.com/thement/midiverb_emulator</a>
 code by thement at ibawizard do net
 </pre>
-<button id="fillDramButton">Fill DRAM with Random Numbers</button> - LOUD! Check how it sounds right after Power-On 
+<button id="fillDramButton">Fill DRAM with Random Numbers</button> - LOUD! Check how it sounds right after Power-On
   <script>
+  // ROM type definitions
+  const ROM_TYPES = {
+    midiverb: {
+      name: "MIDIVerb",
+      romFile: "midiverb.rom",
+      romLength: 16384,
+      firstProgram: 1,
+      lastProgram: 64,
+      bytecodeOffset: 0,
+      memoryShift: 2,
+      hasLfo: false,
+      interpolationPatchTableOffset: 0,
+      effectNames: [
+        ".2 Sec SMALL BRIGHT", ".2 Sec SMALL WARM", ".2 Sec MEDIUM BRIGHT",
+        ".3 Sec SMALL BRIGHT", ".3 Sec SMALL WARM", ".4 Sec MEDIUM BRIGHT",
+        ".4 Sec MEDIUM WARM", ".6 Sec SMALL BRIGHT", ".6 Sec MEDIUM WARM",
+        ".6 Sec MEDIUM DARK", ".8 Sec SMALL BRIGHT", ".8 Sec LARGE WARM",
+        "1.0 Sec SMALL WARM", "1.0 Sec MEDIUM WARM", "1.0 Sec LARGE BRIGHT",
+        "1.2 Sec MEDIUM WARM", "1.2 Sec SMALL WARM", "1.2 Sec SMALL BRIGHT",
+        "1.4 Sec LARGE WARM", "1.4 Sec LARGE DARK", "1.4 Sec MEDIUM WARM",
+        "1.6 Sec SMALL DARK", "1.6 Sec LARGE BRIGHT", "1.6 Sec MEDIUM BRIGHT",
+        "1.8 Sec LARGE DARK", "1.8 Sec LARGE BRIGHT", "1.8 Sec MEDIUM WARM",
+        "2.0 Sec LARGE BRIGHT", "2.0 Sec MEDIUM WARM", "2.0 Sec LARGE WARM",
+        "2.5 Sec MEDIUM WARM", "2.5 Sec LARGE BRIGHT", "2.5 Sec MEDIUM DARK",
+        "2.8 Sec SMALL BRIGHT", "2.8 Sec MEDIUM BRIGHT", "3.0 Sec LARGE BRIGHT",
+        "3.0 Sec LARGE WARM", "3.0 Sec MEDIUM DARK", "3.5 Sec LARGE BRIGHT",
+        "3.5 Sec MEDIUM WARM", "4.0 Sec LARGE DARK", "4.0 Sec MEDIUM BRIGHT",
+        "5 Sec LARGE WARM", "8 Sec LARGE BRIGHT", "8 Sec LARGE WARM",
+        "10 Sec LARGE BRIGHT", "10 Sec LARGE WARM", "16 Sec LARGE DARK",
+        "18 Sec EX. LARGE BRIGHT", "20 Sec EX. LARGE DARK", "Gated 100 MS",
+        "Gated 150 MS", "Gated 200 MS", "Gated 250 MS", "Gated 300 MS",
+        "Gated 350 MS", "Gated 400 MS", "Gated 500 MS", "Gated 600 MS",
+        "REVERSE - 300 MS", "REVERSE - 400 MS", "REVERSE - 500 MS",
+        "REVERSE - 600 MS", "DEFEAT"
+      ]
+    },
+    midifex: {
+      name: "MIDIFex",
+      romFile: "midifex.rom",
+      romLength: 16384,
+      firstProgram: 1,
+      lastProgram: 64,
+      bytecodeOffset: 0,
+      memoryShift: 2,
+      hasLfo: false,
+      interpolationPatchTableOffset: 0,
+      effectNames: [
+        "ECHO LONG FLAT AMBI", "ECHO LONG FLAT THICK", "ECHO LONG HPF",
+        "ECHO LONG HPF WIDE", "ECHO LONG BPF AMBI", "ECHO LONG LPF WIDE",
+        "ECHO MED FLAT AMBI", "ECHO MED FLAT WIDE", "ECHO MED HPF AMBI",
+        "ECHO MED BPF AMBI", "ECHO MED LPF AMBI", "ECHO MED LPF WIDE",
+        "ECHO MED FLAT THICK", "ECHO SHORT FLAT", "ECHO SHORT LPF AMBI",
+        "ECHO SHORT HPF AMBI", "ECHO SHORT BPF AMBI", "ECHO SHORT FLAT",
+        "ECHO SHORT FLAT WIDE", "ECHO XSHORT FLAT", "ECHO XSHORT BPF WIDE",
+        "2TAP MED FLAT AMBI", "2TAP MED HPF AMBI", "2TAP MED BPF AMBI",
+        "2TAP MED FLAT THICK", "2TAP SHORT FLAT WIDE", "2TAP SHORT HPF PAN",
+        "2TAP SHORT BPF AMBI", "2TAP SHORT LPF AMBI", "2TAP XSHORT FLAT WIDE",
+        "3TAP MED FLAT PAN", "3TAP SHORT FLAT PAN", "3TAP SHORT LPF AMBI",
+        "3TAP SHORT BPF AMBI", "3TAP SHORT HPF AMBI", "3TAP XSHORT FLAT AMBI",
+        "REGEN MED FLAT", "REGEN MED HPF AMBI", "REGEN MED BPF AMBI",
+        "REGEN MED LPF AMBI", "REGEN SHORT FLAT", "REGEN XSHORT FLAT",
+        "SLAP1", "SLAP2", "SLAP3", "SLAP4", "SLAP5",
+        "REVERB SHORT GATE", "REVERB MEDIUM WARM", "REVERB MEDIUM BLOOM",
+        "REVERB MEDIUM PAN", "REVERB LONG HPF", "REVERB REVERSE",
+        "REVERB REVERSE REGEN", "MULTITAP PAN", "MULTITAP REVERB",
+        "MULTITAP REVERSE PAN", "THICKENER", "THICKENER DENSE",
+        "STEREOGEN AMBIENT", "STEREOGEN THICK", "STEREOGEN WIDE",
+        "STEREOGEN XWIDE", "DEFEAT"
+      ]
+    },
+    midiverb2: {
+      name: "MIDIVerb 2",
+      romFile: "midiverb2.rom",
+      romLength: 32768,
+      firstProgram: 0,
+      lastProgram: 99,
+      bytecodeOffset: 0x1c00,
+      memoryShift: 1,
+      hasLfo: true,
+      interpolationPatchTableOffset: 0x1b00,
+      effectNames: [
+        "Defeat", "Small Bright .1 Sec", "Small Bright .2 Sec", "Small Bright .3 Sec",
+        "Medium Warm 1.1 Sec", "Medium Bright .6 Sec", "Large Bright 1.2 Sec",
+        "Large Dark 1.0 Sec", "Medium Dark .6 Sec", "Medium Dark .5 Sec",
+        "Medium Bright .6 Sec", "Medium Bright .8 Sec", "Large Warm 1.0 Sec",
+        "Large Warm 1.1 Sec", "Medium Dark 1.0 Sec", "Medium Bright 1.1 Sec",
+        "Medium Bright 1.15 Sec", "Large Bright 1.6 Sec", "Large Dark 1.7 Sec",
+        "Medium Bright 1.65 Sec", "Medium Bright 1.9 Sec", "Large Warm 2.2 Sec",
+        "Large Warm 1.75 Sec", "Large Bright 1.45 Sec", "Large Dark 2.2 Sec",
+        "Large Warm 2.3 Sec", "Large Bright 2.4 Sec", "Large Bright 2.5 Sec",
+        "Xlarge Warm 5.0 Sec", "Xlarge Warm 15.0 Sec", "Slow Gate 100 Msec",
+        "Slow Gate 200 Msec", "Slow Gate 250 Msec", "Slow Gate 400 Msec",
+        "Slow Gate 450 Msec", "Fast Gate 150 Msec", "Fast Gate 75 Msec",
+        "Fast Gate 200 Msec", "Fast Gate 100 Msec", "Fast Gate 175 Msec",
+        "Reverse 400 Msec", "Reverse 450 Msec", "Reverse 250 Msec",
+        "Reverse 200 Msec", "Reverse 150 Msec", "Bloom 1 8 Sec",
+        "Reverse 500 Msec", "Reverse Regen. 2 Sec", "Reverse Regen. 8 Sec",
+        "Bloom 2 7 Sec", "Triggered Flange", "Flange Pan 1", "Flange Pan 2",
+        "Triggered Flange 2", "Flange Pan 3", "Flange Pan 4", "Flange Pan 5",
+        "Triggered Flange 3", "Flange Pan 6", "Flange Pan 7", "Light Chorus 1",
+        "Light Chorus 2", "Medium Chorus 1", "Medium Chorus 2", "Medium Chorus 3",
+        "Deep Chorus 1", "Deep Chorus 2", "Deep Chorus 3", "Fast Chorus 1",
+        "Fast Chorus 2", "35 Msec", "55 Msec", "75 Msec", "115 Msec", "140 Msec",
+        "155 Msec", "160 Msec", "170 Msec", "175 Msec", "180 Msec", "185 Msec",
+        "195 Msec", "205 Msec", "210 Msec", "220 Msec", "240 Msec", "250 Msec",
+        "275 Msec", "375 Msec", "460 Msec", "2 Tap Ambient", "3 Tap Pan",
+        "Multitap", "Multitap Reverse Pan", "Thickener/frozen Flange",
+        "Stereo Generation", "Stereo Generation Wide", "Regenerated Delay 2 Sec",
+        "Regenerated Delay 3 Sec", "Regenerated Delay 4 Sec"
+      ]
+    }
+  };
+
+  // LFO patches for MIDIVerb 2 (programs 50-69)
+  const LFO_PATCHES = {
+    50: { type: 'triangle', max: 0x3fff, retrigger: true, top1: 0x00, top2: 0x00, rate1: 0x03, rate2: 0x03, nextInstrOpcode: 0xc0 },
+    51: { type: 'triangle', max: 0x3fff, retrigger: false, top1: 0x00, top2: 0x00, rate1: 0x03, rate2: 0x05, nextInstrOpcode: 0x80 },
+    52: { type: 'triangle', max: 0x3fff, retrigger: false, top1: 0x00, top2: 0x00, rate1: 0x05, rate2: 0x05, nextInstrOpcode: 0xc0 },
+    53: { type: 'triangle', max: 0x7fff, retrigger: true, top1: 0x00, top2: 0x00, rate1: 0x06, rate2: 0x07, nextInstrOpcode: 0x80 },
+    54: { type: 'triangle', max: 0x7fff, retrigger: false, top1: 0x00, top2: 0x00, rate1: 0x05, rate2: 0x05, nextInstrOpcode: 0xc0 },
+    55: { type: 'triangle', max: 0x7fff, retrigger: false, top1: 0x00, top2: 0x00, rate1: 0x0c, rate2: 0x0c, nextInstrOpcode: 0x80 },
+    56: { type: 'triangle', max: 0x7fff, retrigger: false, top1: 0x00, top2: 0x00, rate1: 0x11, rate2: 0x11, nextInstrOpcode: 0xc0 },
+    57: { type: 'triangle', max: 0xffff, retrigger: true, top1: 0x00, top2: 0x00, rate1: 0x13, rate2: 0x17, nextInstrOpcode: 0x80 },
+    58: { type: 'triangle', max: 0xffff, retrigger: false, top1: 0x00, top2: 0x00, rate1: 0x0d, rate2: 0x0e, nextInstrOpcode: 0xc0 },
+    59: { type: 'triangle', max: 0xffff, retrigger: false, top1: 0x00, top2: 0x00, rate1: 0x17, rate2: 0x11, nextInstrOpcode: 0x80 },
+    60: { type: 'sine', max: 0x7eff, retrigger: false, top1: 0x01, top2: 0x03, rate1: 0x27, rate2: 0x1b, nextInstrOpcode: 0x80 },
+    61: { type: 'sine', max: 0x3eff, retrigger: false, top1: 0x02, top2: 0x03, rate1: 0x2e, rate2: 0x3d, nextInstrOpcode: 0x80 },
+    62: { type: 'sine', max: 0x7eff, retrigger: false, top1: 0x02, top2: 0x01, rate1: 0x2d, rate2: 0x3a, nextInstrOpcode: 0x80 },
+    63: { type: 'sine', max: 0x7eff, retrigger: false, top1: 0x03, top2: 0x02, rate1: 0x40, rate2: 0x45, nextInstrOpcode: 0x80 },
+    64: { type: 'sine', max: 0x3eff, retrigger: false, top1: 0x02, top2: 0x03, rate1: 0x4f, rate2: 0x79, nextInstrOpcode: 0x80 },
+    65: { type: 'sine', max: 0x3eff, retrigger: false, top1: 0x02, top2: 0x01, rate1: 0x94, rate2: 0x7a, nextInstrOpcode: 0x80 },
+    66: { type: 'sine', max: 0x7eff, retrigger: false, top1: 0x02, top2: 0x01, rate1: 0x4f, rate2: 0x41, nextInstrOpcode: 0x80 },
+    67: { type: 'sine', max: 0x3eff, retrigger: false, top1: 0x01, top2: 0x02, rate1: 0x70, rate2: 0x8e, nextInstrOpcode: 0x80 },
+    68: { type: 'sine', max: 0x1eff, retrigger: false, top1: 0x01, top2: 0x01, rate1: 0xea * 4, rate2: 0xd9 * 4, nextInstrOpcode: 0x80 },
+    69: { type: 'sine', max: 0x1eff, retrigger: false, top1: 0x01, top2: 0x01, rate1: 0xff * 4, rate2: 0xff * 4, nextInstrOpcode: 0x80 }
+  };
+
+  // LFO class
+  class Lfo {
+    constructor(type, rate, max) {
+      this.type = type;
+      this.rate = rate;
+      this.max = max;
+      this.reset();
+    }
+
+    reset() {
+      if (this.type === 'triangle') {
+        this.value = 0;
+        this.dir = 1;
+      } else { // sine
+        this.x = 0;
+        this.y = this.max & 0xff00;
+      }
+    }
+
+    update() {
+      if (this.type === 'triangle') {
+        return this.updateTriangle();
+      } else {
+        return this.updateSine();
+      }
+    }
+
+    updateTriangle() {
+      if (this.dir) {
+        this.value += this.rate;
+        if (this.value > this.max) {
+          this.value = this.max;
+          this.dir = 0;
+        }
+      } else {
+        this.value -= this.rate;
+        if (this.value < 0) {
+          this.value = 0;
+          this.dir = 1;
+        }
+      }
+      return this.value & 0xffff;
+    }
+
+    updateSine() {
+      const clampPos = this.max;
+      const clampNeg = -this.max;
+      const rate = this.rate;
+
+      // Y += X * rate >> 16
+      this.y += (this.x * rate) >> 16;
+      if (this.y > clampPos) this.y = clampPos;
+      if (this.y < clampNeg) this.y = clampNeg;
+
+      // X -= Y * rate >> 16
+      this.x -= (this.y * rate) >> 16;
+      if (this.x > clampPos) this.x = clampPos;
+      if (this.x < clampNeg) this.x = clampNeg;
+
+      // Convert signed to unsigned
+      return (this.x ^ 0x8000) & 0xffff;
+    }
+  }
+
   function Filterx2() {
-    // Initial state variables instead of arrays
     this.xv0 = 0; this.xv1 = 0; this.xv2 = 0; this.xv3 = 0; this.xv4 = 0;
     this.yv0 = 0; this.yv1 = 0; this.yv2 = 0; this.yv3 = 0; this.yv4 = 0;
-
-    // The gain constant
     var GAIN = 1.481376007e+01;
 
-    // The function to process one sample and return the output
     this.run = function(x) {
-        // Shift the 'xv' values
-        this.xv0 = this.xv1; this.xv1 = this.xv2; this.xv2 = this.xv3; this.xv3 = this.xv4;
-        this.xv4 = x / GAIN;
-        // Shift the 'yv' values
-        this.yv0 = this.yv1; this.yv1 = this.yv2; this.yv2 = this.yv3; this.yv3 = this.yv4;
-        this.yv4 = (this.xv0 + this.xv4) + 4 * (this.xv1 + this.xv3) + 6 * this.xv2
-            + (-0.0206514245 * this.yv0) + (0.0842337122 * this.yv1)
-            + (-0.5343006371 * this.yv2) + (0.3906414532 * this.yv3);
-
-        return this.yv4;
+      this.xv0 = this.xv1; this.xv1 = this.xv2; this.xv2 = this.xv3; this.xv3 = this.xv4;
+      this.xv4 = x / GAIN;
+      this.yv0 = this.yv1; this.yv1 = this.yv2; this.yv2 = this.yv3; this.yv3 = this.yv4;
+      this.yv4 = (this.xv0 + this.xv4) + 4 * (this.xv1 + this.xv3) + 6 * this.xv2
+          + (-0.0206514245 * this.yv0) + (0.0842337122 * this.yv1)
+          + (-0.5343006371 * this.yv2) + (0.3906414532 * this.yv3);
+      return this.yv4;
     };
   }
 
-    class Machine {
-      constructor() {
-        this.ProgramLength = 128;
-        this.DramLength = 16 * 1024;
-        this.address = 0;
-        this.program = new Uint16Array(this.ProgramLength);
-        this.dram = new Int16Array(this.DramLength);
-        this.acc = 0;
-        this.last_output = 0;
+  class Machine {
+    constructor() {
+      this.ProgramLength = 128;
+      this.ProgramByteLength = 256;
+      this.InterpolationPatchTableLength = 256;
+      this.DramLength = 16 * 1024;
+      this.address = 0;
+      this.program = new Uint8Array(this.ProgramByteLength);
+      this.interpolationPatchTable = new Uint8Array(this.InterpolationPatchTableLength);
+      this.dram = new Int16Array(this.DramLength);
+      this.acc = 0;
+      this.last_output = 0;
+      this.memoryShift = 2;
+      this.romData = null;
+      this.currentRomType = null;
+      this.lfo1 = null;
+      this.lfo2 = null;
+      this.lfoPatch = null;
+      this.hasActiveLfo = false;
+    }
+
+    async loadRom(romType) {
+      if (this.currentRomType === romType && this.romData) {
+        return; // ROM already loaded
+      }
+      try {
+        const response = await fetch(romType.romFile);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        this.romData = new Uint8Array(await response.arrayBuffer());
+        this.currentRomType = romType;
+        this.memoryShift = romType.memoryShift;
+      } catch (error) {
+        console.error(`Failed to load ROM: ${error}`);
+      }
+    }
+
+    loadProgram(romType, programNum) {
+      if (!this.romData) return;
+
+      const programIndex = programNum - romType.firstProgram;
+      const offset = romType.bytecodeOffset + programIndex * this.ProgramByteLength;
+
+      for (let i = 0; i < this.ProgramByteLength; i++) {
+        this.program[i] = this.romData[offset + i];
       }
 
-      async loadMachine(path, programNum) {
-        try {
-          const response = await fetch(path);
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const buffer = await response.arrayBuffer();
-          const byteView = new Uint8Array(buffer);
-          const offset = this.ProgramLength * (programNum - 1) * 2;
-          for (let i = 0; i < this.ProgramLength; i++) {
-            this.program[i] = byteView[offset + 2 * i] | (byteView[offset + 2 * i + 1] << 8);
-          }
-        } catch (error) {
-          console.error(`Failed to load machine: ${error}`);
+      // Load interpolation patch table for MIDIVerb 2
+      if (romType.hasLfo && romType.interpolationPatchTableOffset) {
+        for (let i = 0; i < this.InterpolationPatchTableLength; i++) {
+          this.interpolationPatchTable[i] = this.romData[romType.interpolationPatchTableOffset + i];
         }
       }
 
-      resetMachine() {
-        this.dram.fill(0);
-        this.acc = 0;
-        this.address = 0;
+      // Setup LFO if applicable
+      this.hasActiveLfo = false;
+      if (romType.hasLfo && LFO_PATCHES[programNum]) {
+        const patch = LFO_PATCHES[programNum];
+        this.lfo1 = new Lfo(patch.type, patch.rate1, patch.max);
+        this.lfo2 = new Lfo(patch.type, patch.rate2, patch.max);
+        this.lfoPatch = patch;
+        this.hasActiveLfo = true;
+      }
+    }
+
+    resetMachine() {
+      this.dram.fill(0);
+      this.acc = 0;
+      this.address = 0;
+      if (this.lfo1) this.lfo1.reset();
+      if (this.lfo2) this.lfo2.reset();
+    }
+
+    fillDramWithRandomNumbers() {
+      for (let i = 0; i < this.DramLength; i++) {
+        this.dram[i] = Math.floor(Math.random() * 0xFFFF) - 0x8000;
+      }
+    }
+
+    patchMachine(lfo1Value, lfo2Value) {
+      if (!this.lfoPatch) return;
+
+      const patch = this.lfoPatch;
+      const program = this.program;
+      const interpTable = this.interpolationPatchTable;
+
+      // First LFO patch
+      {
+        const memoryShift = lfo1Value | ((patch.top1) << 16);
+        const patchOffset = memoryShift & 0xf0;
+        const sub = ((interpTable[patchOffset + 1] << 8) | interpTable[patchOffset]) - (memoryShift >> 8);
+        const add = ((interpTable[patchOffset + 7] << 8) | interpTable[patchOffset + 6]) + (memoryShift >> 8);
+
+        program[0x05] = sub & 0xff;
+        program[0x06] = ((sub >> 8) & 0x3f) | 0x40;
+        program[0x59] = interpTable[patchOffset + 2];
+        program[0x5a] = interpTable[patchOffset + 3];
+        program[0x5b] = interpTable[patchOffset + 4];
+        program[0x5c] = interpTable[patchOffset + 5];
+        program[0x5d] = add & 0xff;
+        program[0x5e] = ((add >> 8) & 0x3f) | patch.nextInstrOpcode;
       }
 
-      fillDramWithRandomNumbers() {
-        for (let i = 0; i < this.DramLength; i++) {
-          this.dram[i] = Math.floor(Math.random() * 0xFFFF) - 0x8000;
+      // Second LFO patch
+      {
+        const memoryShift = lfo2Value | ((patch.top2) << 16);
+        const patchOffset = 8 + (memoryShift & 0xf0);
+        const sub = ((interpTable[patchOffset + 1] << 8) | interpTable[patchOffset]) - (memoryShift >> 8);
+        const add = ((interpTable[patchOffset + 7] << 8) | interpTable[patchOffset + 6]) + (memoryShift >> 8);
+
+        program[0x5f] = sub & 0xff;
+        program[0x60] = ((sub >> 8) & 0x3f) | 0x40;
+        program[0xb3] = interpTable[patchOffset + 2];
+        program[0xb4] = interpTable[patchOffset + 3];
+        program[0xb5] = interpTable[patchOffset + 4];
+        program[0xb6] = interpTable[patchOffset + 5];
+        program[0xb7] = add & 0xff;
+        program[0xb8] = ((add >> 8) & 0x3f) | patch.nextInstrOpcode;
+      }
+    }
+
+    runMachineTick(input) {
+      let acc = this.acc;
+      let address = this.address;
+      let output = { s: [0, 0] };
+      const memShift = this.memoryShift;
+      const program = this.program;
+
+      for (let pc = 0; pc < 128; pc++) {
+        const operation = program[(2 * pc - memShift - 1) & 0xff] >> 6;
+        const offsetLo = program[(2 * pc - memShift + 0) & 0xff];
+        const offsetHi = program[(2 * pc - memShift + 1) & 0xff] & 0x3f;
+        const offset = (offsetHi << 8) | offsetLo;
+
+        let newAcc = acc;
+        let data, sgn;
+        switch (operation) {
+          case 0: // sumhlf
+            data = this.dram[address];
+            sgn = data < 0 ? 1 : 0;
+            newAcc = newAcc + (data >> 1) + sgn;
+            break;
+          case 1: // ldhlf
+            data = this.dram[address];
+            sgn = data < 0 ? 1 : 0;
+            newAcc = (data >> 1) + sgn;
+            break;
+          case 2: // strpos
+            data = newAcc;
+            sgn = data < 0 ? 1 : 0;
+            this.dram[address] = data;
+            newAcc = newAcc + (data >> 1) + sgn;
+            break;
+          case 3: // strneg
+            data = ~newAcc;
+            sgn = data < 0 ? 1 : 0;
+            this.dram[address] = data;
+            newAcc = (data >> 1) + sgn;
+            break;
         }
-      }
 
-      runMachineTick(input) {
-        let acc = this.acc;
-        let address = this.address;
-        let output = { s: [0, 0] };
-
-        for (let pc = 0; pc < 128; pc++) {
-          const prevInstruction = this.program[(pc + 126) % 128];
-          const instruction = this.program[(pc + 127) % 128];
-          const opcode = (prevInstruction >> 14) & 0x3;
-          const offset = instruction & 0x3FFF;
-
-          let newAcc = acc;
-          let data, sgn;
-          switch (opcode) {
-            case 0:
-              data = this.dram[address];
-              newAcc = Math.floor(newAcc + data / 2) ;
-              break;
-            case 1:
-              data = this.dram[address];
-              newAcc = Math.floor(data / 2);
-              break;
-            case 2:
-              data = newAcc;
-              this.dram[address] = data;
-              newAcc = newAcc + Math.floor(data / 2);
-              break;
-            case 3:
-              data = -newAcc;
-              this.dram[address] = data;
-              newAcc = Math.floor(data / 2);
-              break;
-          }
-          //console.log(`op=${opcode} pc=${pc} addr=${address.toString(16).padStart(8, '0')} data=${data} acc=${newAcc}`);
-
-          if (pc === 0x60) {
-            output.s[0] = data;
-          } else if (pc === 0x70) {
-            output.s[1] = data;
-          } else if (pc === 0) {
-            this.dram[address] = input;
-          } else {
-            acc = newAcc;
-          }
-
-          address = (address + offset) % this.DramLength;
-        }
-        this.acc = acc;
-        this.address = address;
-
-        return output;
-      }
-
-      runEffect(leftIn, rightIn, feedbackAmount) {
-        const mono_sample = (leftIn + rightIn + this.last_output * feedbackAmount) >> 5;
-        const output = this.runMachineTick(mono_sample);
-
-        const left_out = this.clip(output.s[0] * 16);
-        const right_out = this.clip(output.s[1] * 16);
-
-        this.last_output = (left_out + right_out) / 2;
-
-        return [left_out, right_out];
-      }
-
-      clip(input) {
-        if (input > 32767) {
-          return 32767;
-        } else if (input < -32768) {
-          return -32768;
+        if (pc === 0x60) {
+          output.s[0] = data;
+        } else if (pc === 0x70) {
+          output.s[1] = data;
+        } else if (pc === 0) {
+          this.dram[address] = input;
         } else {
-          return input;
+          acc = newAcc;
         }
+
+        address = (address + offset) % this.DramLength;
       }
+      this.acc = acc;
+      this.address = address;
 
-      decodeInstruction(pc, address, prev, curr) {
-          let op = prev >> 14;
-          let offset = curr & 0x3fff;
-          let instruction;
-          let data;
-          let comment;
-
-          switch (op) {
-              case 0b00:
-                  instruction = `sumhlf 0x${address.toString(16).padStart(4, '0')}`;
-                  data = `DRAM[0x${address.toString(16).padStart(4, '0')}]`;
-                  comment = `Acc = Acc + ${data}/2 + sgn`;
-                  break;
-              case 0b01:
-                  instruction = `ldhlf  0x${address.toString(16).padStart(4, '0')}`;
-                  data = `DRAM[0x${address.toString(16).padStart(4, '0')}]`;
-                  comment = `Acc = ${data}/2 + sgn`;
-                  break;
-              case 0b10:
-                  instruction = `strpos 0x${address.toString(16).padStart(4, '0')}`;
-                  data = `Acc`;
-                  comment = `DRAM[0x${address.toString(16).padStart(4, '0')}] = ${data}, Acc = Acc + ${data}/2 + sgn`;
-                  break;
-              case 0b11:
-                  data = `~Acc`;
-                  instruction = `strneg 0x${address.toString(16).padStart(4, '0')}`;
-                  comment = `DRAM[0x${address.toString(16).padStart(4, '0')}] = ${data}, Acc = ${data}/2 + sgn`;
-                  break;
-              default:
-                  instruction = "unknown";
-                  comment = "";
-                  break;
-          }
-
-          if (pc === 0x00) {
-              comment = `DRAM[0x${address.toString(16).padStart(4, '0')}] = Input`;
-          } else if (pc === 0x60) {
-              comment = `Left = ${data}`;
-          } else if (pc === 0x70) {
-              comment = `Right = ${data}`;
-          }
-
-          return {
-              instructionLine: `${pc.toString(16).padStart(2, '0')} ${op} ${curr.toString(16).padStart(4, '0')}   ${instruction}    ${comment}`,
-              newAddress: (address + offset) & 0x3fff
-          };
-      }
-
-      disassemble() {
-          let disassembledInstructions = [];
-          let address = 0;
-
-          for (let pc = 0; pc < 128; pc++) {
-              let prev = this.program[(pc + 126) % 128];
-              let curr = this.program[(pc + 127) % 128];
-              let result = this.decodeInstruction(pc, address, prev, curr);
-              disassembledInstructions.push(result.instructionLine);
-              address = result.newAddress;
-          }
-
-          return {
-              disassembledInstructions,
-              endAddress: address
-          };
-      }
+      return output;
     }
 
-    let audioPath = 'example.wav'; // Default audio file path
-    let currentProgram = 1; // Default effect program
-    const machine = new Machine();
-    let audioCtx = null;
-    let source = null;
-    let processor = null;
-    let dryWetMix = 0.5; // Default to 50% wet signal
-    let isPaused = false;
-    let feedbackAmount = 0.0;
-    let downSamplingFilter0 = new Filterx2();
-    let downSamplingFilter1 = new Filterx2();
-    let upSamplingFilter0 = new Filterx2();
-    let upSamplingFilter1 = new Filterx2();
+    runEffect(leftIn, rightIn, feedbackAmount) {
+      const mono_sample = (leftIn + rightIn + this.last_output * feedbackAmount) >> 5;
+      const output = this.runMachineTick(mono_sample);
 
-    async function startAudio() {
-      if (audioCtx !== null) {
-        audioCtx.close(); // Close any existing audio context
+      const left_out = this.clip(output.s[0] * 16);
+      const right_out = this.clip(output.s[1] * 16);
+
+      this.last_output = (left_out + right_out) / 2;
+
+      return [left_out, right_out];
+    }
+
+    clip(input) {
+      if (input > 32767) return 32767;
+      if (input < -32768) return -32768;
+      return input;
+    }
+
+    decodeInstruction(pc, address, memShift) {
+      const program = this.program;
+      const operation = program[(2 * pc - memShift - 1) & 0xff] >> 6;
+      const offsetLo = program[(2 * pc - memShift + 0) & 0xff];
+      const offsetHi = program[(2 * pc - memShift + 1) & 0xff] & 0x3f;
+      const offset = (offsetHi << 8) | offsetLo;
+      const curr = (offsetHi << 8) | offsetLo;
+
+      let instruction;
+      let data;
+      let comment;
+
+      switch (operation) {
+        case 0b00:
+          instruction = `sumhlf 0x${address.toString(16).padStart(4, '0')}`;
+          data = `DRAM[0x${address.toString(16).padStart(4, '0')}]`;
+          comment = `Acc = Acc + ${data}/2 + sgn`;
+          break;
+        case 0b01:
+          instruction = `ldhlf  0x${address.toString(16).padStart(4, '0')}`;
+          data = `DRAM[0x${address.toString(16).padStart(4, '0')}]`;
+          comment = `Acc = ${data}/2 + sgn`;
+          break;
+        case 0b10:
+          instruction = `strpos 0x${address.toString(16).padStart(4, '0')}`;
+          data = `Acc`;
+          comment = `DRAM[0x${address.toString(16).padStart(4, '0')}] = ${data}, Acc = Acc + ${data}/2 + sgn`;
+          break;
+        case 0b11:
+          data = `~Acc`;
+          instruction = `strneg 0x${address.toString(16).padStart(4, '0')}`;
+          comment = `DRAM[0x${address.toString(16).padStart(4, '0')}] = ${data}, Acc = ${data}/2 + sgn`;
+          break;
+        default:
+          instruction = "unknown";
+          comment = "";
+          break;
       }
 
-      await machine.loadMachine('midiverb.rom', currentProgram);
-      machine.resetMachine();
+      if (pc === 0x00) {
+        comment = `DRAM[0x${address.toString(16).padStart(4, '0')}] = Input`;
+      } else if (pc === 0x60) {
+        comment = `Left = ${data}`;
+      } else if (pc === 0x70) {
+        comment = `Right = ${data}`;
+      }
 
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const response = await fetch(audioPath);
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-
-      source = audioCtx.createBufferSource();
-      source.buffer = audioBuffer;
-      source.loop = true; // Make it repeat forever
-
-      let last_left = 0;
-      let last_right = 0;
-      processor = audioCtx.createScriptProcessor(4096, 2, 2);
-      processor.onaudioprocess = (audioProcessingEvent) => {
-        const inputBuffer = audioProcessingEvent.inputBuffer;
-        const outputBuffer = audioProcessingEvent.outputBuffer;
-
-        for (let sample = 0; sample < inputBuffer.length; sample++) {
-          let left = inputBuffer.numberOfChannels > 0 ? inputBuffer.getChannelData(0)[sample] : 0;
-          let right = inputBuffer.numberOfChannels > 1 ? inputBuffer.getChannelData(1)[sample] : 0;
-          if (isPaused) {
-            left = 0;
-            right = 0;
-          }
-          const left_ds = downSamplingFilter0.run(left);
-          const right_ds = downSamplingFilter1.run(right);
-          if (sample % 2 == 0) {
-            const [left_out, right_out] = machine.runEffect((left_ds * 32767.0)|0, (right_ds * 32767.0)|0, feedbackAmount);
-            last_left = left_out / 32767.0;
-            last_right = right_out / 32767.0;
-          }
-          let left_us = upSamplingFilter0.run(last_left);
-          let right_us = upSamplingFilter1.run(last_right);
-
-          outputBuffer.getChannelData(0)[sample] = (1 - dryWetMix) * left + dryWetMix * left_us;
-          outputBuffer.getChannelData(1)[sample] = (1 - dryWetMix) * right + dryWetMix * right_us;
-        }
+      return {
+        instructionLine: `${pc.toString(16).padStart(2, '0')} ${operation} ${curr.toString(16).padStart(4, '0')}   ${instruction}    ${comment}`,
+        newAddress: (address + offset) & 0x3fff
       };
-
-      source.connect(processor);
-      processor.connect(audioCtx.destination);
-      source.start(0);
     }
 
-    function stopAudio() {
-      if (source !== null) {
-        source.stop();
+    disassemble() {
+      let disassembledInstructions = [];
+      let address = 0;
+
+      for (let pc = 0; pc < 128; pc++) {
+        let result = this.decodeInstruction(pc, address, this.memoryShift);
+        disassembledInstructions.push(result.instructionLine);
+        address = result.newAddress;
       }
-      if (processor !== null) {
-        processor.disconnect();
-      }
-      if (audioCtx !== null) {
-        audioCtx.close();
-      }
+
+      return {
+        disassembledInstructions,
+        endAddress: address
+      };
+    }
+  }
+
+  // Configuration - default device and effect
+  const DEFAULT_DEVICE = 'midiverb2';
+  const DEFAULT_PROGRAM = 1;
+
+  // Global state
+  let audioPath = 'example.wav';
+  let currentDevice = DEFAULT_DEVICE;
+  let currentProgram = DEFAULT_PROGRAM;
+  const machine = new Machine();
+  let audioCtx = null;
+  let source = null;
+  let processor = null;
+  let dryWetMix = 0.5;
+  let isPaused = false;
+  let feedbackAmount = 0.0;
+  let downSamplingFilter0 = new Filterx2();
+  let downSamplingFilter1 = new Filterx2();
+  let upSamplingFilter0 = new Filterx2();
+  let upSamplingFilter1 = new Filterx2();
+
+  // Disassembly update throttling
+  let lastDisassemblyUpdate = 0;
+  const DISASSEMBLY_UPDATE_INTERVAL = 100; // 10 fps = 100ms interval
+  let lfoTickCounter = 0;
+
+  function populateEffectList(deviceKey) {
+    const romType = ROM_TYPES[deviceKey];
+    const effectSelect = document.getElementById('effectProgram');
+    effectSelect.innerHTML = '';
+
+    romType.effectNames.forEach((name, index) => {
+      const option = document.createElement('option');
+      option.value = romType.firstProgram + index;
+      option.textContent = `${romType.firstProgram + index}: ${name}`;
+      effectSelect.appendChild(option);
+    });
+
+    currentProgram = romType.firstProgram;
+  }
+
+  async function startAudio() {
+    if (audioCtx !== null) {
+      audioCtx.close();
     }
 
-    function pauseAudio() {
-      isPaused = !isPaused; // Toggle pause state
-      if (isPaused) {
-        document.getElementById('pauseButton').innerText = 'Unmute effect input';
-      } else {
-        document.getElementById('pauseButton').innerText = 'Mute effect input';
+    const romType = ROM_TYPES[currentDevice];
+    await machine.loadRom(romType);
+    machine.loadProgram(romType, currentProgram);
+    machine.resetMachine();
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const response = await fetch(audioPath);
+    const arrayBuffer = await response.arrayBuffer();
+    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+    source = audioCtx.createBufferSource();
+    source.buffer = audioBuffer;
+    source.loop = true;
+
+    let last_left = 0;
+    let last_right = 0;
+    lfoTickCounter = 0;
+
+    processor = audioCtx.createScriptProcessor(4096, 2, 2);
+    processor.onaudioprocess = (audioProcessingEvent) => {
+      const inputBuffer = audioProcessingEvent.inputBuffer;
+      const outputBuffer = audioProcessingEvent.outputBuffer;
+
+      for (let sample = 0; sample < inputBuffer.length; sample++) {
+        let left = inputBuffer.numberOfChannels > 0 ? inputBuffer.getChannelData(0)[sample] : 0;
+        let right = inputBuffer.numberOfChannels > 1 ? inputBuffer.getChannelData(1)[sample] : 0;
+        if (isPaused) {
+          left = 0;
+          right = 0;
+        }
+        const left_ds = downSamplingFilter0.run(left);
+        const right_ds = downSamplingFilter1.run(right);
+        if (sample % 2 == 0) {
+          const [left_out, right_out] = machine.runEffect((left_ds * 32767.0)|0, (right_ds * 32767.0)|0, feedbackAmount);
+          last_left = left_out / 32767.0;
+          last_right = right_out / 32767.0;
+
+          // Run LFO every ~8 samples (matching C code timing)
+          if (machine.hasActiveLfo && lfoTickCounter % 8 === 0) {
+            const lfo1Value = machine.lfo1.update();
+            const lfo2Value = machine.lfo2.update();
+            machine.patchMachine(lfo1Value, lfo2Value);
+
+            // Throttled disassembly update
+            const now = performance.now();
+            if (now - lastDisassemblyUpdate >= DISASSEMBLY_UPDATE_INTERVAL) {
+              lastDisassemblyUpdate = now;
+              requestAnimationFrame(() => displayDisassembly(currentProgram));
+            }
+          }
+          lfoTickCounter++;
+        }
+        let left_us = upSamplingFilter0.run(last_left);
+        let right_us = upSamplingFilter1.run(last_right);
+
+        outputBuffer.getChannelData(0)[sample] = (1 - dryWetMix) * left + dryWetMix * left_us;
+        outputBuffer.getChannelData(1)[sample] = (1 - dryWetMix) * right + dryWetMix * right_us;
       }
+    };
+
+    source.connect(processor);
+    processor.connect(audioCtx.destination);
+    source.start(0);
+
+    displayDisassembly(currentProgram);
+  }
+
+  function stopAudio() {
+    if (source !== null) {
+      source.stop();
     }
-
-
-    document.getElementById('startButton').addEventListener('click', startAudio);
-    document.getElementById('stopButton').addEventListener('click', stopAudio);
-    document.getElementById('pauseButton').addEventListener('click', pauseAudio);
-
-    document.getElementById('effectProgram').addEventListener('change', (event) => {
-      currentProgram = parseInt(event.target.value);
-      machine.loadMachine('midiverb.rom', currentProgram)
-        .then(() => {
-          machine.resetMachine();
-          displayDisassembly(currentProgram); // Add this line
-        });
-    });
-
-    function displayDisassembly(programNumber) {
-      const disassembled = machine.disassemble().disassembledInstructions;
-      const disassemblyContainer = document.getElementById('disassemblyContainer');
-      disassemblyContainer.innerHTML = `<h3>Program #${programNumber}</h3><pre>${disassembled.join('\n')}</pre>`;
+    if (processor !== null) {
+      processor.disconnect();
     }
+    if (audioCtx !== null) {
+      audioCtx.close();
+      audioCtx = null;
+    }
+  }
 
-    document.getElementById('dryWetMix').addEventListener('input', (event) => {
-      dryWetMix = event.target.value / 100;
-    });
-    document.getElementById('feedbackAmount').addEventListener('input', (event) => {
-      feedbackAmount = event.target.value / 100;
-    });
+  function pauseAudio() {
+    isPaused = !isPaused;
+    if (isPaused) {
+      document.getElementById('pauseButton').innerText = 'Unmute effect input';
+    } else {
+      document.getElementById('pauseButton').innerText = 'Mute effect input';
+    }
+  }
 
-    document.getElementById('uploadButton').addEventListener('click', () => {
-      document.getElementById('fileInput').click();
-    });
+  function displayDisassembly(programNumber) {
+    const romType = ROM_TYPES[currentDevice];
+    const effectName = romType.effectNames[programNumber - romType.firstProgram] || '';
+    const lfoInfo = machine.hasActiveLfo ? ' [LFO Active]' : '';
+    const disassembled = machine.disassemble().disassembledInstructions;
+    const disassemblyContainer = document.getElementById('disassemblyContainer');
+    disassemblyContainer.innerHTML = `<h3>${romType.name} Program #${programNumber}: ${effectName}${lfoInfo}</h3><pre>${disassembled.join('\n')}</pre>`;
+  }
 
-    document.getElementById('fillDramButton').addEventListener('click', () => {
-      machine.fillDramWithRandomNumbers();
-    });
+  // Event listeners
+  document.getElementById('startButton').addEventListener('click', startAudio);
+  document.getElementById('stopButton').addEventListener('click', stopAudio);
+  document.getElementById('pauseButton').addEventListener('click', pauseAudio);
 
-    document.getElementById('fileInput').addEventListener('change', (event) => {
-      if (event.target.files.length > 0) {
-        const file = event.target.files[0];
-        audioPath = URL.createObjectURL(file);
-        stopAudio(); // Stop any existing audio
-        startAudio(); // Restart audio with the new file
-      }
-    });
+  document.getElementById('deviceSelect').addEventListener('change', async (event) => {
+    currentDevice = event.target.value;
+    populateEffectList(currentDevice);
+
+    const romType = ROM_TYPES[currentDevice];
+    await machine.loadRom(romType);
+    machine.loadProgram(romType, currentProgram);
+    machine.resetMachine();
+    displayDisassembly(currentProgram);
+  });
+
+  document.getElementById('effectProgram').addEventListener('change', async (event) => {
+    currentProgram = parseInt(event.target.value);
+    const romType = ROM_TYPES[currentDevice];
+    await machine.loadRom(romType);
+    machine.loadProgram(romType, currentProgram);
+    machine.resetMachine();
+    displayDisassembly(currentProgram);
+  });
+
+  document.getElementById('dryWetMix').addEventListener('input', (event) => {
+    dryWetMix = event.target.value / 100;
+  });
+
+  document.getElementById('feedbackAmount').addEventListener('input', (event) => {
+    feedbackAmount = event.target.value / 100;
+  });
+
+  document.getElementById('uploadButton').addEventListener('click', () => {
+    document.getElementById('fileInput').click();
+  });
+
+  document.getElementById('fillDramButton').addEventListener('click', () => {
+    machine.fillDramWithRandomNumbers();
+  });
+
+  document.getElementById('fileInput').addEventListener('change', (event) => {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      audioPath = URL.createObjectURL(file);
+      stopAudio();
+      startAudio();
+    }
+  });
+
+  // Initialize on load
+  populateEffectList(DEFAULT_DEVICE);
+  // Set default program in the effect dropdown
+  document.getElementById('effectProgram').value = DEFAULT_PROGRAM;
+  currentProgram = DEFAULT_PROGRAM;
   </script>
 </body>
 </html>
