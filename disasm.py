@@ -369,6 +369,7 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
 
     print('-- Pass 3: Eliminate dead instructions')
     will_be_needed = used_writes | set(['Left', 'Right'])
+    used_locations = set()
     pass3_instructions = []
     # Accumulator is probably not used in between iterations, but just in case...
     #if 'Acc' in prev_used:
@@ -381,6 +382,7 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
             pass
         else:
             will_be_needed = (will_be_needed - defines) | uses
+            used_locations |= uses
             print(instr.pretty_string())
             pass3_instructions.append(instr)
     pass3_instructions = reversed(pass3_instructions)
@@ -391,7 +393,7 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
     f.write('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])\n')
     f.write('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])\n')
     f.write(f'void {function_name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {{\n')
-    local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp_addrs]
+    local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp_addrs if addr in used_locations]
     local_vars_str = ', '.join(local_vars)
     f.write(f'\tint16_t {local_vars_str};\n')
 
