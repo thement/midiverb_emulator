@@ -201,7 +201,8 @@ class DelayLineStorage:
         self.lines = []
         self.read_addrs = {}
         self.write_addrs = {}
-        self.tmp = set()
+        self.tmp_addrs = set()
+        self.tmp_addrs_that_read_real_memory = set()
 
     def add(self, line):
         i = len(self.lines)
@@ -211,22 +212,34 @@ class DelayLineStorage:
             self.read_addrs[addr] = i
         self.write_addrs[line.addr] = i
 
-    def add_tmp(self, addr):
-        self.tmp.add(addr)
+    def add_tmp(self, addr, is_read_first):
+        self.tmp_addrs.add(addr)
+        if is_read_first:
+            self.tmp_addrs_that_read_real_memory.add(addr)
 
     @staticmethod
     def get_tmp_name(addr):
         return f"tmp_{addr:x}"
 
-    def format_address(self, addr):
-        if addr in self.tmp:
-            return self.get_tmp_name(addr)
+    def format_read_address(self, addr, was_this_addr_written):
+        if addr in self.tmp_addrs:
+            if not addr in self.tmp_addrs_that_read_real_memory or was_this_addr_written:
+                return self.get_tmp_name(addr)
         id = self.read_addrs.get(addr)
-        if id is not None:
-            line = self.lines[id]
-            offset = (line.addr - addr) & 0x3fff
-            return f"LINE({line.id}, {line.addr}, {offset})"
-        id = self.write_addrs[addr]
+        if id is None:
+            id = self.write_addrs.get(addr)
+        if id is None:
+            return None
+        line = self.lines[id]
+        offset = (line.addr - addr) & 0x3fff
+        return f"LINE({line.id}, {line.addr}, {offset})"
+
+    def format_write_address(self, addr):
+        if addr in self.tmp_addrs:
+            return self.get_tmp_name(addr)
+        id = self.write_addrs.get(addr)
+        if id is None:
+            return None
         line = self.lines[id]
         return f"WRITE_LINE({line.id}, {line.addr})"
 
@@ -345,7 +358,7 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
                 j = (j - 1) % n
             if len(taps) == 0:
                 not_read.add(location['addr'])
-                delay_line_storage.add_tmp(location['addr'])
+                delay_line_storage.add_tmp(location['addr'], location['read'])
             else:
                 used_writes.add(location['addr'])
                 delay_line = DelayLine(addr=location['addr'], tap_addrs=taps)
@@ -378,10 +391,11 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
     f.write('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])\n')
     f.write('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])\n')
     f.write(f'void {function_name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {{\n')
-    local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp]
+    local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp_addrs]
     local_vars_str = ', '.join(local_vars)
     f.write(f'\tint16_t {local_vars_str};\n')
 
+    addrs_written = dict()
     acc = None
     def flush_acc():
         nonlocal acc
@@ -397,32 +411,33 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
     for instr in pass3_instructions:
         s = None
         if instr.addr is not None:
-            addr_str = delay_line_storage.format_address(instr.addr)
+            read_addr_str = delay_line_storage.format_read_address(instr.addr, instr.addr in addrs_written)
+            write_addr_str = delay_line_storage.format_write_address(instr.addr)
         else:
-            addr_str = None
-        #f.write(f'// {instr}, addr_str = {addr_str}, opcode = {instr.opcode}\n');
+            read_addr_str = None
+            write_addr_str = None
 
-        #flush_acc()
         if instr.opcode == DSPInstruction.SUMHLF:
-            #s = f"Acc = Acc + {addr_str}/2"
             default_acc()
-            acc += Accumulator.term(addr_str, 1, 2)
+            acc += Accumulator.term(read_addr_str, 1, 2)
         elif instr.opcode == DSPInstruction.LDHLF:
-            #s = f"Acc = {addr_str}/2"
-            acc = Accumulator.term(addr_str, 1, 2)
+            acc = Accumulator.term(read_addr_str, 1, 2)
         elif instr.opcode == DSPInstruction.INPUT:
             flush_acc()
-            s = f"{addr_str} = input"
+            s = f"{write_addr_str} = input"
+            addrs_written[instr.addr] = True
         elif instr.opcode == DSPInstruction.OUTPUT_LEFT:
-            s = f"*out_left = {addr_str}"
+            s = f"*out_left = {read_addr_str}"
         elif instr.opcode == DSPInstruction.OUTPUT_RIGHT:
-            s = f"*out_right = {addr_str}"
+            s = f"*out_right = {read_addr_str}"
         elif instr.opcode == DSPInstruction.STORE:
             flush_acc()
-            s = f"{addr_str} = Acc"
+            s = f"{write_addr_str} = Acc"
+            addrs_written[instr.addr] = True
         elif instr.opcode == DSPInstruction.STOREN:
             flush_acc()
-            s = f"{addr_str} = -Acc"
+            s = f"{write_addr_str} = -Acc"
+            addrs_written[instr.addr] = True
         elif instr.opcode == DSPInstruction.ADDHLF:
             #s = f"Acc = Acc + Acc/2"
             default_acc()
