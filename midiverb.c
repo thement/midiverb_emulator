@@ -152,6 +152,7 @@ int main(int argc, char *argv[]) {
         int32_t input_mono_with_fb = ((int32_t) input_left + input_right) * 0.5 +
             args.feedback_ratio * ((int32_t) output_left + output_right) * 0.5;
         int16_t input_clipped = clip(input_mono_with_fb);
+        unsigned int sample_num = i / 2;
 
         // Input should be 13-bit mono
         //
@@ -175,8 +176,8 @@ int main(int argc, char *argv[]) {
         output_samples[i] = clip(output_left * dry_wet_ratio + input_left * wet_dry_ratio);
         output_samples[i + 1] = clip(output_right * dry_wet_ratio + input_right * wet_dry_ratio);
 
-        // Maybe run LFO; TODO: figure out the timing
-        if (i % 44 == 0 && run_lfo) {
+        // Run the LFO at 23437.5 / 8 == 2930 Hz
+        if (sample_num % 8 == 0 && run_lfo) {
             uint32_t lfo1_value = lfo1.update(&lfo1);
             uint32_t lfo2_value = lfo2.update(&lfo2);
 
