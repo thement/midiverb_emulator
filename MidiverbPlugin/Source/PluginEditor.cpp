@@ -4,20 +4,30 @@
 MidiverbAudioProcessorEditor::MidiverbAudioProcessorEditor(MidiverbAudioProcessor& p)
     : AudioProcessorEditor(&p), audioProcessor(p)
 {
+    // Device selector
+    deviceLabel.setText("Device", juce::dontSendNotification);
+    deviceLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(deviceLabel);
+
+    for (int i = 0; i < MidiverbAudioProcessor::NUM_DEVICES; ++i)
+        deviceSelector.addItem(MidiverbAudioProcessor::getDeviceName(i), i + 1);
+
+    addAndMakeVisible(deviceSelector);
+
+    deviceAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
+        audioProcessor.getAPVTS(), "device", deviceSelector);
+
     // Program selector
     programLabel.setText("Program", juce::dontSendNotification);
     programLabel.setJustificationType(juce::Justification::centred);
     addAndMakeVisible(programLabel);
-
-    for (int i = 1; i <= MidiverbAudioProcessor::NUM_EFFECTS; ++i)
-        programSelector.addItem(juce::String(i) + ": " + MidiverbAudioProcessor::getEffectName(i - 1), i);
-
-    programSelector.setSelectedId(1);
     addAndMakeVisible(programSelector);
 
-    // ComboBox attachment needs special handling for AudioParameterInt
     programAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.getAPVTS(), "program", programSelector);
+
+    // Initialize program list for current device
+    updateProgramSelector();
 
     // Dry/Wet slider
     dryWetLabel.setText("Dry/Wet", juce::dontSendNotification);
@@ -43,7 +53,7 @@ MidiverbAudioProcessorEditor::MidiverbAudioProcessorEditor(MidiverbAudioProcesso
     feedbackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         audioProcessor.getAPVTS(), "feedback", feedbackSlider);
 
-    setSize(500, 300);
+    setSize(500, 340);
 
     startTimerHz(30);
 }
@@ -53,8 +63,47 @@ MidiverbAudioProcessorEditor::~MidiverbAudioProcessorEditor()
     stopTimer();
 }
 
+void MidiverbAudioProcessorEditor::updateProgramSelector()
+{
+    int deviceIndex = static_cast<int>(*audioProcessor.getAPVTS().getRawParameterValue("device"));
+
+    if (deviceIndex == lastDeviceIndex)
+        return;
+
+    lastDeviceIndex = deviceIndex;
+
+    // Save current program
+    int currentProgram = static_cast<int>(*audioProcessor.getAPVTS().getRawParameterValue("program"));
+
+    // Detach temporarily to avoid feedback loops
+    programAttachment.reset();
+
+    programSelector.clear(juce::dontSendNotification);
+
+    int firstProg = MidiverbAudioProcessor::getDeviceFirstProgram(deviceIndex);
+    int lastProg = MidiverbAudioProcessor::getDeviceLastProgram(deviceIndex);
+
+    for (int prog = firstProg; prog <= lastProg; ++prog) {
+        juce::String name = MidiverbAudioProcessor::getEffectName(deviceIndex, prog);
+        programSelector.addItem(juce::String(prog) + ": " + name, prog + 1);  // ComboBox IDs are 1-based
+    }
+
+    // Clamp current program to valid range for this device
+    if (currentProgram < firstProg) currentProgram = firstProg;
+    if (currentProgram > lastProg) currentProgram = lastProg;
+
+    programSelector.setSelectedId(currentProgram + 1, juce::dontSendNotification);
+
+    // Reattach
+    programAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
+        audioProcessor.getAPVTS(), "program", programSelector);
+}
+
 void MidiverbAudioProcessorEditor::timerCallback()
 {
+    // Check for device changes
+    updateProgramSelector();
+
     if (audioProcessor.getAndClearInputOverload())
     {
         showOverload = true;
@@ -87,7 +136,13 @@ void MidiverbAudioProcessorEditor::resized()
     auto area = getLocalBounds();
     area.removeFromTop(50); // Space for title
 
-    auto selectorArea = area.removeFromTop(60);
+    // Device selector
+    auto deviceArea = area.removeFromTop(50);
+    deviceLabel.setBounds(deviceArea.removeFromTop(20));
+    deviceSelector.setBounds(deviceArea.reduced(20, 5));
+
+    // Program selector
+    auto selectorArea = area.removeFromTop(50);
     programLabel.setBounds(selectorArea.removeFromTop(20));
     programSelector.setBounds(selectorArea.reduced(20, 5));
 

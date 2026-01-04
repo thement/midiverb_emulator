@@ -17,7 +17,14 @@ public:
 
 private:
     void timerCallback() override;
+    void updateProgramSelector();
     MidiverbAudioProcessor& audioProcessor;
+
+    // Device selector
+    juce::ComboBox deviceSelector;
+    juce::Label deviceLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> deviceAttachment;
+    int lastDeviceIndex = -1;
 
     // Program selector
     juce::ComboBox programSelector;

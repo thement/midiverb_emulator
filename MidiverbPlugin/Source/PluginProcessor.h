@@ -140,11 +140,16 @@ public:
 
     juce::AudioProcessorValueTreeState& getAPVTS() { return apvts; }
 
-    static constexpr int NUM_EFFECTS = 128;
+    static constexpr int NUM_DEVICES = 3;
+    static constexpr int MAX_PROGRAMS = 100;  // MIDIVerb 2 has 100 programs (0-99)
     static constexpr double EFFECT_SAMPLE_RATE = 24000.0;
     static constexpr double FILTER_CUTOFF = 10000.0;  // Below 12kHz Nyquist
 
-    static const char* getEffectName(int index);
+    // Device info accessors
+    static const char* getDeviceName(int deviceIndex);
+    static int getDeviceFirstProgram(int deviceIndex);
+    static int getDeviceLastProgram(int deviceIndex);
+    static const char* getEffectName(int deviceIndex, int program);
 
     // Input overload detection
     bool getAndClearInputOverload() { return inputOverload.exchange(false); }

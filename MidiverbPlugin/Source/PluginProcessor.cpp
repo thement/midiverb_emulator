@@ -4,142 +4,36 @@
 
 #include "Effects.h"
 
-// Effect names from all.txt
-static const char* effectNames[128] = {
-    ".2 Sec SMALL BRIGHT",
-    ".2 Sec SMALL WARM",
-    ".2 Sec MEDIUM BRIGHT",
-    ".3 Sec SMALL BRIGHT",
-    ".3 Sec SMALL WARM",
-    ".4 Sec MEDIUM BRIGHT",
-    ".4 Sec MEDIUM WARM",
-    ".6 Sec SMALL BRIGHT",
-    ".6 Sec MEDIUM WARM",
-    ".6 Sec MEDIUM DARK",
-    ".8 Sec SMALL BRIGHT",
-    ".8 Sec LARGE WARM",
-    "1.0 Sec SMALL WARM",
-    "1.0 Sec MEDIUM WARM",
-    "1.0 Sec LARGE BRIGHT",
-    "1.2 Sec MEDIUM WARM",
-    "1.2 Sec SMALL WARM",
-    "1.2 Sec SMALL BRIGHT",
-    "1.4 Sec LARGE WARM",
-    "1.4 Sec LARGE DARK",
-    "1.4 Sec MEDIUM WARM",
-    "1.6 Sec SMALL DARK",
-    "1.6 Sec LARGE BRIGHT",
-    "1.6 Sec MEDIUM BRIGHT",
-    "1.8 Sec LARGE DARK",
-    "1.8 Sec LARGE BRIGHT",
-    "1.8 Sec MEDIUM WARM",
-    "2.0 Sec LARGE BRIGHT",
-    "2.0 Sec MEDIUM WARM",
-    "2.0 Sec LARGE WARM",
-    "2.5 Sec MEDIUM WARM",
-    "2.5 Sec LARGE BRIGHT",
-    "2.5 Sec MEDIUM DARK",
-    "2.8 Sec SMALL BRIGHT",
-    "2.8 Sec MEDIUM BRIGHT",
-    "3.0 Sec LARGE BRIGHT",
-    "3.0 Sec LARGE WARM",
-    "3.0 Sec MEDIUM DARK",
-    "3.5 Sec LARGE BRIGHT",
-    "3.5 Sec MEDIUM WARM",
-    "4.0 Sec LARGE DARK",
-    "4.0 Sec MEDIUM BRIGHT",
-    "5 Sec LARGE WARM",
-    "8 Sec LARGE BRIGHT",
-    "8 Sec LARGE WARM",
-    "10 Sec LARGE BRIGHT",
-    "10 Sec LARGE WARM",
-    "16 Sec LARGE DARK",
-    "18 Sec EX. LARGE BRIGHT",
-    "20 Sec EX. LARGE DARK",
-    "Gated 100 MS",
-    "Gated 150 MS",
-    "Gated 200 MS",
-    "Gated 250 MS",
-    "Gated 300 MS",
-    "Gated 350 MS",
-    "Gated 400 MS",
-    "Gated 500 MS",
-    "Gated 600 MS",
-    "REVERSE - 300 MS",
-    "REVERSE - 400 MS",
-    "REVERSE - 500 MS",
-    "REVERSE - 600 MS",
-    "DEFEAT",
-    "ECHO LONG FLAT AMBI",
-    "ECHO LONG FLAT THICK",
-    "ECHO LONG HPF",
-    "ECHO LONG HPF WIDE",
-    "ECHO LONG BPF AMBI",
-    "ECHO LONG LPF WIDE",
-    "ECHO MED FLAT AMBI",
-    "ECHO MED FLAT WIDE",
-    "ECHO MED HPF AMBI",
-    "ECHO MED BPF AMBI",
-    "ECHO MED LPF AMBI",
-    "ECHO MED LPF WIDE",
-    "ECHO MED FLAT THICK",
-    "ECHO SHORT FLAT",
-    "ECHO SHORT LPF AMBI",
-    "ECHO SHORT HPF AMBI",
-    "ECHO SHORT BPF AMBI",
-    "ECHO SHORT FLAT",
-    "ECHO SHORT FLAT WIDE",
-    "ECHO XSHORT FLAT",
-    "ECHO XSHORT BPF WIDE",
-    "2TAP MED FLAT AMBI",
-    "2TAP MED HPF AMBI",
-    "2TAP MED BPF AMBI",
-    "2TAP MED FLAT THICK",
-    "2TAP SHORT FLAT WIDE",
-    "2TAP SHORT HPF PAN",
-    "2TAP SHORT BPF AMBI",
-    "2TAP SHORT LPF AMBI",
-    "2TAP XSHORT FLAT WIDE",
-    "3TAP MED FLAT PAN",
-    "3TAP SHORT FLAT PAN",
-    "3TAP SHORT LPF AMBI",
-    "3TAP SHORT BPF AMBI",
-    "3TAP SHORT HPF AMBI",
-    "3TAP XSHORT FLAT AMBI",
-    "REGEN MED FLAT",
-    "REGEN MED HPF AMBI",
-    "REGEN MED BPF AMBI",
-    "REGEN MED LPF AMBI",
-    "REGEN SHORT FLAT",
-    "REGEN XSHORT FLAT",
-    "SLAP1",
-    "SLAP2",
-    "SLAP3",
-    "SLAP4",
-    "SLAP5",
-    "REVERB SHORT GATE",
-    "REVERB MEDIUM WARM",
-    "REVERB MEDIUM BLOOM",
-    "REVERB MEDIUM PAN",
-    "REVERB LONG HPF",
-    "REVERB REVERSE",
-    "REVERB REVERSE REGEN",
-    "MULTITAP PAN",
-    "MULTITAP REVERB",
-    "MULTITAP REVERSE PAN",
-    "THICKENER",
-    "THICKENER DENSE",
-    "STEREOGEN AMBIENT",
-    "STEREOGEN THICK",
-    "STEREOGEN WIDE",
-    "STEREOGEN XWIDE",
-    "DEFEAT"
-};
-
-const char* MidiverbAudioProcessor::getEffectName(int index)
+const char* MidiverbAudioProcessor::getDeviceName(int deviceIndex)
 {
-    if (index >= 0 && index < NUM_EFFECTS)
-        return effectNames[index];
+    if (deviceIndex >= 0 && deviceIndex < NUM_DEVICES)
+        return devices[deviceIndex].name;
+    return "Unknown";
+}
+
+int MidiverbAudioProcessor::getDeviceFirstProgram(int deviceIndex)
+{
+    if (deviceIndex >= 0 && deviceIndex < NUM_DEVICES)
+        return devices[deviceIndex].firstProgram;
+    return 0;
+}
+
+int MidiverbAudioProcessor::getDeviceLastProgram(int deviceIndex)
+{
+    if (deviceIndex >= 0 && deviceIndex < NUM_DEVICES)
+        return devices[deviceIndex].lastProgram;
+    return 0;
+}
+
+const char* MidiverbAudioProcessor::getEffectName(int deviceIndex, int program)
+{
+    if (deviceIndex >= 0 && deviceIndex < NUM_DEVICES) {
+        const auto& dev = devices[deviceIndex];
+        int index = program - dev.firstProgram;
+        int count = dev.lastProgram - dev.firstProgram + 1;
+        if (index >= 0 && index < count)
+            return dev.effectNames[index];
+    }
     return "Unknown";
 }
 
@@ -167,8 +61,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout MidiverbAudioProcessor::crea
 {
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
+    // Device selection (0=MIDIVerb, 1=MidiFex, 2=MIDIVerb 2)
     params.push_back(std::make_unique<juce::AudioParameterInt>(
-        juce::ParameterID{"program", 1}, "Program", 1, NUM_EFFECTS, 1));
+        juce::ParameterID{"device", 1}, "Device", 0, NUM_DEVICES - 1, 2));  // Default: MIDIVerb 2
+
+    // Program selection (0-99 range to cover all devices)
+    params.push_back(std::make_unique<juce::AudioParameterInt>(
+        juce::ParameterID{"program", 1}, "Program", 0, MAX_PROGRAMS - 1, 1));  // Default: program 1
 
     params.push_back(std::make_unique<juce::AudioParameterFloat>(
         juce::ParameterID{"dryWet", 1}, "Dry/Wet",
@@ -191,21 +90,22 @@ bool MidiverbAudioProcessor::producesMidi() const { return false; }
 bool MidiverbAudioProcessor::isMidiEffect() const { return false; }
 double MidiverbAudioProcessor::getTailLengthSeconds() const { return 2.0; }
 
-int MidiverbAudioProcessor::getNumPrograms() { return NUM_EFFECTS; }
+int MidiverbAudioProcessor::getNumPrograms() { return MAX_PROGRAMS; }
 int MidiverbAudioProcessor::getCurrentProgram()
 {
-    return static_cast<int>(*apvts.getRawParameterValue("program")) - 1;
+    return static_cast<int>(*apvts.getRawParameterValue("program"));
 }
 
 void MidiverbAudioProcessor::setCurrentProgram(int index)
 {
     apvts.getParameter("program")->setValueNotifyingHost(
-        apvts.getParameter("program")->convertTo0to1(static_cast<float>(index + 1)));
+        apvts.getParameter("program")->convertTo0to1(static_cast<float>(index)));
 }
 
 const juce::String MidiverbAudioProcessor::getProgramName(int index)
 {
-    return juce::String(index + 1) + ": " + getEffectName(index);
+    int deviceIndex = static_cast<int>(*apvts.getRawParameterValue("device"));
+    return juce::String(index) + ": " + getEffectName(deviceIndex, index);
 }
 
 void MidiverbAudioProcessor::changeProgramName(int index, const juce::String& newName)
@@ -263,15 +163,25 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    int programNo = static_cast<int>(*apvts.getRawParameterValue("program"));
+    int deviceIndex = static_cast<int>(*apvts.getRawParameterValue("device"));
+    int program = static_cast<int>(*apvts.getRawParameterValue("program"));
     float dryWet = *apvts.getRawParameterValue("dryWet");
     float feedback = *apvts.getRawParameterValue("feedback");
+
+    // Clamp program to valid range for current device
+    const auto& dev = devices[deviceIndex];
+    if (program < dev.firstProgram) program = dev.firstProgram;
+    if (program > dev.lastProgram) program = dev.lastProgram;
+
+    // Get effect function pointer
+    int effectIndex = program - dev.firstProgram;
+    auto effectFn = dev.effects[effectIndex];
 
     auto* leftChannel = buffer.getWritePointer(0);
     auto* rightChannel = buffer.getWritePointer(1);
     int numSamples = buffer.getNumSamples();
 
-    float angle = dryWet * 1.5707963f;  // π/2
+    float angle = dryWet * 1.5707963f;  // pi/2
     float equalPowerDry = std::cos(angle);
     float equalPowerWet = std::sin(angle);
 
@@ -296,7 +206,7 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             int16_t inputInt = static_cast<int16_t>(saturate(lastFilteredInput) * 0x1fff);
             int16_t outLeftInt, outRightInt;
 
-            effects[programNo - 1](inputInt, &outLeftInt, &outRightInt, DRAM.data(), memoryPointer++);
+            effectFn(inputInt, &outLeftInt, &outRightInt, DRAM.data(), memoryPointer++);
 
             float outL = outLeftInt / static_cast<float>(0x1fff);
             float outR = outRightInt / static_cast<float>(0x1fff);
