@@ -13,13 +13,13 @@ void midiverb_effect_1(int16_t input, int16_t *out_left, int16_t *out_right, int
 	tmp_3 = Acc;
 	Acc = LINE(13, 16381, 58) * 5 / 8 + LINE(0, 0, 1) / 2;
 	WRITE_LINE(13, 16381) = -Acc;
-	Acc = LINE(12, 16321, 89) * 5 / 8 + WRITE_LINE(13, 16381) * 5 / 8 + LINE(13, 16381, 58);
+	Acc = LINE(12, 16321, 89) * 5 / 8 + LINE(13, 16381, 0) * 5 / 8 + LINE(13, 16381, 58);
 	WRITE_LINE(12, 16321) = -Acc;
-	Acc = LINE(11, 16230, 113) * 5 / 8 + WRITE_LINE(12, 16321) * 5 / 8 + LINE(12, 16321, 89);
+	Acc = LINE(11, 16230, 113) * 5 / 8 + LINE(12, 16321, 0) * 5 / 8 + LINE(12, 16321, 89);
 	WRITE_LINE(11, 16230) = -Acc;
-	Acc = -WRITE_LINE(11, 16230) / 4;
+	Acc = -LINE(11, 16230, 0) / 4;
 	tmp_1 = -Acc;
-	Acc = -Acc / 2 + WRITE_LINE(11, 16230) / 2 + LINE(11, 16230, 113) + tmp_1 / 2;
+	Acc = -Acc / 2 + LINE(11, 16230, 0) / 2 + LINE(11, 16230, 113) + tmp_1 / 2;
 	tmp_1 = -Acc;
 	Acc = Acc * -27 / 16 + tmp_1 * 27 / 8;
 	tmp_b = Acc;
@@ -69,13 +69,13 @@ void midiverb_effect_2(int16_t input, int16_t *out_left, int16_t *out_right, int
 	WRITE_LINE(3, 14110) = Acc;
 	Acc = LINE(14, 16381, 58) * 5 / 8 + LINE(3, 14110, 1) / 2;
 	WRITE_LINE(14, 16381) = -Acc;
-	Acc = LINE(13, 16321, 89) * 5 / 8 + WRITE_LINE(14, 16381) * 5 / 8 + LINE(14, 16381, 58);
+	Acc = LINE(13, 16321, 89) * 5 / 8 + LINE(14, 16381, 0) * 5 / 8 + LINE(14, 16381, 58);
 	WRITE_LINE(13, 16321) = -Acc;
-	Acc = LINE(12, 16230, 113) * 5 / 8 + WRITE_LINE(13, 16321) * 5 / 8 + LINE(13, 16321, 89);
+	Acc = LINE(12, 16230, 113) * 5 / 8 + LINE(13, 16321, 0) * 5 / 8 + LINE(13, 16321, 89);
 	WRITE_LINE(12, 16230) = -Acc;
-	Acc = -WRITE_LINE(12, 16230) / 4;
+	Acc = -LINE(12, 16230, 0) / 4;
 	tmp_1 = -Acc;
-	Acc = -Acc / 2 + WRITE_LINE(12, 16230) / 2 + LINE(12, 16230, 113) + tmp_1 / 2;
+	Acc = -Acc / 2 + LINE(12, 16230, 0) / 2 + LINE(12, 16230, 113) + tmp_1 / 2;
 	tmp_1 = -Acc;
 	Acc = Acc * -27 / 16 + tmp_1 * 27 / 8;
 	tmp_b = Acc;
@@ -123,13 +123,13 @@ void midiverb_effect_3(int16_t input, int16_t *out_left, int16_t *out_right, int
 	tmp_3 = Acc;
 	Acc = LINE(13, 16381, 58) * 5 / 8 + LINE(0, 0, 1) / 2;
 	WRITE_LINE(13, 16381) = -Acc;
-	Acc = LINE(12, 16321, 89) * 5 / 8 + WRITE_LINE(13, 16381) * 5 / 8 + LINE(13, 16381, 58);
+	Acc = LINE(12, 16321, 89) * 5 / 8 + LINE(13, 16381, 0) * 5 / 8 + LINE(13, 16381, 58);
 	WRITE_LINE(12, 16321) = -Acc;
-	Acc = LINE(11, 16230, 183) * 5 / 8 + WRITE_LINE(12, 16321) * 5 / 8 + LINE(12, 16321, 89);
+	Acc = LINE(11, 16230, 183) * 5 / 8 + LINE(12, 16321, 0) * 5 / 8 + LINE(12, 16321, 89);
 	WRITE_LINE(11, 16230) = -Acc;
-	Acc = -WRITE_LINE(11, 16230) / 4;
+	Acc = -LINE(11, 16230, 0) / 4;
 	tmp_1 = -Acc;
-	Acc = -Acc / 2 + WRITE_LINE(11, 16230) / 2 + LINE(11, 16230, 183) + tmp_1 / 2;
+	Acc = -Acc / 2 + LINE(11, 16230, 0) / 2 + LINE(11, 16230, 183) + tmp_1 / 2;
 	tmp_1 = -Acc;
 	Acc = Acc * -27 / 16 + tmp_1 * 27 / 8;
 	tmp_b = Acc;
@@ -177,13 +177,13 @@ void midiverb_effect_4(int16_t input, int16_t *out_left, int16_t *out_right, int
 	tmp_3 = Acc;
 	Acc = LINE(13, 16381, 58) * 5 / 8 + LINE(0, 0, 1) / 2;
 	WRITE_LINE(13, 16381) = -Acc;
-	Acc = LINE(12, 16321, 89) * 5 / 8 + WRITE_LINE(13, 16381) * 5 / 8 + LINE(13, 16381, 58);
+	Acc = LINE(12, 16321, 89) * 5 / 8 + LINE(13, 16381, 0) * 5 / 8 + LINE(13, 16381, 58);
 	WRITE_LINE(12, 16321) = -Acc;
-	Acc = LINE(11, 16230, 103) * 5 / 8 + WRITE_LINE(12, 16321) * 5 / 8 + LINE(12, 16321, 89);
+	Acc = LINE(11, 16230, 103) * 5 / 8 + LINE(12, 16321, 0) * 5 / 8 + LINE(12, 16321, 89);
 	WRITE_LINE(11, 16230) = -Acc;
-	Acc = -WRITE_LINE(11, 16230) / 4;
+	Acc = -LINE(11, 16230, 0) / 4;
 	tmp_1 = -Acc;
-	Acc = -Acc / 2 + WRITE_LINE(11, 16230) / 2 + LINE(11, 16230, 103) + tmp_1 / 2;
+	Acc = -Acc / 2 + LINE(11, 16230, 0) / 2 + LINE(11, 16230, 103) + tmp_1 / 2;
 	tmp_1 = -Acc;
 	Acc = Acc * -27 / 16 + tmp_1 * 27 / 8;
 	tmp_b = Acc;
@@ -233,13 +233,13 @@ void midiverb_effect_5(int16_t input, int16_t *out_left, int16_t *out_right, int
 	WRITE_LINE(3, 12696) = Acc;
 	Acc = LINE(14, 16381, 58) * 5 / 8 + LINE(3, 12696, 1) / 2;
 	WRITE_LINE(14, 16381) = -Acc;
-	Acc = LINE(13, 16321, 89) * 5 / 8 + WRITE_LINE(14, 16381) * 5 / 8 + LINE(14, 16381, 58);
+	Acc = LINE(13, 16321, 89) * 5 / 8 + LINE(14, 16381, 0) * 5 / 8 + LINE(14, 16381, 58);
 	WRITE_LINE(13, 16321) = -Acc;
-	Acc = LINE(12, 16230, 103) * 5 / 8 + WRITE_LINE(13, 16321) * 5 / 8 + LINE(13, 16321, 89);
+	Acc = LINE(12, 16230, 103) * 5 / 8 + LINE(13, 16321, 0) * 5 / 8 + LINE(13, 16321, 89);
 	WRITE_LINE(12, 16230) = -Acc;
-	Acc = -WRITE_LINE(12, 16230) / 4;
+	Acc = -LINE(12, 16230, 0) / 4;
 	tmp_1 = -Acc;
-	Acc = -Acc / 2 + WRITE_LINE(12, 16230) / 2 + LINE(12, 16230, 103) + tmp_1 / 2;
+	Acc = -Acc / 2 + LINE(12, 16230, 0) / 2 + LINE(12, 16230, 103) + tmp_1 / 2;
 	tmp_1 = -Acc;
 	Acc = Acc * -27 / 16 + tmp_1 * 27 / 8;
 	tmp_b = Acc;
@@ -287,13 +287,13 @@ void midiverb_effect_6(int16_t input, int16_t *out_left, int16_t *out_right, int
 	tmp_3 = Acc;
 	Acc = LINE(13, 16381, 58) * 5 / 8 + LINE(0, 0, 1) / 2;
 	WRITE_LINE(13, 16381) = -Acc;
-	Acc = LINE(12, 16321, 89) * 5 / 8 + WRITE_LINE(13, 16381) * 5 / 8 + LINE(13, 16381, 58);
+	Acc = LINE(12, 16321, 89) * 5 / 8 + LINE(13, 16381, 0) * 5 / 8 + LINE(13, 16381, 58);
 	WRITE_LINE(12, 16321) = -Acc;
-	Acc = LINE(11, 16230, 183) * 5 / 8 + WRITE_LINE(12, 16321) * 5 / 8 + LINE(12, 16321, 89);
+	Acc = LINE(11, 16230, 183) * 5 / 8 + LINE(12, 16321, 0) * 5 / 8 + LINE(12, 16321, 89);
 	WRITE_LINE(11, 16230) = -Acc;
-	Acc = -WRITE_LINE(11, 16230) / 4;
+	Acc = -LINE(11, 16230, 0) / 4;
 	tmp_1 = -Acc;
-	Acc = -Acc / 2 + WRITE_LINE(11, 16230) / 2 + LINE(11, 16230, 183) + tmp_1 / 2;
+	Acc = -Acc / 2 + LINE(11, 16230, 0) / 2 + LINE(11, 16230, 183) + tmp_1 / 2;
 	tmp_1 = -Acc;
 	Acc = Acc * -27 / 16 + tmp_1 * 27 / 8;
 	tmp_b = Acc;
@@ -339,13 +339,13 @@ void midiverb_effect_7(int16_t input, int16_t *out_left, int16_t *out_right, int
 	WRITE_LINE(3, 12130) = Acc;
 	Acc = LINE(14, 16381, 58) * 5 / 8 + LINE(3, 12130, 1) / 2;
 	WRITE_LINE(14, 16381) = -Acc;
-	Acc = LINE(13, 16321, 89) * 5 / 8 + WRITE_LINE(14, 16381) * 5 / 8 + LINE(14, 16381, 58);
+	Acc = LINE(13, 16321, 89) * 5 / 8 + LINE(14, 16381, 0) * 5 / 8 + LINE(14, 16381, 58);
 	WRITE_LINE(13, 16321) = -Acc;
-	Acc = LINE(12, 16230, 183) * 5 / 8 + WRITE_LINE(13, 16321) * 5 / 8 + LINE(13, 16321, 89);
+	Acc = LINE(12, 16230, 183) * 5 / 8 + LINE(13, 16321, 0) * 5 / 8 + LINE(13, 16321, 89);
 	WRITE_LINE(12, 16230) = -Acc;
-	Acc = -WRITE_LINE(12, 16230) / 4;
+	Acc = -LINE(12, 16230, 0) / 4;
 	tmp_1 = -Acc;
-	Acc = -Acc / 2 + WRITE_LINE(12, 16230) / 2 + LINE(12, 16230, 183) + tmp_1 / 2;
+	Acc = -Acc / 2 + LINE(12, 16230, 0) / 2 + LINE(12, 16230, 183) + tmp_1 / 2;
 	tmp_1 = -Acc;
 	Acc = Acc * -27 / 16 + tmp_1 * 27 / 8;
 	tmp_b = Acc;
@@ -381,7 +381,7 @@ void midiverb_effect_7(int16_t input, int16_t *out_left, int16_t *out_right, int
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_8(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_7, tmp_b;
+	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(10, 15645, 64) / 2 + LINE(8, 14568, 496) / 2 + LINE(4, 11989, 339) / 2 + LINE(11, 16230, 24) / 2;
 	tmp_1 = Acc;
@@ -393,13 +393,13 @@ void midiverb_effect_8(int16_t input, int16_t *out_left, int16_t *out_right, int
 	tmp_3 = Acc;
 	Acc = LINE(13, 16381, 58) * 5 / 8 + LINE(0, 0, 1) / 2;
 	WRITE_LINE(13, 16381) = -Acc;
-	Acc = LINE(12, 16321, 89) * 5 / 8 + WRITE_LINE(13, 16381) * 5 / 8 + LINE(13, 16381, 58);
+	Acc = LINE(12, 16321, 89) * 5 / 8 + LINE(13, 16381, 0) * 5 / 8 + LINE(13, 16381, 58);
 	WRITE_LINE(12, 16321) = -Acc;
-	Acc = LINE(11, 16230, 183) * 5 / 8 + WRITE_LINE(12, 16321) * 5 / 8 + LINE(12, 16321, 89);
+	Acc = LINE(11, 16230, 183) * 5 / 8 + LINE(12, 16321, 0) * 5 / 8 + LINE(12, 16321, 89);
 	WRITE_LINE(11, 16230) = -Acc;
-	Acc = -WRITE_LINE(11, 16230) / 4;
+	Acc = -LINE(11, 16230, 0) / 4;
 	tmp_1 = -Acc;
-	Acc = -Acc / 2 + WRITE_LINE(11, 16230) / 2 + LINE(11, 16230, 183) + tmp_1 / 2;
+	Acc = -Acc / 2 + LINE(11, 16230, 0) / 2 + LINE(11, 16230, 183) + tmp_1 / 2;
 	tmp_1 = -Acc;
 	Acc = Acc * -27 / 16 + tmp_1 * 27 / 8;
 	tmp_b = Acc;
@@ -435,7 +435,7 @@ void midiverb_effect_8(int16_t input, int16_t *out_left, int16_t *out_right, int
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_9(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_7, tmp_b;
+	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(11, 14322, 123) / 4 + -LINE(9, 11770, 987) / 4 + -LINE(5, 6614, 678) / 4 + -LINE(14, 16182, 142) / 4;
 	tmp_5 = -Acc;
@@ -445,11 +445,11 @@ void midiverb_effect_9(int16_t input, int16_t *out_left, int16_t *out_right, int
 	WRITE_LINE(3, 3742) = Acc;
 	Acc = LINE(15, 16282, 98) * 5 / 8 + LINE(3, 3742, 1) / 2;
 	WRITE_LINE(15, 16282) = -Acc;
-	Acc = LINE(14, 16182, 198) * 5 / 8 + WRITE_LINE(15, 16282) * 5 / 8 + LINE(15, 16282, 98);
+	Acc = LINE(14, 16182, 198) * 5 / 8 + LINE(15, 16282, 0) * 5 / 8 + LINE(15, 16282, 98);
 	WRITE_LINE(14, 16182) = -Acc;
-	Acc = LINE(13, 15982, 367) * 5 / 8 + WRITE_LINE(14, 16182) * 5 / 8 + LINE(14, 16182, 198);
+	Acc = LINE(13, 15982, 367) * 5 / 8 + LINE(14, 16182, 0) * 5 / 8 + LINE(14, 16182, 198);
 	WRITE_LINE(13, 15982) = -Acc;
-	Acc = WRITE_LINE(13, 15982) * 5 / 8 + LINE(13, 15982, 367) + LINE(12, 15113, 789) / 2;
+	Acc = LINE(13, 15982, 0) * 5 / 8 + LINE(13, 15982, 367) + LINE(12, 15113, 789) / 2;
 	WRITE_LINE(12, 15113) = -Acc;
 	Acc = Acc * -27 / 16 + LINE(12, 15113, 789) * 27 / 8;
 	tmp_b = Acc;
@@ -485,7 +485,7 @@ void midiverb_effect_9(int16_t input, int16_t *out_left, int16_t *out_right, int
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_10(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_7, tmp_b;
+	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(11, 14322, 123) / 4 + -LINE(9, 11770, 987) / 4 + -LINE(5, 6614, 678) / 4 + -LINE(14, 16182, 142) / 4;
 	tmp_5 = -Acc;
@@ -495,11 +495,11 @@ void midiverb_effect_10(int16_t input, int16_t *out_left, int16_t *out_right, in
 	WRITE_LINE(3, 3742) = Acc;
 	Acc = LINE(15, 16282, 98) * 5 / 8 + LINE(3, 3742, 1) / 2;
 	WRITE_LINE(15, 16282) = -Acc;
-	Acc = LINE(14, 16182, 198) * 5 / 8 + WRITE_LINE(15, 16282) * 5 / 8 + LINE(15, 16282, 98);
+	Acc = LINE(14, 16182, 198) * 5 / 8 + LINE(15, 16282, 0) * 5 / 8 + LINE(15, 16282, 98);
 	WRITE_LINE(14, 16182) = -Acc;
-	Acc = LINE(13, 15982, 367) * 5 / 8 + WRITE_LINE(14, 16182) * 5 / 8 + LINE(14, 16182, 198);
+	Acc = LINE(13, 15982, 367) * 5 / 8 + LINE(14, 16182, 0) * 5 / 8 + LINE(14, 16182, 198);
 	WRITE_LINE(13, 15982) = -Acc;
-	Acc = WRITE_LINE(13, 15982) * 5 / 8 + LINE(13, 15982, 367) + LINE(12, 15113, 789) / 2;
+	Acc = LINE(13, 15982, 0) * 5 / 8 + LINE(13, 15982, 367) + LINE(12, 15113, 789) / 2;
 	WRITE_LINE(12, 15113) = -Acc;
 	Acc = Acc * -27 / 16 + LINE(12, 15113, 789) * 27 / 8;
 	tmp_b = Acc;
@@ -535,7 +535,7 @@ void midiverb_effect_10(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_11(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_7, tmp_b;
+	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(10, 15645, 64) / 4 + -LINE(8, 14468, 496) / 4 + -LINE(4, 11789, 339) / 4 + -LINE(11, 16230, 24) / 4;
 	tmp_5 = -Acc;
@@ -543,13 +543,13 @@ void midiverb_effect_11(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_3 = -Acc;
 	Acc = LINE(13, 16381, 58) * 5 / 8 + LINE(0, 0, 1) / 2;
 	WRITE_LINE(13, 16381) = -Acc;
-	Acc = LINE(12, 16321, 89) * 5 / 8 + WRITE_LINE(13, 16381) * 5 / 8 + LINE(13, 16381, 58);
+	Acc = LINE(12, 16321, 89) * 5 / 8 + LINE(13, 16381, 0) * 5 / 8 + LINE(13, 16381, 58);
 	WRITE_LINE(12, 16321) = -Acc;
-	Acc = LINE(11, 16230, 183) * 5 / 8 + WRITE_LINE(12, 16321) * 5 / 8 + LINE(12, 16321, 89);
+	Acc = LINE(11, 16230, 183) * 5 / 8 + LINE(12, 16321, 0) * 5 / 8 + LINE(12, 16321, 89);
 	WRITE_LINE(11, 16230) = -Acc;
-	Acc = -WRITE_LINE(11, 16230) / 4;
+	Acc = -LINE(11, 16230, 0) / 4;
 	tmp_1 = -Acc;
-	Acc = -Acc / 2 + WRITE_LINE(11, 16230) / 2 + LINE(11, 16230, 183) + tmp_1 / 2;
+	Acc = -Acc / 2 + LINE(11, 16230, 0) / 2 + LINE(11, 16230, 183) + tmp_1 / 2;
 	tmp_1 = -Acc;
 	Acc = Acc * -27 / 16 + tmp_1 * 27 / 8;
 	tmp_b = Acc;
@@ -615,7 +615,7 @@ void midiverb_effect_12(int16_t input, int16_t *out_left, int16_t *out_right, in
 	WRITE_LINE(7, 11815) = -Acc;
 	Acc = -Acc / 2 + LINE(7, 11815, 1992) + LINE(1, 760, 1) / 2;
 	WRITE_LINE(1, 760) = Acc;
-	Acc = WRITE_LINE(1, 760);
+	Acc = LINE(1, 760, 0);
 	WRITE_LINE(6, 9821) = Acc;
 	Acc = -LINE(6, 9821, 2010) / 4 + LINE(5, 7809, 2371) / 2;
 	WRITE_LINE(5, 7809) = -Acc;
@@ -633,7 +633,7 @@ void midiverb_effect_12(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_13(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_7, tmp_b;
+	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(11, 15785, 64) / 4 + -LINE(9, 14908, 496) / 4 + -LINE(5, 12759, 339) / 4 + -LINE(12, 16230, 24) / 4;
 	tmp_5 = -Acc;
@@ -643,13 +643,13 @@ void midiverb_effect_13(int16_t input, int16_t *out_left, int16_t *out_right, in
 	WRITE_LINE(3, 11503) = Acc;
 	Acc = LINE(14, 16381, 58) * 5 / 8 + LINE(3, 11503, 1) / 2;
 	WRITE_LINE(14, 16381) = -Acc;
-	Acc = LINE(13, 16321, 89) * 5 / 8 + WRITE_LINE(14, 16381) * 5 / 8 + LINE(14, 16381, 58);
+	Acc = LINE(13, 16321, 89) * 5 / 8 + LINE(14, 16381, 0) * 5 / 8 + LINE(14, 16381, 58);
 	WRITE_LINE(13, 16321) = -Acc;
-	Acc = LINE(12, 16230, 183) * 5 / 8 + WRITE_LINE(13, 16321) * 5 / 8 + LINE(13, 16321, 89);
+	Acc = LINE(12, 16230, 183) * 5 / 8 + LINE(13, 16321, 0) * 5 / 8 + LINE(13, 16321, 89);
 	WRITE_LINE(12, 16230) = -Acc;
-	Acc = -WRITE_LINE(12, 16230) / 4;
+	Acc = -LINE(12, 16230, 0) / 4;
 	tmp_1 = -Acc;
-	Acc = -Acc / 2 + WRITE_LINE(12, 16230) / 2 + LINE(12, 16230, 183) + tmp_1 / 2;
+	Acc = -Acc / 2 + LINE(12, 16230, 0) / 2 + LINE(12, 16230, 183) + tmp_1 / 2;
 	tmp_1 = -Acc;
 	Acc = Acc * -27 / 16 + tmp_1 * 27 / 8;
 	tmp_b = Acc;
@@ -685,7 +685,7 @@ void midiverb_effect_13(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_14(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_7, tmp_b;
+	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(11, 14236, 123) / 2 + LINE(9, 11884, 987) / 2 + LINE(5, 6908, 678) / 2 + LINE(14, 16182, 142) / 2;
 	tmp_1 = Acc;
@@ -699,11 +699,11 @@ void midiverb_effect_14(int16_t input, int16_t *out_left, int16_t *out_right, in
 	WRITE_LINE(3, 3836) = Acc;
 	Acc = LINE(15, 16282, 98) * 5 / 8 + LINE(3, 3836, 1) / 2;
 	WRITE_LINE(15, 16282) = -Acc;
-	Acc = LINE(14, 16182, 198) * 5 / 8 + WRITE_LINE(15, 16282) * 5 / 8 + LINE(15, 16282, 98);
+	Acc = LINE(14, 16182, 198) * 5 / 8 + LINE(15, 16282, 0) * 5 / 8 + LINE(15, 16282, 98);
 	WRITE_LINE(14, 16182) = -Acc;
-	Acc = LINE(13, 15982, 367) * 5 / 8 + WRITE_LINE(14, 16182) * 5 / 8 + LINE(14, 16182, 198);
+	Acc = LINE(13, 15982, 367) * 5 / 8 + LINE(14, 16182, 0) * 5 / 8 + LINE(14, 16182, 198);
 	WRITE_LINE(13, 15982) = -Acc;
-	Acc = WRITE_LINE(13, 15982) * 5 / 8 + LINE(13, 15982, 367) + LINE(12, 15113, 875) / 2;
+	Acc = LINE(13, 15982, 0) * 5 / 8 + LINE(13, 15982, 367) + LINE(12, 15113, 875) / 2;
 	WRITE_LINE(12, 15113) = -Acc;
 	Acc = Acc * -27 / 16 + LINE(12, 15113, 875) * 27 / 8;
 	tmp_b = Acc;
@@ -739,7 +739,7 @@ void midiverb_effect_14(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_15(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_7, tmp_b;
+	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(10, 13855, 123) / 4 + -LINE(8, 11303, 987) / 4 + -LINE(4, 5447, 678) / 4 + -LINE(13, 16182, 142) / 4;
 	tmp_5 = -Acc;
@@ -747,11 +747,11 @@ void midiverb_effect_15(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_3 = -Acc;
 	Acc = LINE(14, 16282, 98) * 5 / 8 + LINE(0, 0, 100) / 2;
 	WRITE_LINE(14, 16282) = -Acc;
-	Acc = LINE(13, 16182, 198) * 5 / 8 + WRITE_LINE(14, 16282) * 5 / 8 + LINE(14, 16282, 98);
+	Acc = LINE(13, 16182, 198) * 5 / 8 + LINE(14, 16282, 0) * 5 / 8 + LINE(14, 16282, 98);
 	WRITE_LINE(13, 16182) = -Acc;
-	Acc = LINE(12, 15982, 367) * 5 / 8 + WRITE_LINE(13, 16182) * 5 / 8 + LINE(13, 16182, 198);
+	Acc = LINE(12, 15982, 367) * 5 / 8 + LINE(13, 16182, 0) * 5 / 8 + LINE(13, 16182, 198);
 	WRITE_LINE(12, 15982) = -Acc;
-	Acc = WRITE_LINE(12, 15982) * 5 / 8 + LINE(12, 15982, 367) + LINE(11, 15113, 1256) / 2;
+	Acc = LINE(12, 15982, 0) * 5 / 8 + LINE(12, 15982, 367) + LINE(11, 15113, 1256) / 2;
 	WRITE_LINE(11, 15113) = -Acc;
 	Acc = Acc * -27 / 16 + LINE(11, 15113, 1256) * 27 / 8;
 	tmp_b = Acc;
@@ -787,7 +787,7 @@ void midiverb_effect_15(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_16(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_7, tmp_b;
+	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(11, 14124, 123) / 4 + -LINE(9, 11572, 987) / 4 + -LINE(5, 5716, 678) / 4 + -LINE(14, 16182, 142) / 4;
 	tmp_5 = -Acc;
@@ -795,13 +795,13 @@ void midiverb_effect_16(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_3 = -Acc;
 	Acc = LINE(3, 1944, 1) / 2 + LINE(0, 0, 100) / 2;
 	WRITE_LINE(3, 1944) = Acc;
-	Acc = LINE(15, 16282, 98) * 5 / 8 + WRITE_LINE(3, 1944) / 2;
+	Acc = LINE(15, 16282, 98) * 5 / 8 + LINE(3, 1944, 0) / 2;
 	WRITE_LINE(15, 16282) = -Acc;
-	Acc = LINE(14, 16182, 198) * 5 / 8 + WRITE_LINE(15, 16282) * 5 / 8 + LINE(15, 16282, 98);
+	Acc = LINE(14, 16182, 198) * 5 / 8 + LINE(15, 16282, 0) * 5 / 8 + LINE(15, 16282, 98);
 	WRITE_LINE(14, 16182) = -Acc;
-	Acc = LINE(13, 15982, 367) * 5 / 8 + WRITE_LINE(14, 16182) * 5 / 8 + LINE(14, 16182, 198);
+	Acc = LINE(13, 15982, 367) * 5 / 8 + LINE(14, 16182, 0) * 5 / 8 + LINE(14, 16182, 198);
 	WRITE_LINE(13, 15982) = -Acc;
-	Acc = WRITE_LINE(13, 15982) * 5 / 8 + LINE(13, 15982, 367) + LINE(12, 15113, 987) / 2;
+	Acc = LINE(13, 15982, 0) * 5 / 8 + LINE(13, 15982, 367) + LINE(12, 15113, 987) / 2;
 	WRITE_LINE(12, 15113) = -Acc;
 	Acc = Acc * -27 / 16 + LINE(12, 15113, 987) * 27 / 8;
 	tmp_b = Acc;
@@ -837,7 +837,7 @@ void midiverb_effect_16(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_17(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_7, tmp_b;
+	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(11, 15084, 12) / 4 + -LINE(9, 13237, 987) / 4 + -LINE(7, 10675, 978) / 4 + -LINE(5, 8381, 745) / 4;
 	tmp_5 = -Acc;
@@ -847,11 +847,11 @@ void midiverb_effect_17(int16_t input, int16_t *out_left, int16_t *out_right, in
 	WRITE_LINE(3, 6209) = Acc;
 	Acc = LINE(14, 16282, 78) * 5 / 8 + LINE(3, 6209, 1) / 2;
 	WRITE_LINE(14, 16282) = -Acc;
-	Acc = LINE(13, 16202, 147) * 5 / 8 + WRITE_LINE(14, 16282) * 5 / 8 + LINE(14, 16282, 78);
+	Acc = LINE(13, 16202, 147) * 5 / 8 + LINE(14, 16282, 0) * 5 / 8 + LINE(14, 16282, 78);
 	WRITE_LINE(13, 16202) = -Acc;
-	Acc = LINE(12, 16053, 367) * 5 / 8 + WRITE_LINE(13, 16202) * 5 / 8 + LINE(13, 16202, 147);
+	Acc = LINE(12, 16053, 367) * 5 / 8 + LINE(13, 16202, 0) * 5 / 8 + LINE(13, 16202, 147);
 	WRITE_LINE(12, 16053) = -Acc;
-	Acc = WRITE_LINE(12, 16053) * 135 / 64 + LINE(12, 16053, 367) * 27 / 8;
+	Acc = LINE(12, 16053, 0) * 135 / 64 + LINE(12, 16053, 367) * 27 / 8;
 	tmp_b = Acc;
 	Acc = LINE(11, 15084, 798) * 3 / 4 + LINE(10, 14284, 1045) / 2;
 	WRITE_LINE(10, 14284) = -Acc;
@@ -885,7 +885,7 @@ void midiverb_effect_17(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_18(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_7, tmp_b;
+	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(10, 15084, 12) / 4 + -LINE(8, 13237, 987) / 4 + -LINE(6, 10675, 978) / 4 + -LINE(4, 8381, 745) / 4;
 	tmp_5 = -Acc;
@@ -893,11 +893,11 @@ void midiverb_effect_18(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_3 = -Acc;
 	Acc = LINE(13, 16282, 78) * 5 / 8 + LINE(0, 0, 100) / 2;
 	WRITE_LINE(13, 16282) = -Acc;
-	Acc = LINE(12, 16202, 147) * 5 / 8 + WRITE_LINE(13, 16282) * 5 / 8 + LINE(13, 16282, 78);
+	Acc = LINE(12, 16202, 147) * 5 / 8 + LINE(13, 16282, 0) * 5 / 8 + LINE(13, 16282, 78);
 	WRITE_LINE(12, 16202) = -Acc;
-	Acc = LINE(11, 16053, 367) * 5 / 8 + WRITE_LINE(12, 16202) * 5 / 8 + LINE(12, 16202, 147);
+	Acc = LINE(11, 16053, 367) * 5 / 8 + LINE(12, 16202, 0) * 5 / 8 + LINE(12, 16202, 147);
 	WRITE_LINE(11, 16053) = -Acc;
-	Acc = WRITE_LINE(11, 16053) * 135 / 64 + LINE(11, 16053, 367) * 27 / 8;
+	Acc = LINE(11, 16053, 0) * 135 / 64 + LINE(11, 16053, 367) * 27 / 8;
 	tmp_b = Acc;
 	Acc = LINE(10, 15084, 798) * 3 / 4 + LINE(9, 14284, 1045) / 2;
 	WRITE_LINE(9, 14284) = -Acc;
@@ -967,7 +967,7 @@ void midiverb_effect_19(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = -Acc;
 	Acc = -Acc / 2 + LINE(1, 2412, 1) / 2 + tmp_1 / 2;
 	WRITE_LINE(1, 2412) = Acc;
-	Acc = WRITE_LINE(1, 2412) + tmp_2;
+	Acc = LINE(1, 2412, 0) + tmp_2;
 	WRITE_LINE(8, 13793) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1013,7 +1013,7 @@ void midiverb_effect_20(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 360, 1) / 2 + tmp_1 / 2;
 	WRITE_LINE(1, 360) = Acc;
-	Acc = WRITE_LINE(1, 360) + tmp_2;
+	Acc = LINE(1, 360, 0) + tmp_2;
 	WRITE_LINE(8, 12941) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1023,7 +1023,7 @@ void midiverb_effect_20(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_21(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(8, 13306, 21) / 2 + LINE(6, 10886, 1391) / 2 + LINE(4, 7601, 1503) / 2;
 	tmp_1 = Acc;
@@ -1063,7 +1063,7 @@ void midiverb_effect_21(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 3725, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 3725) = Acc;
-	Acc = WRITE_LINE(1, 3725) + tmp_2;
+	Acc = LINE(1, 3725, 0) + tmp_2;
 	WRITE_LINE(8, 13306) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1109,7 +1109,7 @@ void midiverb_effect_22(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 8561, 1) / 2 + tmp_1 / 2;
 	WRITE_LINE(1, 8561) = Acc;
-	Acc = WRITE_LINE(1, 8561) + tmp_2;
+	Acc = LINE(1, 8561, 0) + tmp_2;
 	WRITE_LINE(8, 14810) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1119,7 +1119,7 @@ void midiverb_effect_22(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_23(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 13409, 21) / 4 + -LINE(5, 10389, 1491) / 4 + -LINE(3, 6804, 1703) / 4;
 	tmp_3 = -Acc;
@@ -1153,7 +1153,7 @@ void midiverb_effect_23(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 2228, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 2228) = Acc;
-	Acc = WRITE_LINE(1, 2228) + tmp_2;
+	Acc = LINE(1, 2228, 0) + tmp_2;
 	WRITE_LINE(7, 13409) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1163,7 +1163,7 @@ void midiverb_effect_23(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_24(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12841, 21) / 4 + -LINE(5, 9821, 1491) / 4 + -LINE(3, 6236, 1703) / 4;
 	tmp_3 = -Acc;
@@ -1197,7 +1197,7 @@ void midiverb_effect_24(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 1660, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 1660) = Acc;
-	Acc = WRITE_LINE(1, 1660) + tmp_2;
+	Acc = LINE(1, 1660, 0) + tmp_2;
 	WRITE_LINE(7, 12841) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1243,7 +1243,7 @@ void midiverb_effect_25(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 360, 1) / 2 + tmp_1 / 2;
 	WRITE_LINE(1, 360) = Acc;
-	Acc = WRITE_LINE(1, 360) + tmp_2;
+	Acc = LINE(1, 360, 0) + tmp_2;
 	WRITE_LINE(8, 12941) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1253,7 +1253,7 @@ void midiverb_effect_25(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_26(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12941, 211) / 4 + -LINE(5, 9221, 1591) / 4 + -LINE(3, 4836, 1403) / 4;
 	tmp_3 = -Acc;
@@ -1287,7 +1287,7 @@ void midiverb_effect_26(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 360, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 360) = Acc;
-	Acc = WRITE_LINE(1, 360) + tmp_2;
+	Acc = LINE(1, 360, 0) + tmp_2;
 	WRITE_LINE(7, 12941) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1297,7 +1297,7 @@ void midiverb_effect_26(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_27(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12741, 21) / 4 + -LINE(6, 9621, 1491) / 4 + -LINE(4, 5536, 1703) / 4;
 	tmp_3 = -Acc;
@@ -1333,7 +1333,7 @@ void midiverb_effect_27(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 960, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 960) = Acc;
-	Acc = WRITE_LINE(1, 960) + tmp_2;
+	Acc = LINE(1, 960, 0) + tmp_2;
 	WRITE_LINE(8, 12741) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1343,7 +1343,7 @@ void midiverb_effect_27(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_28(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12941, 211) / 4 + -LINE(5, 9721, 1591) / 4 + -LINE(3, 5336, 403) / 4;
 	tmp_3 = -Acc;
@@ -1377,7 +1377,7 @@ void midiverb_effect_28(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 360, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 360) = Acc;
-	Acc = WRITE_LINE(1, 360) + tmp_2;
+	Acc = LINE(1, 360, 0) + tmp_2;
 	WRITE_LINE(7, 12941) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1387,7 +1387,7 @@ void midiverb_effect_28(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_29(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9421, 1891) / 4 + -LINE(4, 5136, 1403) / 4;
 	tmp_3 = -Acc;
@@ -1423,7 +1423,7 @@ void midiverb_effect_29(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 660, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 660) = Acc;
-	Acc = WRITE_LINE(1, 660) + tmp_2;
+	Acc = LINE(1, 660, 0) + tmp_2;
 	WRITE_LINE(8, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1433,7 +1433,7 @@ void midiverb_effect_29(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_30(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 13241, 21) / 4 + -LINE(6, 9821, 1591) / 4 + -LINE(4, 5436, 2003) / 4;
 	tmp_3 = -Acc;
@@ -1469,7 +1469,7 @@ void midiverb_effect_30(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 760, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 760) = Acc;
-	Acc = WRITE_LINE(1, 760) + tmp_2;
+	Acc = LINE(1, 760, 0) + tmp_2;
 	WRITE_LINE(8, 13241) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1479,7 +1479,7 @@ void midiverb_effect_30(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_31(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9021, 1891) / 4 + -LINE(4, 4536, 2003) / 4;
 	tmp_3 = -Acc;
@@ -1515,7 +1515,7 @@ void midiverb_effect_31(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 60, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 60) = Acc;
-	Acc = WRITE_LINE(1, 60) + tmp_2;
+	Acc = LINE(1, 60, 0) + tmp_2;
 	WRITE_LINE(8, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1525,7 +1525,7 @@ void midiverb_effect_31(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_32(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 13241, 21) / 4 + -LINE(5, 9621, 1591) / 4 + -LINE(3, 5036, 2003) / 4;
 	tmp_3 = -Acc;
@@ -1559,7 +1559,7 @@ void midiverb_effect_32(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 160, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 160) = Acc;
-	Acc = WRITE_LINE(1, 160) + tmp_2;
+	Acc = LINE(1, 160, 0) + tmp_2;
 	WRITE_LINE(7, 13241) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1605,7 +1605,7 @@ void midiverb_effect_33(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 760, 1) / 2 + tmp_1 / 2;
 	WRITE_LINE(1, 760) = Acc;
-	Acc = WRITE_LINE(1, 760) + tmp_2;
+	Acc = LINE(1, 760, 0) + tmp_2;
 	WRITE_LINE(8, 13241) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1615,7 +1615,7 @@ void midiverb_effect_33(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_34(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 14377, 21) / 4 + -LINE(4, 10748, 79) / 4 + -LINE(3, 8945, 1356) / 4;
 	tmp_3 = -Acc;
@@ -1649,7 +1649,7 @@ void midiverb_effect_34(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 5905, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 5905) = Acc;
-	Acc = WRITE_LINE(1, 5905) + tmp_2;
+	Acc = LINE(1, 5905, 0) + tmp_2;
 	WRITE_LINE(7, 14377) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1659,7 +1659,7 @@ void midiverb_effect_34(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_35(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9621, 1691) / 4 + -LINE(3, 5836, 1903) / 4;
 	tmp_3 = -Acc;
@@ -1693,7 +1693,7 @@ void midiverb_effect_35(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 1560, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 1560) = Acc;
-	Acc = WRITE_LINE(1, 1560) + tmp_2;
+	Acc = LINE(1, 1560, 0) + tmp_2;
 	WRITE_LINE(7, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1703,7 +1703,7 @@ void midiverb_effect_35(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_36(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9021, 1891) / 4 + -LINE(3, 4536, 2003) / 4;
 	tmp_3 = -Acc;
@@ -1737,7 +1737,7 @@ void midiverb_effect_36(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 60, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 60) = Acc;
-	Acc = WRITE_LINE(1, 60) + tmp_2;
+	Acc = LINE(1, 60, 0) + tmp_2;
 	WRITE_LINE(7, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1747,7 +1747,7 @@ void midiverb_effect_36(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_37(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9021, 1891) / 4 + -LINE(4, 4536, 2003) / 4;
 	tmp_3 = -Acc;
@@ -1783,7 +1783,7 @@ void midiverb_effect_37(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 60, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 60) = Acc;
-	Acc = WRITE_LINE(1, 60) + tmp_2;
+	Acc = LINE(1, 60, 0) + tmp_2;
 	WRITE_LINE(8, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1829,7 +1829,7 @@ void midiverb_effect_38(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 760, 1) / 2 + tmp_1 / 2;
 	WRITE_LINE(1, 760) = Acc;
-	Acc = WRITE_LINE(1, 760) + tmp_2;
+	Acc = LINE(1, 760, 0) + tmp_2;
 	WRITE_LINE(8, 13441) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1839,7 +1839,7 @@ void midiverb_effect_38(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_39(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9021, 1891) / 4 + -LINE(3, 4536, 2003) / 4;
 	tmp_3 = -Acc;
@@ -1873,7 +1873,7 @@ void midiverb_effect_39(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 60, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 60) = Acc;
-	Acc = WRITE_LINE(1, 60) + tmp_2;
+	Acc = LINE(1, 60, 0) + tmp_2;
 	WRITE_LINE(7, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1883,7 +1883,7 @@ void midiverb_effect_39(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_40(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9021, 1891) / 4 + -LINE(4, 4536, 1703) / 4;
 	tmp_3 = -Acc;
@@ -1919,7 +1919,7 @@ void midiverb_effect_40(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 60, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 60) = Acc;
-	Acc = WRITE_LINE(1, 60) + tmp_2;
+	Acc = LINE(1, 60, 0) + tmp_2;
 	WRITE_LINE(8, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1965,7 +1965,7 @@ void midiverb_effect_41(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 60, 1) / 2 + tmp_1 / 2;
 	WRITE_LINE(1, 60) = Acc;
-	Acc = WRITE_LINE(1, 60) + tmp_2;
+	Acc = LINE(1, 60, 0) + tmp_2;
 	WRITE_LINE(8, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -1975,7 +1975,7 @@ void midiverb_effect_41(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_42(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9021, 1891) / 4 + -LINE(3, 4536, 2003) / 4;
 	tmp_3 = -Acc;
@@ -2009,7 +2009,7 @@ void midiverb_effect_42(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 60, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 60) = Acc;
-	Acc = WRITE_LINE(1, 60) + tmp_2;
+	Acc = LINE(1, 60, 0) + tmp_2;
 	WRITE_LINE(7, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -2019,7 +2019,7 @@ void midiverb_effect_42(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_43(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9321, 1891) / 4 + -LINE(4, 4836, 2003) / 4;
 	tmp_3 = -Acc;
@@ -2055,7 +2055,7 @@ void midiverb_effect_43(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 60, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 60) = Acc;
-	Acc = WRITE_LINE(1, 60) + tmp_2;
+	Acc = LINE(1, 60, 0) + tmp_2;
 	WRITE_LINE(8, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -2065,7 +2065,7 @@ void midiverb_effect_43(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_44(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9021, 1891) / 4 + -LINE(3, 4536, 1703) / 4;
 	tmp_3 = -Acc;
@@ -2099,7 +2099,7 @@ void midiverb_effect_44(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 60, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 60) = Acc;
-	Acc = WRITE_LINE(1, 60) + tmp_2;
+	Acc = LINE(1, 60, 0) + tmp_2;
 	WRITE_LINE(7, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -2109,7 +2109,7 @@ void midiverb_effect_44(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_45(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9021, 1891) / 4 + -LINE(4, 4536, 2003) / 4;
 	tmp_3 = -Acc;
@@ -2145,7 +2145,7 @@ void midiverb_effect_45(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 60, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 60) = Acc;
-	Acc = WRITE_LINE(1, 60) + tmp_2;
+	Acc = LINE(1, 60, 0) + tmp_2;
 	WRITE_LINE(8, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -2155,7 +2155,7 @@ void midiverb_effect_45(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_46(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9021, 1891) / 4 + -LINE(3, 4536, 2003) / 4;
 	tmp_3 = -Acc;
@@ -2189,7 +2189,7 @@ void midiverb_effect_46(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 63, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 63) = Acc;
-	Acc = WRITE_LINE(1, 63) + tmp_2;
+	Acc = LINE(1, 63, 0) + tmp_2;
 	WRITE_LINE(7, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -2199,7 +2199,7 @@ void midiverb_effect_46(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_47(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9021, 1591) / 4 + -LINE(4, 4436, 2003) / 4;
 	tmp_3 = -Acc;
@@ -2235,7 +2235,7 @@ void midiverb_effect_47(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 90, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 90) = Acc;
-	Acc = WRITE_LINE(1, 90) + tmp_2;
+	Acc = LINE(1, 90, 0) + tmp_2;
 	WRITE_LINE(8, 12641) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -2245,7 +2245,7 @@ void midiverb_effect_47(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_48(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
+	int16_t Acc, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12665, 21) / 4 + -LINE(6, 9345, 1591) / 4 + -LINE(4, 5360, 1403) / 4;
 	tmp_3 = -Acc;
@@ -2279,7 +2279,7 @@ void midiverb_effect_48(int16_t input, int16_t *out_left, int16_t *out_right, in
 	WRITE_LINE(3, 3501) = -Acc;
 	Acc = Acc / 4 + -LINE(3, 3501, 2712) / 2 + LINE(1, 784, 1) / 2;
 	WRITE_LINE(1, 784) = Acc;
-	Acc = WRITE_LINE(1, 784) + tmp_2;
+	Acc = LINE(1, 784, 0) + tmp_2;
 	WRITE_LINE(8, 12665) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -2289,7 +2289,7 @@ void midiverb_effect_48(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_49(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5, tmp_7;
+	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 13033, 21) / 4 + -LINE(5, 9413, 1891) / 4 + -LINE(3, 4928, 2003) / 4;
 	tmp_3 = -Acc;
@@ -2319,7 +2319,7 @@ void midiverb_effect_49(int16_t input, int16_t *out_left, int16_t *out_right, in
 	tmp_1 = Acc;
 	Acc = LINE(1, 55, 1) / 4 + tmp_1 / 2;
 	WRITE_LINE(1, 55) = Acc;
-	Acc = WRITE_LINE(1, 55) + tmp_2;
+	Acc = LINE(1, 55, 0) + tmp_2;
 	WRITE_LINE(7, 13033) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -2329,7 +2329,7 @@ void midiverb_effect_49(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_50(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
+	int16_t Acc, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 13033, 21) / 4 + -LINE(6, 9413, 1891) / 4 + -LINE(4, 4928, 2003) / 4;
 	tmp_3 = -Acc;
@@ -2359,7 +2359,7 @@ void midiverb_effect_50(int16_t input, int16_t *out_left, int16_t *out_right, in
 	WRITE_LINE(3, 2769) = -Acc;
 	Acc = Acc / 4 + -LINE(3, 2769, 2712) / 2 + LINE(1, 52, 1) / 2;
 	WRITE_LINE(1, 52) = Acc;
-	Acc = WRITE_LINE(1, 52) + tmp_2;
+	Acc = LINE(1, 52, 0) + tmp_2;
 	WRITE_LINE(8, 13033) = Acc;
 	*out_left = tmp_5;
 	*out_right = tmp_3;
@@ -2390,7 +2390,7 @@ void midiverb_effect_51(int16_t input, int16_t *out_left, int16_t *out_right, in
 	Acc = LINE(0, 0, 163) / 2 + LINE(0, 0, 233) / 2 + LINE(0, 0, 412) / 2 + LINE(0, 0, 534) / 2 + LINE(0, 0, 761) / 2 + LINE(0, 0, 875) / 2 + LINE(0, 0, 1065) / 2 + LINE(0, 0, 1119) / 2 + LINE(0, 0, 1233) / 2 + LINE(0, 0, 1434) / 2 + LINE(0, 0, 1555) / 2 + LINE(0, 0, 1742) / 2 + LINE(0, 0, 1862) / 2 + LINE(0, 0, 2046) / 2 + LINE(0, 0, 2149) / 2 + LINE(0, 0, 2256) / 2 + LINE(0, 0, 2443) / 2;
 	WRITE_LINE(2, 11) = Acc;
 	*out_left = tmp_5;
-	*out_right = WRITE_LINE(1, 3);
+	*out_right = LINE(1, 3, 0);
 }
 #undef LINE
 #undef WRITE_LINE
@@ -2418,7 +2418,7 @@ void midiverb_effect_52(int16_t input, int16_t *out_left, int16_t *out_right, in
 	Acc = LINE(0, 0, 163) / 2 + LINE(0, 0, 233) / 2 + LINE(0, 0, 412) / 2 + LINE(0, 0, 534) / 2 + LINE(0, 0, 761) / 2 + LINE(0, 0, 875) / 2 + LINE(0, 0, 1065) / 2 + LINE(0, 0, 1119) / 2 + LINE(0, 0, 1233) / 2 + LINE(0, 0, 1434) / 2 + LINE(0, 0, 1555) / 2 + LINE(0, 0, 1742) / 2 + LINE(0, 0, 1862) / 2 + LINE(0, 0, 2046) / 2 + LINE(0, 0, 2149) / 2 + LINE(0, 0, 2256) / 2 + LINE(0, 0, 2443) / 2 + LINE(0, 0, 2579) / 2 + LINE(0, 0, 2721) / 2 + LINE(0, 0, 2873) / 2 + LINE(0, 0, 3036) / 2 + LINE(0, 0, 3121) / 2 + LINE(0, 0, 3267) / 2 + LINE(0, 0, 3451) / 2 + LINE(0, 0, 3569) / 2;
 	WRITE_LINE(2, 11) = Acc;
 	*out_left = tmp_5;
-	*out_right = WRITE_LINE(1, 3);
+	*out_right = LINE(1, 3, 0);
 }
 #undef LINE
 #undef WRITE_LINE
@@ -2446,7 +2446,7 @@ void midiverb_effect_53(int16_t input, int16_t *out_left, int16_t *out_right, in
 	Acc = LINE(0, 0, 163) / 2 + LINE(0, 0, 233) / 2 + LINE(0, 0, 412) / 2 + LINE(0, 0, 534) / 2 + LINE(0, 0, 761) / 2 + LINE(0, 0, 875) / 2 + LINE(0, 0, 1065) / 2 + LINE(0, 0, 1119) / 2 + LINE(0, 0, 1233) / 2 + LINE(0, 0, 1434) / 2 + LINE(0, 0, 1555) / 2 + LINE(0, 0, 1742) / 2 + LINE(0, 0, 1862) / 2 + LINE(0, 0, 2046) / 2 + LINE(0, 0, 2149) / 2 + LINE(0, 0, 2256) / 2 + LINE(0, 0, 2443) / 2 + LINE(0, 0, 2579) / 2 + LINE(0, 0, 2721) / 2 + LINE(0, 0, 2873) / 2 + LINE(0, 0, 3036) / 2 + LINE(0, 0, 3121) / 2 + LINE(0, 0, 3267) / 2 + LINE(0, 0, 3451) / 2 + LINE(0, 0, 3569) / 2 + LINE(0, 0, 3725) / 2 + LINE(0, 0, 3889) / 2 + LINE(0, 0, 4034) / 2 + LINE(0, 0, 4152) / 2 + LINE(0, 0, 4257) / 2 + LINE(0, 0, 4492) / 2 + LINE(0, 0, 4556) / 2;
 	WRITE_LINE(2, 11) = Acc;
 	*out_left = tmp_5;
-	*out_right = WRITE_LINE(1, 3);
+	*out_right = LINE(1, 3, 0);
 }
 #undef LINE
 #undef WRITE_LINE
@@ -2474,7 +2474,7 @@ void midiverb_effect_54(int16_t input, int16_t *out_left, int16_t *out_right, in
 	Acc = LINE(0, 0, 163) / 2 + LINE(0, 0, 233) / 2 + LINE(0, 0, 412) / 2 + LINE(0, 0, 534) / 2 + LINE(0, 0, 761) / 2 + LINE(0, 0, 875) / 2 + LINE(0, 0, 1065) / 2 + LINE(0, 0, 1119) / 2 + LINE(0, 0, 1233) / 2 + LINE(0, 0, 1434) / 2 + LINE(0, 0, 1555) / 2 + LINE(0, 0, 1742) / 2 + LINE(0, 0, 1862) / 2 + LINE(0, 0, 2046) / 2 + LINE(0, 0, 2149) / 2 + LINE(0, 0, 2256) / 2 + LINE(0, 0, 2443) / 2 + LINE(0, 0, 2579) / 2 + LINE(0, 0, 2721) / 2 + LINE(0, 0, 2873) / 2 + LINE(0, 0, 3036) / 2 + LINE(0, 0, 3121) / 2 + LINE(0, 0, 3267) / 2 + LINE(0, 0, 3451) / 2 + LINE(0, 0, 3569) / 2 + LINE(0, 0, 3725) / 2 + LINE(0, 0, 3889) / 2 + LINE(0, 0, 4034) / 2 + LINE(0, 0, 4152) / 2 + LINE(0, 0, 4257) / 2 + LINE(0, 0, 4492) / 2 + LINE(0, 0, 4556) / 2 + LINE(0, 0, 4727) / 2 + LINE(0, 0, 4849) / 2 + LINE(0, 0, 5034) / 2 + LINE(0, 0, 5129) / 2 + LINE(0, 0, 5235) / 2 + LINE(0, 0, 5421) / 2 + LINE(0, 0, 5534) / 2 + LINE(0, 0, 5759) / 2 + LINE(0, 0, 5837) / 2;
 	WRITE_LINE(2, 11) = Acc;
 	*out_left = tmp_5;
-	*out_right = WRITE_LINE(1, 3);
+	*out_right = LINE(1, 3, 0);
 }
 #undef LINE
 #undef WRITE_LINE
@@ -2502,7 +2502,7 @@ void midiverb_effect_55(int16_t input, int16_t *out_left, int16_t *out_right, in
 	Acc = LINE(0, 0, 163) / 2 + LINE(0, 0, 233) / 2 + LINE(0, 0, 412) / 2 + LINE(0, 0, 534) / 2 + LINE(0, 0, 761) / 2 + LINE(0, 0, 875) / 2 + LINE(0, 0, 1065) / 2 + LINE(0, 0, 1119) / 2 + LINE(0, 0, 1233) / 2 + LINE(0, 0, 1434) / 2 + LINE(0, 0, 1555) / 2 + LINE(0, 0, 1742) / 2 + LINE(0, 0, 1862) / 2 + LINE(0, 0, 2046) / 2 + LINE(0, 0, 2149) / 2 + LINE(0, 0, 2256) / 2 + LINE(0, 0, 2443) / 2 + LINE(0, 0, 2579) / 2 + LINE(0, 0, 2721) / 2 + LINE(0, 0, 2873) / 2 + LINE(0, 0, 3036) / 2 + LINE(0, 0, 3121) / 2 + LINE(0, 0, 3267) / 2 + LINE(0, 0, 3451) / 2 + LINE(0, 0, 3569) / 2 + LINE(0, 0, 3725) / 2 + LINE(0, 0, 3889) / 2 + LINE(0, 0, 4034) / 2 + LINE(0, 0, 4152) / 2 + LINE(0, 0, 4257) / 2 + LINE(0, 0, 4492) / 2 + LINE(0, 0, 4556) / 2 + LINE(0, 0, 4727) / 2 + LINE(0, 0, 4849) / 2 + LINE(0, 0, 5034) / 2 + LINE(0, 0, 5129) / 2 + LINE(0, 0, 5235) / 2 + LINE(0, 0, 5421) / 2 + LINE(0, 0, 5534) / 2 + LINE(0, 0, 5759) / 2 + LINE(0, 0, 5837) / 2 + LINE(0, 0, 6035) / 2 + LINE(0, 0, 6159) / 2 + LINE(0, 0, 6223) / 2 + LINE(0, 0, 6446) / 2 + LINE(0, 0, 6534) / 2 + LINE(0, 0, 6782) / 2 + LINE(0, 0, 6859) / 2 + LINE(0, 0, 7039) / 2;
 	WRITE_LINE(2, 11) = Acc;
 	*out_left = tmp_5;
-	*out_right = WRITE_LINE(1, 3);
+	*out_right = LINE(1, 3, 0);
 }
 #undef LINE
 #undef WRITE_LINE
@@ -2530,7 +2530,7 @@ void midiverb_effect_56(int16_t input, int16_t *out_left, int16_t *out_right, in
 	Acc = LINE(0, 0, 163) / 2 + LINE(0, 0, 233) / 2 + LINE(0, 0, 412) / 2 + LINE(0, 0, 534) / 2 + LINE(0, 0, 761) / 2 + LINE(0, 0, 875) / 2 + LINE(0, 0, 1065) / 2 + LINE(0, 0, 1119) / 2 + LINE(0, 0, 1233) / 2 + LINE(0, 0, 1434) / 2 + LINE(0, 0, 1555) / 2 + LINE(0, 0, 1742) / 2 + LINE(0, 0, 1862) / 2 + LINE(0, 0, 2046) / 2 + LINE(0, 0, 2149) / 2 + LINE(0, 0, 2256) / 2 + LINE(0, 0, 2443) / 2 + LINE(0, 0, 2579) / 2 + LINE(0, 0, 2721) / 2 + LINE(0, 0, 2873) / 2 + LINE(0, 0, 3036) / 2 + LINE(0, 0, 3121) / 2 + LINE(0, 0, 3267) / 2 + LINE(0, 0, 3451) / 2 + LINE(0, 0, 3569) / 2 + LINE(0, 0, 3725) / 2 + LINE(0, 0, 3889) / 2 + LINE(0, 0, 4034) / 2 + LINE(0, 0, 4152) / 2 + LINE(0, 0, 4257) / 2 + LINE(0, 0, 4492) / 2 + LINE(0, 0, 4556) / 2 + LINE(0, 0, 4727) / 2 + LINE(0, 0, 4849) / 2 + LINE(0, 0, 5034) / 2 + LINE(0, 0, 5129) / 2 + LINE(0, 0, 5235) / 2 + LINE(0, 0, 5421) / 2 + LINE(0, 0, 5534) / 2 + LINE(0, 0, 5759) / 2 + LINE(0, 0, 5837) / 2 + LINE(0, 0, 6035) / 2 + LINE(0, 0, 6159) / 2 + LINE(0, 0, 6223) / 2 + LINE(0, 0, 6446) / 2 + LINE(0, 0, 6534) / 2 + LINE(0, 0, 6782) / 2 + LINE(0, 0, 6859) / 2 + LINE(0, 0, 7039) / 2 + LINE(0, 0, 7126) / 2 + LINE(0, 0, 7221) / 2 + LINE(0, 0, 7439) / 2 + LINE(0, 0, 7534) / 2 + LINE(0, 0, 7736) / 2 + LINE(0, 0, 7891) / 2 + LINE(0, 0, 8034) / 2 + LINE(0, 0, 8146) / 2 + LINE(0, 0, 8278) / 2;
 	WRITE_LINE(2, 11) = Acc;
 	*out_left = tmp_5;
-	*out_right = WRITE_LINE(1, 3);
+	*out_right = LINE(1, 3, 0);
 }
 #undef LINE
 #undef WRITE_LINE
@@ -2558,7 +2558,7 @@ void midiverb_effect_57(int16_t input, int16_t *out_left, int16_t *out_right, in
 	Acc = LINE(0, 0, 163) / 2 + LINE(0, 0, 233) / 2 + LINE(0, 0, 412) / 2 + LINE(0, 0, 534) / 2 + LINE(0, 0, 761) / 2 + LINE(0, 0, 875) / 2 + LINE(0, 0, 1065) / 2 + LINE(0, 0, 1119) / 2 + LINE(0, 0, 1233) / 2 + LINE(0, 0, 1434) / 2 + LINE(0, 0, 1555) / 2 + LINE(0, 0, 1742) / 2 + LINE(0, 0, 1862) / 2 + LINE(0, 0, 2046) / 2 + LINE(0, 0, 2149) / 2 + LINE(0, 0, 2256) / 2 + LINE(0, 0, 2443) / 2 + LINE(0, 0, 2579) / 2 + LINE(0, 0, 2721) / 2 + LINE(0, 0, 2873) / 2 + LINE(0, 0, 3036) / 2 + LINE(0, 0, 3121) / 2 + LINE(0, 0, 3267) / 2 + LINE(0, 0, 3451) / 2 + LINE(0, 0, 3569) / 2 + LINE(0, 0, 3725) / 2 + LINE(0, 0, 3889) / 2 + LINE(0, 0, 4034) / 2 + LINE(0, 0, 4152) / 2 + LINE(0, 0, 4257) / 2 + LINE(0, 0, 4492) / 2 + LINE(0, 0, 4556) / 2 + LINE(0, 0, 4727) / 2 + LINE(0, 0, 4849) / 2 + LINE(0, 0, 5034) / 2 + LINE(0, 0, 5129) / 2 + LINE(0, 0, 5235) / 2 + LINE(0, 0, 5421) / 2 + LINE(0, 0, 5534) / 2 + LINE(0, 0, 5759) / 2 + LINE(0, 0, 5837) / 2 + LINE(0, 0, 6035) / 2 + LINE(0, 0, 6159) / 2 + LINE(0, 0, 6223) / 2 + LINE(0, 0, 6446) / 2 + LINE(0, 0, 6534) / 2 + LINE(0, 0, 6782) / 2 + LINE(0, 0, 6859) / 2 + LINE(0, 0, 7039) / 2 + LINE(0, 0, 7126) / 2 + LINE(0, 0, 7221) / 2 + LINE(0, 0, 7439) / 2 + LINE(0, 0, 7534) / 2 + LINE(0, 0, 7736) / 2 + LINE(0, 0, 7891) / 2 + LINE(0, 0, 8034) / 2 + LINE(0, 0, 8146) / 2 + LINE(0, 0, 8278) / 2 + LINE(0, 0, 8447) / 2 + LINE(0, 0, 8565) / 2 + LINE(0, 0, 8700) / 2 + LINE(0, 0, 8885) / 2 + LINE(0, 0, 9012) / 2 + LINE(0, 0, 9171) / 2 + LINE(0, 0, 9215) / 2;
 	WRITE_LINE(2, 11) = Acc;
 	*out_left = tmp_5;
-	*out_right = WRITE_LINE(1, 3);
+	*out_right = LINE(1, 3, 0);
 }
 #undef LINE
 #undef WRITE_LINE
@@ -2586,7 +2586,7 @@ void midiverb_effect_58(int16_t input, int16_t *out_left, int16_t *out_right, in
 	*out_left = tmp_5;
 	Acc = LINE(0, 0, 163) / 2 + LINE(0, 0, 233) / 2 + LINE(0, 0, 412) / 2 + LINE(0, 0, 534) / 2 + LINE(0, 0, 761) / 2 + LINE(0, 0, 875) / 2 + LINE(0, 0, 1065) / 2 + LINE(0, 0, 1119) / 2 + LINE(0, 0, 1233) / 2 + LINE(0, 0, 1434) / 2 + LINE(0, 0, 1555) / 2 + LINE(0, 0, 1742) / 2 + LINE(0, 0, 1862) / 2 + LINE(0, 0, 2046) / 2 + LINE(0, 0, 2149) / 2 + LINE(0, 0, 2256) / 2 + LINE(0, 0, 2443) / 2 + LINE(0, 0, 2579) / 2 + LINE(0, 0, 2721) / 2 + LINE(0, 0, 2873) / 2 + LINE(0, 0, 3036) / 2 + LINE(0, 0, 3121) / 2 + LINE(0, 0, 3267) / 2 + LINE(0, 0, 3451) / 2 + LINE(0, 0, 3569) / 2 + LINE(0, 0, 3725) / 2 + LINE(0, 0, 3889) / 2 + LINE(0, 0, 4034) / 2 + LINE(0, 0, 4152) / 2 + LINE(0, 0, 4257) / 2 + LINE(0, 0, 4492) / 2 + LINE(0, 0, 4556) / 2 + LINE(0, 0, 4727) / 2 + LINE(0, 0, 4849) / 2 + LINE(0, 0, 5034) / 2 + LINE(0, 0, 5129) / 2 + LINE(0, 0, 5235) / 2 + LINE(0, 0, 5421) / 2 + LINE(0, 0, 5534) / 2 + LINE(0, 0, 5759) / 2 + LINE(0, 0, 5837) / 2 + LINE(0, 0, 6035) / 2 + LINE(0, 0, 6159) / 2 + LINE(0, 0, 6223) / 2 + LINE(0, 0, 6446) / 2 + LINE(0, 0, 6534) / 2 + LINE(0, 0, 6782) / 2 + LINE(0, 0, 6859) / 2 + LINE(0, 0, 7039) / 2 + LINE(0, 0, 7126) / 2 + LINE(0, 0, 7221) / 2 + LINE(0, 0, 7439) / 2 + LINE(0, 0, 7534) / 2 + LINE(0, 0, 7736) / 2 + LINE(0, 0, 7891) / 2 + LINE(0, 0, 8034) / 2 + LINE(0, 0, 8146) / 2 + LINE(0, 0, 8278) / 2 + LINE(0, 0, 8447) / 2 + LINE(0, 0, 8565) / 2 + LINE(0, 0, 8700) / 2 + LINE(0, 0, 8885) / 2 + LINE(0, 0, 9012) / 2 + LINE(0, 0, 9171) / 2 + LINE(0, 0, 9215) / 2 + LINE(0, 0, 9449) / 2 + LINE(0, 0, 9513) / 2 + LINE(0, 0, 9765) / 2 + LINE(0, 0, 9867) / 2 + LINE(0, 0, 10046) / 2 + LINE(0, 0, 10110) / 2 + LINE(0, 0, 10285) / 2 + LINE(0, 0, 10428) / 2 + LINE(0, 0, 10578) / 2 + LINE(0, 0, 10734) / 2 + LINE(0, 0, 10815) / 2 + LINE(0, 0, 11023) / 2 + LINE(0, 0, 11185) / 2 + LINE(0, 0, 11254) / 2 + LINE(0, 0, 11479) / 2;
 	WRITE_LINE(2, 11) = Acc;
-	*out_right = WRITE_LINE(1, 3);
+	*out_right = LINE(1, 3, 0);
 }
 #undef LINE
 #undef WRITE_LINE
@@ -2612,7 +2612,7 @@ void midiverb_effect_59(int16_t input, int16_t *out_left, int16_t *out_right, in
 	Acc = -Acc / 2 + LINE(3, 1934, 133);
 	tmp_5 = Acc;
 	*out_left = tmp_5;
-	*out_right = WRITE_LINE(1, 3);
+	*out_right = LINE(1, 3, 0);
 	Acc = LINE(0, 0, 163) / 2 + LINE(0, 0, 233) / 2 + LINE(0, 0, 412) / 2 + LINE(0, 0, 534) / 2 + LINE(0, 0, 761) / 2 + LINE(0, 0, 875) / 2 + LINE(0, 0, 1065) / 2 + LINE(0, 0, 1119) / 2 + LINE(0, 0, 1233) / 2 + LINE(0, 0, 1434) / 2 + LINE(0, 0, 1555) / 2 + LINE(0, 0, 1742) / 2 + LINE(0, 0, 1862) / 2 + LINE(0, 0, 2046) / 2 + LINE(0, 0, 2149) / 2 + LINE(0, 0, 2256) / 2 + LINE(0, 0, 2443) / 2 + LINE(0, 0, 2579) / 2 + LINE(0, 0, 2721) / 2 + LINE(0, 0, 2873) / 2 + LINE(0, 0, 3036) / 2 + LINE(0, 0, 3121) / 2 + LINE(0, 0, 3267) / 2 + LINE(0, 0, 3451) / 2 + LINE(0, 0, 3569) / 2 + LINE(0, 0, 3725) / 2 + LINE(0, 0, 3889) / 2 + LINE(0, 0, 4034) / 2 + LINE(0, 0, 4152) / 2 + LINE(0, 0, 4257) / 2 + LINE(0, 0, 4492) / 2 + LINE(0, 0, 4556) / 2 + LINE(0, 0, 4727) / 2 + LINE(0, 0, 4849) / 2 + LINE(0, 0, 5034) / 2 + LINE(0, 0, 5129) / 2 + LINE(0, 0, 5235) / 2 + LINE(0, 0, 5421) / 2 + LINE(0, 0, 5534) / 2 + LINE(0, 0, 5759) / 2 + LINE(0, 0, 5837) / 2 + LINE(0, 0, 6035) / 2 + LINE(0, 0, 6159) / 2 + LINE(0, 0, 6223) / 2 + LINE(0, 0, 6446) / 2 + LINE(0, 0, 6534) / 2 + LINE(0, 0, 6782) / 2 + LINE(0, 0, 6859) / 2 + LINE(0, 0, 7039) / 2 + LINE(0, 0, 7126) / 2 + LINE(0, 0, 7221) / 2 + LINE(0, 0, 7439) / 2 + LINE(0, 0, 7534) / 2 + LINE(0, 0, 7736) / 2 + LINE(0, 0, 7891) / 2 + LINE(0, 0, 8034) / 2 + LINE(0, 0, 8146) / 2 + LINE(0, 0, 8278) / 2 + LINE(0, 0, 8447) / 2 + LINE(0, 0, 8565) / 2 + LINE(0, 0, 8700) / 2 + LINE(0, 0, 8885) / 2 + LINE(0, 0, 9012) / 2 + LINE(0, 0, 9171) / 2 + LINE(0, 0, 9215) / 2 + LINE(0, 0, 9449) / 2 + LINE(0, 0, 9513) / 2 + LINE(0, 0, 9765) / 2 + LINE(0, 0, 9867) / 2 + LINE(0, 0, 10046) / 2 + LINE(0, 0, 10110) / 2 + LINE(0, 0, 10285) / 2 + LINE(0, 0, 10428) / 2 + LINE(0, 0, 10578) / 2 + LINE(0, 0, 10734) / 2 + LINE(0, 0, 10815) / 2 + LINE(0, 0, 11023) / 2 + LINE(0, 0, 11185) / 2 + LINE(0, 0, 11254) / 2 + LINE(0, 0, 11479) / 2 + LINE(0, 0, 11546) / 2 + LINE(0, 0, 11715) / 2 + LINE(0, 0, 11847) / 2 + LINE(0, 0, 12074) / 2 + LINE(0, 0, 12112) / 2 + LINE(0, 0, 12279) / 2 + LINE(0, 0, 12415) / 2 + LINE(0, 0, 12516) / 2 + LINE(0, 0, 12746) / 2 + LINE(0, 0, 12815) / 2 + LINE(0, 0, 13046) / 2;
 	WRITE_LINE(2, 11) = Acc;
 }
@@ -2621,7 +2621,7 @@ void midiverb_effect_59(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_60(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5;
+	int16_t Acc, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(1, 11, 2) / 2 + LINE(7, 2298, 21) / 2;
 	WRITE_LINE(7, 2298) = -Acc;
@@ -2649,7 +2649,7 @@ void midiverb_effect_60(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_61(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5;
+	int16_t Acc, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(1, 11, 2) / 2 + LINE(7, 2298, 21) / 2;
 	WRITE_LINE(7, 2298) = -Acc;
@@ -2677,7 +2677,7 @@ void midiverb_effect_61(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_62(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5;
+	int16_t Acc, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(1, 11, 2) / 2 + LINE(7, 2298, 21) / 2;
 	WRITE_LINE(7, 2298) = -Acc;
@@ -2705,7 +2705,7 @@ void midiverb_effect_62(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_63(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_1, tmp_3, tmp_5;
+	int16_t Acc, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(1, 11, 2) / 2 + LINE(7, 2298, 21) / 2;
 	WRITE_LINE(7, 2298) = -Acc;
@@ -2733,7 +2733,7 @@ void midiverb_effect_63(int16_t input, int16_t *out_left, int16_t *out_right, in
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb_effect_64(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
-	int16_t Acc, tmp_0, tmp_160a, tmp_2c0b, tmp_215, tmp_1816, tmp_2e17, tmp_421, tmp_1a22, tmp_3023, tmp_62d, tmp_1c2e, tmp_322f, tmp_1e3a, tmp_343b, tmp_a45, tmp_2046, tmp_3647, tmp_c51, tmp_2252, tmp_3853, tmp_e5d, tmp_245e, tmp_3a5f, tmp_1069, tmp_266a, tmp_3c6b, tmp_1275, tmp_2876, tmp_3e77, tmp_1481, tmp_2a82, tmp_168d, tmp_2c8e, tmp_298, tmp_1899, tmp_2e9a, tmp_4a4, tmp_1aa5, tmp_30a6, tmp_6b0, tmp_1cb1, tmp_32b2, tmp_8bc, tmp_1ebd, tmp_34be, tmp_ac8, tmp_20c9, tmp_36ca, tmp_cd4, tmp_22d5, tmp_38d6, tmp_ee0, tmp_24e1, tmp_3ae2, tmp_10ec, tmp_26ed, tmp_3cee, tmp_12f8, tmp_28f9, tmp_3efa, tmp_1504, tmp_2b05, tmp_10f, tmp_1710, tmp_2d11, tmp_31b, tmp_191c, tmp_2f1d, tmp_527, tmp_1b28, tmp_3129, tmp_733, tmp_1d34, tmp_3335, tmp_93f, tmp_1f40, tmp_3541, tmp_b4b, tmp_214c, tmp_374d, tmp_d57, tmp_2358, tmp_3959, tmp_f63, tmp_2564, tmp_3b65, tmp_116f, tmp_2770, tmp_3d71, tmp_137b, tmp_297c, tmp_57d, tmp_3f7d, tmp_1587, tmp_2b88, tmp_192, tmp_1793, tmp_2d94, tmp_39e, tmp_199f, tmp_2fa0, tmp_5aa, tmp_1bab, tmp_31ac, tmp_7b6, tmp_1db7, tmp_33b8, tmp_9c2, tmp_1fc3, tmp_35c4, tmp_bce, tmp_21cf, tmp_37d0, tmp_dda, tmp_23db, tmp_39dc, tmp_fe6, tmp_25e7, tmp_3be8, tmp_11f2, tmp_27f3, tmp_3df4, tmp_13fe, tmp_29ff;
+	int16_t Acc;
 	*out_left = LINE(0, 140, 135);
 	*out_right = LINE(0, 140, 137);
 	Acc = 0;
