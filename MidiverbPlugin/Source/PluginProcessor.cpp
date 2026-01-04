@@ -201,13 +201,14 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             phase -= 1.0;
 
             // Process one effect sample at 24kHz
-            int16_t inputInt = static_cast<int16_t>(saturate(lastFilteredInput) * 0x1fff);
+            // Original hardware uses 13-bit samples (±4095 range, same as >> 3 from 16-bit)
+            int16_t inputInt = static_cast<int16_t>(saturate(lastFilteredInput) * 0x0fff);
             int16_t outLeftInt, outRightInt;
 
             effectFn(inputInt, &outLeftInt, &outRightInt, DRAM.data(), memoryPointer++);
 
-            float outL = outLeftInt / static_cast<float>(0x1fff);
-            float outR = outRightInt / static_cast<float>(0x1fff);
+            float outL = outLeftInt / static_cast<float>(0x0fff);
+            float outR = outRightInt / static_cast<float>(0x0fff);
 
             // Push to interpolation buffers
             outputBufferL.push(outL);
