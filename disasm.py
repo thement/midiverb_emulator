@@ -562,6 +562,7 @@ def main():
     parser.add_argument("-U", "--unoptimized", action='store_true', help="Do not optimize the resulting C function with dead-code elimination and constant-folding")
     parser.add_argument("-i", "--integer-arithmetic", action='store_true', help="Use integer arithmetic instead of float-point arithmetic")
     parser.add_argument("-2", "--midiverb2", action='store_true', help="Assume the byte order is same as Midiverb 2, and start at 0x1c00 from program 0")
+    parser.add_argument("-p", "--prefix", default="", help="Add custom prefix to decompiled functions")
     parser.add_argument("--lfo1", type=int_or_hex, help="Apply LFO1 modulation (from modulation table)")
     parser.add_argument("--lfo2", type=int_or_hex, help="Apply LFO2 modulation (from modulation table)")
     parser.add_argument("--lfo-op", type=int_or_hex, help="LFO operator")
@@ -607,16 +608,16 @@ def main():
 
         if decompiler_output is not None:
             if len(decode) > 1:
-                function_name = f'effect_{program_number}'
+                function_name = f'{args.prefix}effect_{program_number}'
             else:
-                function_name = 'effect'
+                function_name = f'{args.prefix}effect'
             decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic)
 
     if decompiler_output is not None and len(decode) > 1:
         f = decompiler_output
-        f.write('void (*effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) = {\n')
+        f.write(f'void (*{args.prefix}effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) = {{\n')
         for program_number in decode:
-            f.write(f'\teffect_{program_number},\n')
+            f.write(f'\t{args.prefix}effect_{program_number},\n')
         f.write('};\n')
 
 if __name__ == "__main__":
