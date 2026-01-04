@@ -368,7 +368,7 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
 
     print(f'-- Pass 4: Output C program into a file')
     for line in delay_line_storage.lines:
-        f.write(f"// Delay line {line.id}: length={line.length}, taps={line.taps}\n")
+        print(f"Delay line {line.id}: length={line.length}, taps={line.taps}")
     f.write('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])\n')
     f.write('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])\n')
     f.write(f'void {function_name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {{\n')
