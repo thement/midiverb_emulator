@@ -14,9 +14,11 @@
 #include "args.h"
 #include "dasp16.h"
 #include "wav.h"
-#include "rom.h"
 #include "lfo.h"
-#include "all-effects.h"
+#include "decompiled-midiverb.h"
+#include "decompiled-midifex.h"
+#include "decompiled-midiverb2.h"
+#include "rom.h"
 
 int16_t clip(int32_t input) {
     if (input > INT16_MAX) {
@@ -28,28 +30,47 @@ int16_t clip(int32_t input) {
     }
 }
 
-RomType *detect_rom(const char *rom_file, bool *use_internal_effects) {
+RomType *detect_rom(const char *rom_file, const char *model_name, bool *out_use_internal_effects) {
     if (rom_file == NULL) {
-        fprintf(stderr, "no ROM specified, using internal effects\n");
-        *use_internal_effects = true;
-        return &internal_rom_type;
-    }
-
-    *use_internal_effects = false;
-
-    // Detect ROM type
-    uint8_t signature[4];
-    read_bytes(rom_file, 0, 4, signature);
-
-    for (int i = 0; i < ARRAY_SIZE(rom_types); i++) {
-        RomType *rom_type = &rom_types[i];
-        if (memcmp(signature, rom_type->signature, sizeof(rom_type->signature)) == 0) {
-            fprintf(stderr, "detected ROM: %s\n", rom_type->name);
-            return rom_type;
+        if (model_name == NULL) {
+            *out_use_internal_effects = true;
+            return &rom_types[2];
         }
+        for (int i = 0; i < ARRAY_SIZE(rom_types); i++) {
+            RomType *rom_type = &rom_types[i];
+            if (rom_type->decompiled != NULL && strcasecmp(model_name, rom_type->name) == 0) {
+                *out_use_internal_effects = true;
+                return rom_type;
+            }
+        }
+        int printed_something = 0;
+        fprintf(stderr, "model '%s' not found, available are:", model_name);
+        for (int i = 0; i < ARRAY_SIZE(rom_types); i++) {
+            RomType *rom_type = &rom_types[i];
+            if (rom_type->decompiled != NULL) {
+                fprintf(stderr, "%s %s", printed_something ? "," : "", rom_type->name);
+                printed_something = 1;
+            }
+        }
+        exit(0);
+    } else {
+        *out_use_internal_effects = false;
+
+        // Detect ROM type
+        uint8_t signature[4];
+        read_bytes(rom_file, 0, 4, signature);
+
+        for (int i = 0; i < ARRAY_SIZE(rom_types); i++) {
+            RomType *rom_type = &rom_types[i];
+            if (memcmp(signature, rom_type->signature, sizeof(rom_type->signature)) == 0) {
+                fprintf(stderr, "detected ROM: %s\n", rom_type->name);
+                return rom_type;
+            }
+        }
+
+        fprintf(stderr, "warning: ROM was not recognized, assuming Midiverb I\n");
+        return &rom_types[0];
     }
-    fprintf(stderr, "warning: ROM was not recognized, assuming Midiverb I\n");
-    return &rom_types[0];
 }
 
 int main(int argc, char *argv[]) {
@@ -58,7 +79,7 @@ int main(int argc, char *argv[]) {
     bool use_internal_effects = false;
 
     // Get ROM type
-    rom_type = detect_rom(args.rom_file, &use_internal_effects);
+    rom_type = detect_rom(args.rom_file, args.model_name, &use_internal_effects);
 
     // Check program number is valid
     int program_valid =
@@ -74,11 +95,17 @@ int main(int argc, char *argv[]) {
 
     // Load the machine
     Machine machine;
+    void (*effect_fn)(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr);
+
     if (!use_internal_effects) {
         load_rom(&machine, rom_type, args.rom_file, args.program_number);
+        effect_fn = NULL;
+    } else {
+        fprintf(stderr, "using internal decompiled effects for %s\n", rom_type->name);
+        effect_fn = rom_type->decompiled[program_index];
     }
     if (rom_type->effect_names) {
-	fprintf(stderr, "loaded effect: %s\n", rom_type->effect_names[program_index]);
+	fprintf(stderr, "effect name: %s\n", rom_type->effect_names[program_index]);
     }
     reset_machine(&machine);
 
@@ -117,6 +144,7 @@ int main(int argc, char *argv[]) {
     float wet_dry_ratio = 1.0 - dry_wet_ratio;
     int32_t output_left = 0, output_right = 0;
 
+
     // Process each sample
     for (sf_count_t i = 0; i < num_samples; i += 2) {
         int16_t input_left = input_samples[i];
@@ -132,9 +160,9 @@ int main(int argc, char *argv[]) {
         // Remove 3 bits to reduce it from 16-bit to 13-bit
         int16_t input_mono = input_clipped >> 3;
 
-        if (use_internal_effects) {
+        if (effect_fn != NULL) {
             // Run decompiled version
-            effects[program_index](input_mono, &output.s[0], &output.s[1], machine.dram, machine.address++);
+            effect_fn(input_mono, &output.s[0], &output.s[1], machine.dram, machine.address++);
         } else {
             run_machine_tick(&machine, input_mono, &output);
         }
