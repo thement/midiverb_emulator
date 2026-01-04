@@ -11,28 +11,26 @@ const char* MidiverbAudioProcessor::getDeviceName(int deviceIndex)
     return "Unknown";
 }
 
-int MidiverbAudioProcessor::getDeviceFirstProgram(int deviceIndex)
+int MidiverbAudioProcessor::getDeviceNumEffects(int deviceIndex)
 {
     if (deviceIndex >= 0 && deviceIndex < NUM_DEVICES)
-        return devices[deviceIndex].firstProgram;
+        return devices[deviceIndex].numEffects;
     return 0;
 }
 
-int MidiverbAudioProcessor::getDeviceLastProgram(int deviceIndex)
+int MidiverbAudioProcessor::getDeviceDisplayOffset(int deviceIndex)
 {
     if (deviceIndex >= 0 && deviceIndex < NUM_DEVICES)
-        return devices[deviceIndex].lastProgram;
+        return devices[deviceIndex].displayOffset;
     return 0;
 }
 
-const char* MidiverbAudioProcessor::getEffectName(int deviceIndex, int program)
+const char* MidiverbAudioProcessor::getEffectName(int deviceIndex, int effectIndex)
 {
     if (deviceIndex >= 0 && deviceIndex < NUM_DEVICES) {
         const auto& dev = devices[deviceIndex];
-        int index = program - dev.firstProgram;
-        int count = dev.lastProgram - dev.firstProgram + 1;
-        if (index >= 0 && index < count)
-            return dev.effectNames[index];
+        if (effectIndex >= 0 && effectIndex < dev.numEffects)
+            return dev.effectNames[effectIndex];
     }
     return "Unknown";
 }
@@ -105,7 +103,8 @@ void MidiverbAudioProcessor::setCurrentProgram(int index)
 const juce::String MidiverbAudioProcessor::getProgramName(int index)
 {
     int deviceIndex = static_cast<int>(*apvts.getRawParameterValue("device"));
-    return juce::String(index) + ": " + getEffectName(deviceIndex, index);
+    int displayNum = index + getDeviceDisplayOffset(deviceIndex);
+    return juce::String(displayNum) + ": " + getEffectName(deviceIndex, index);
 }
 
 void MidiverbAudioProcessor::changeProgramName(int index, const juce::String& newName)
@@ -164,17 +163,16 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
         buffer.clear(i, 0, buffer.getNumSamples());
 
     int deviceIndex = static_cast<int>(*apvts.getRawParameterValue("device"));
-    int program = static_cast<int>(*apvts.getRawParameterValue("program"));
+    int effectIndex = static_cast<int>(*apvts.getRawParameterValue("program"));
     float dryWet = *apvts.getRawParameterValue("dryWet");
     float feedback = *apvts.getRawParameterValue("feedback");
 
-    // Clamp program to valid range for current device
+    // Clamp effect index to valid range for current device
     const auto& dev = devices[deviceIndex];
-    if (program < dev.firstProgram) program = dev.firstProgram;
-    if (program > dev.lastProgram) program = dev.lastProgram;
+    if (effectIndex < 0) effectIndex = 0;
+    if (effectIndex >= dev.numEffects) effectIndex = dev.numEffects - 1;
 
     // Get effect function pointer
-    int effectIndex = program - dev.firstProgram;
     auto effectFn = dev.effects[effectIndex];
 
     auto* leftChannel = buffer.getWritePointer(0);

@@ -23,16 +23,16 @@ static const char* names_midiverb2[] = {
 // Device info structure
 struct DeviceInfo {
     const char* name;
-    int firstProgram;   // First valid program number (0 or 1)
-    int lastProgram;    // Last valid program number
+    int numEffects;     // Number of effects
+    int displayOffset;  // Added to 0-based index for display (1 for MIDIVerb/MidiFex, 0 for MIDIVerb 2)
     const char** effectNames;
     void (**effects)(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr);
 };
 
 static const DeviceInfo devices[] = {
-    { "MIDIVerb",   1, 64, names_midiverb,  midiverb_effects },
-    { "MidiFex",    1, 64, names_midifex,   midifex_effects },
-    { "MIDIVerb 2", 0, 99, names_midiverb2, midiverb2_effects },
+    { "MIDIVerb",   64,  1, names_midiverb,  midiverb_effects },
+    { "MidiFex",    64,  1, names_midifex,   midifex_effects },
+    { "MIDIVerb 2", 100, 0, names_midiverb2, midiverb2_effects },
 };
 
 static constexpr int NUM_DEVICES = 3;

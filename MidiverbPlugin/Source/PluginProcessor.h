@@ -147,9 +147,9 @@ public:
 
     // Device info accessors
     static const char* getDeviceName(int deviceIndex);
-    static int getDeviceFirstProgram(int deviceIndex);
-    static int getDeviceLastProgram(int deviceIndex);
-    static const char* getEffectName(int deviceIndex, int program);
+    static int getDeviceNumEffects(int deviceIndex);
+    static int getDeviceDisplayOffset(int deviceIndex);
+    static const char* getEffectName(int deviceIndex, int effectIndex);
 
     // Input overload detection
     bool getAndClearInputOverload() { return inputOverload.exchange(false); }

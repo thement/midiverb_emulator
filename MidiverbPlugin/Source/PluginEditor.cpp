@@ -72,27 +72,29 @@ void MidiverbAudioProcessorEditor::updateProgramSelector()
 
     lastDeviceIndex = deviceIndex;
 
-    // Save current program
-    int currentProgram = static_cast<int>(*audioProcessor.getAPVTS().getRawParameterValue("program"));
+    // Save current effect index (0-based)
+    int currentIndex = static_cast<int>(*audioProcessor.getAPVTS().getRawParameterValue("program"));
 
     // Detach temporarily to avoid feedback loops
     programAttachment.reset();
 
     programSelector.clear(juce::dontSendNotification);
 
-    int firstProg = MidiverbAudioProcessor::getDeviceFirstProgram(deviceIndex);
-    int lastProg = MidiverbAudioProcessor::getDeviceLastProgram(deviceIndex);
+    int numEffects = MidiverbAudioProcessor::getDeviceNumEffects(deviceIndex);
+    int displayOffset = MidiverbAudioProcessor::getDeviceDisplayOffset(deviceIndex);
 
-    for (int prog = firstProg; prog <= lastProg; ++prog) {
-        juce::String name = MidiverbAudioProcessor::getEffectName(deviceIndex, prog);
-        programSelector.addItem(juce::String(prog) + ": " + name, prog + 1);  // ComboBox IDs are 1-based
+    // ComboBox IDs must be sequential starting at 1 for ComboBoxAttachment to work correctly
+    for (int i = 0; i < numEffects; ++i) {
+        int displayNum = i + displayOffset;
+        juce::String name = MidiverbAudioProcessor::getEffectName(deviceIndex, i);
+        programSelector.addItem(juce::String(displayNum) + ": " + name, i + 1);
     }
 
-    // Clamp current program to valid range for this device
-    if (currentProgram < firstProg) currentProgram = firstProg;
-    if (currentProgram > lastProg) currentProgram = lastProg;
+    // Clamp current index to valid range for this device
+    if (currentIndex < 0) currentIndex = 0;
+    if (currentIndex >= numEffects) currentIndex = numEffects - 1;
 
-    programSelector.setSelectedId(currentProgram + 1, juce::dontSendNotification);
+    programSelector.setSelectedId(currentIndex + 1, juce::dontSendNotification);
 
     // Reattach
     programAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
