@@ -17,14 +17,20 @@ MidiverbAudioProcessorEditor::MidiverbAudioProcessorEditor(MidiverbAudioProcesso
     deviceAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         audioProcessor.getAPVTS(), "device", deviceSelector);
 
-    // Program selector
+    // Program selector (manually managed due to variable effect counts per device)
     programLabel.setText("Program", juce::dontSendNotification);
     programLabel.setJustificationType(juce::Justification::centred);
     addAndMakeVisible(programLabel);
     addAndMakeVisible(programSelector);
 
-    programAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-        audioProcessor.getAPVTS(), "program", programSelector);
+    // Manual onChange handler - ComboBox ID equals effect index + 1
+    programSelector.onChange = [this]() {
+        int effectIndex = programSelector.getSelectedId() - 1;
+        if (effectIndex >= 0) {
+            auto* param = audioProcessor.getAPVTS().getParameter("program");
+            param->setValueNotifyingHost(param->convertTo0to1(static_cast<float>(effectIndex)));
+        }
+    };
 
     // Initialize program list for current device
     updateProgramSelector();
@@ -75,15 +81,12 @@ void MidiverbAudioProcessorEditor::updateProgramSelector()
     // Save current effect index (0-based)
     int currentIndex = static_cast<int>(*audioProcessor.getAPVTS().getRawParameterValue("program"));
 
-    // Detach temporarily to avoid feedback loops
-    programAttachment.reset();
-
     programSelector.clear(juce::dontSendNotification);
 
     int numEffects = MidiverbAudioProcessor::getDeviceNumEffects(deviceIndex);
     int displayOffset = MidiverbAudioProcessor::getDeviceDisplayOffset(deviceIndex);
 
-    // ComboBox IDs must be sequential starting at 1 for ComboBoxAttachment to work correctly
+    // ComboBox ID = effect index + 1 (direct mapping, no normalization)
     for (int i = 0; i < numEffects; ++i) {
         int displayNum = i + displayOffset;
         juce::String name = MidiverbAudioProcessor::getEffectName(deviceIndex, i);
@@ -96,15 +99,20 @@ void MidiverbAudioProcessorEditor::updateProgramSelector()
 
     programSelector.setSelectedId(currentIndex + 1, juce::dontSendNotification);
 
-    // Reattach
-    programAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-        audioProcessor.getAPVTS(), "program", programSelector);
+    // Update parameter if it was clamped
+    auto* param = audioProcessor.getAPVTS().getParameter("program");
+    param->setValueNotifyingHost(param->convertTo0to1(static_cast<float>(currentIndex)));
 }
 
 void MidiverbAudioProcessorEditor::timerCallback()
 {
     // Check for device changes
     updateProgramSelector();
+
+    // Sync ComboBox with parameter (for automation/preset changes)
+    int currentIndex = static_cast<int>(*audioProcessor.getAPVTS().getRawParameterValue("program"));
+    if (programSelector.getSelectedId() != currentIndex + 1)
+        programSelector.setSelectedId(currentIndex + 1, juce::dontSendNotification);
 
     if (audioProcessor.getAndClearInputOverload())
     {

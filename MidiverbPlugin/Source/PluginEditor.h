@@ -26,10 +26,9 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> deviceAttachment;
     int lastDeviceIndex = -1;
 
-    // Program selector
+    // Program selector (manually managed, not using attachment due to variable effect counts)
     juce::ComboBox programSelector;
     juce::Label programLabel;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> programAttachment;
 
     // Dry/Wet knob
     juce::Slider dryWetSlider;
