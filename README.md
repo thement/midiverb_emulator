@@ -24,18 +24,22 @@ There's a decompiler that outputs C code which makes it possible to run at *full
 ## Support
 
 
+
 |  | CLI emulator | web demo | VST3 plugin |
 |---|---|---|---|
 | Midiverb+Midifex emulation |  100% | 100% | - |
-| Midiverb 2 emulation | 90% | 90% | - |
+| Midiverb 2 emulation | 90%<sup>*</sup> | 90%<sup>*</sup> | - |
 | Midiverb+Midifex native | 100% | - | 100% |
-| Midiverb 2 native | 60% | - | 60% |
+| Midiverb 2 native | 60%<sup>**</sup> | - | 60%<sup>**</sup> |
 
 What is missing:
-- pre-emphasis/antialiasing filter modelling, output filter modelling
-- triggers for flanger are not implemented
-- LFO is not supported in the native version
-- Chorus/Flanger  effects (50-69) are NOT WORKING in VST3 because of the previous point
+
+<sup>*</sup> Triggers for flanger are not implemented<br>
+<sup>**</sup> LFO is not supported in the native version<br>
+Chorus/Flanger  effects (50-69) are NOT WORKING in VST3 because of the previous point<br>
+Pre-emphasis/antialiasing filter modelling, output filter modelling<br>
+
+
 
 
 ## `midiverb` CLI tool
