@@ -1,64 +1,94 @@
-# Midiverb I emulator
+# Midiverb/Midiverb II emulator
 
 ![Panel](panel.jpg)
+![Panel2](panel2.png)
+
 
 <h3>There's a <a href="https://github.com/thement/midiverb_emulator/releases">VST3 plugin</a> now. Also a <a href="http://ibawizard.net/midiverb">WEB DEMO</a>!</h3>
 
-This is an emulator for the original MIDIVERB and MIDIFEX effect units made by Alesis.
+## What is this
+
+This is an emulator for the original **Midiverb**, **Midifex** and **Midiverb II** effect units made by Alesis.
+
+The core is DASP-family DSP processor µ-code emulator.
+
+There's a decompiler that outputs C code which makes it possible to run at *full-speed* which is exactly what is done for the *VST-3 plugin*.
+
+## Contents of the repository
+
+* [command-line emulator](midiverb.c)
+* [disassembler/decompiler](disasm.py) of DSP µ-code
+* [VST3 plugin](MidiverbPlugin) which is available for download in [releases](https://github.com/thement/midiverb_emulator/releases)
+* [web demo](web-demo) which is <a href="http://ibawizard.net/midiverb">live here</a>
+
+## Support
 
 
-This emulator is based on [reverse engineering work](https://github.com/emeb/MIDIVerb_RE) done by [Eric Brombaugh](https://github.com/emeb) and there's a series of videos presenting this work by [Paul Schreiber](https://www.youtube.com/@MOTMguy). If you are into synthesizers and electronics, it's a must watch!
+|  | CLI emulator | web demo | VST3 plugin |
+|---|---|---|---|
+| Midiverb+Midifex emulation |  100% | 100% | - |
+| Midiverb 2 emulation | 90% | 90% | - |
+| Midiverb+Midifex native | 100% | - | 100% |
+| Midiverb 2 native | 60% | - | 60% |
 
-* https://www.youtube.com/watch?v=z4cIt1VPAjU
-* https://www.youtube.com/watch?v=JNPpU08YZjk
-* https://www.youtube.com/watch?v=5DYbirWuBaU
-
-<b>Update 16.7.2025:</b> All materials from the videos are now open source! It includes all the stuff - schematics of Midiverb, disassembler, compiler and emulator - check [https://github.com/emeb/MIDIVerb_RE](https://github.com/emeb/MIDIVerb_RE).
-
-
-So far this is only a standalone C program that processes .WAV files, but in future it will be adapted into plugins/VCVRack module/Raspberry Pi Pico device.
+What is missing:
+- pre-emphasis/antialiasing filter modelling, output filter modelling
+- triggers for flanger are not implemented
+- LFO is not supported in the native version
+- Chorus/Flanger  effects (50-69) are NOT WORKING in VST3 because of the previous point
 
 
-## What can you find here
+## `midiverb` CLI tool
 
+This is a simple command-line tool for adding effects to wav files.
 
-### Midiverb Emulator
+It supports two modes:
+* emulation, which requires original ROMs to run (`midiverb.rom`, `midifex.rom` or `midiverb2.rom`)
+* using internal decompiled Midiverb effects - that doesn't require the ROMs but not all features are supported
 
-A very naive command-line emulator of Midiverb instruction set with audio input/output. Lives in the top-level.
-
-There's also a <a href="http://ibawizard.net/midiverb">WEB DEMO</a> of this emulator.
-
-So far it's emulated:
-
-- the core DSP engine
-- output saturation
-
-What's missing:
-
-- input pre-emphasis and filtering
-
-#### How to build it
-
-- requires original midiverb.rom (or midifex.rom) to run
+How to build it:
 - requires libsndfile to build: `apt-get install libsndfile-dev`
 - then just `make`
 
-#### Usage
+### Example usage
 
-Inputs and outputs are stereo WAV files, 22 KHz, 16-bit, signed integer.
-
-The output is 100% wet.
+Inputs and outputs are stereo WAV files, 23.4 KHz, 16-bit, signed integer. The effect doesn't resample the input so if you run wavs at 48 KHz you will run the effect twice as fast.
 
 ```
-$ sox i_feel_so_liberated.wav -t wav -e signed-integer -b 16 -r 22050 input.wav
-$ ./midiverb midiverb.rom 21 input.wav output.wav
-channels=2, sample_rate=22050, num=198636
+$ sox i_feel_so_liberated.wav -t wav -e signed-integer -b 16 -r 23400 input.wav
 ```
 
-The programs are indexed from 1 in the same way as they are on the original unit.
+By default internal implementation of effects from `Midiverb II` is used.
+The effect programs are numbered the same way as on the original unit.
+The following example runs 100% wet effect no. 15 from Midiverb II.
 
+```
+$ ./midiverb 15 input.wav output.wav
+using internal decompiled effects for MidiVerb 2
+effect name: Medium Bright 1.1 Sec
+channels=2, sample_rate=23400, num=93600
+```
 
-### Midiverb decompiler
+`midiverb` supports wet/dry mixing and feedback. This runs 40% wet effect no 15 from midiverb with 50% feedback.
+
+```
+$ ./midiverb -m midifex 15 -d 0.4 -f 0.5 input.wav output.wav
+using internal decompiled effects for MidiFex
+effect name: ECHO SHORT LPF AMBI
+channels=2, sample_rate=23400, num=93600
+```
+
+You can also run the original roms. This runs flanger:
+
+```
+$ ./midiverb -r roms/midiverb2.rom -d 0.5 52 input.wav output.wav
+detected ROM: MidiVerb 2
+effect name: Flange Pan 2
+this effect has LFO
+channels=2, sample_rate=23400, num=93600
+```
+
+## Midiverb decompiler
 
 A [decompiler from Midiverb instruction set to C](disasm.py). It will also disassemble the ROMs.
 
@@ -70,7 +100,9 @@ It does some optimizations:
 - constant folding
 - calculating partial results in floating-point (that's by default, but integer calculation can be set by an option)
 
-The output looks something like this ([full output here](all-effects.h)):
+The decompiler doesn't yet support LFO, because the LFOs rely in dynamically modifying the effect code and patching different offset and constants. This will be supported in the future.
+
+The output of the decompiler looks something like this ([full output here](decompiled-midiverb2.h)):
 
 ```c
 void effect_22(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
@@ -117,27 +149,22 @@ void effect_22(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRA
 }
 ```
 
-It should be reasonably fast (compared to the naive emulation).
+### Usage
 
-#### Usage
 
-The `all-effects.h` file was generated with
+The `decompiled-midiver.h` file was generated with
 
 ```shell
-cat midiverb.rom midifex.rom > both.rom
-python3 disasm.py -d all-effects.h -i both.rom
+python3 disasm.py -d decompiled-midiverb.h -i midiverb.rom --prefix midiverb_
 ```
 
-Midiverb emulator will by default use the decompiled effects if no ROMs are spcified.
 
 
-### Midiverb VST3 plugin
+## Midiverb VST3 plugin
 
-There is [a plugin using the JUCE library](MidiverbPlugin/) that works very much like `all-effects-test` but can be run as a VST3 plugin with realtime parameters. This plugin was generated using Claude Code.
+There is [a plugin using the JUCE library](MidiverbPlugin/) that works very much like the "internal" effects in `midiverb` tool but can be run as a VST3 plugin with realtime parameters. This plugin was generated using Claude Code.
 
 There are precompiled binaries in releases.
-
-It could be compiled also for Mac but I don't have a Mac.
 
 
 ## Supported ROMs
@@ -151,3 +178,19 @@ This program was tested with the following roms:
 | 11a460c8e64d3325411bba0c11a2ae49  | midiverb.rom |
 | f06003307a93ec09c637146ecaa17948  | midifex.rom |
 | d503f74c239917b9888f247f979509ec  | midiverb2.rom |
+
+## Authors
+
+
+The `Midiverb I` emulator is based on [reverse engineering work](https://github.com/emeb/MIDIVerb_RE) done by [Eric Brombaugh](https://github.com/emeb) and there's a series of videos presenting this work by [Paul Schreiber](https://www.youtube.com/@MOTMguy). If you are into synthesizers and electronics, it's a must watch!
+
+* https://www.youtube.com/watch?v=z4cIt1VPAjU
+* https://www.youtube.com/watch?v=JNPpU08YZjk
+* https://www.youtube.com/watch?v=5DYbirWuBaU
+
+The `Midiverb II` was reverse-engineered by myself (thement).
+
+
+
+
+
