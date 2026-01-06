@@ -11,7 +11,7 @@ typedef struct {
 } Args;
 
 void usage(void) {
-    fprintf(stderr, "usage: midiverb [-m model_name] [-r rom_file] [-d dry_wet] [-f feedback] program_num input.wav output.wav");
+    fprintf(stderr, "usage: midiverb [-m model_name] [-r rom_file] [-d dry_wet] [-f feedback] program_num input.wav output.wav\n");
     exit(1);
 }
 
