@@ -55,3 +55,4 @@ dkms.conf
 MidiverbPlugin/build/
 tags
 web-demo/*.rom
+web-demo/*.bin
