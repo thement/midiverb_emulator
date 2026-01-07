@@ -106,13 +106,8 @@ void MidiverbAudioProcessorEditor::updateProgramSelector()
 
 void MidiverbAudioProcessorEditor::timerCallback()
 {
-    // Check for device changes
+    // Check for device changes (this also syncs the program selector)
     updateProgramSelector();
-
-    // Sync ComboBox with parameter (for automation/preset changes)
-    int currentIndex = static_cast<int>(*audioProcessor.getAPVTS().getRawParameterValue("program"));
-    if (programSelector.getSelectedId() != currentIndex + 1)
-        programSelector.setSelectedId(currentIndex + 1, juce::dontSendNotification);
 
     if (audioProcessor.getAndClearInputOverload())
     {
