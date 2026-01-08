@@ -40,10 +40,6 @@ private:
     juce::Label feedbackLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> feedbackAttachment;
 
-    // Hi-Quality toggle
-    juce::ToggleButton hiQualityButton;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> hiQualityAttachment;
-
     // Input overload indicator
     bool showOverload = false;
 

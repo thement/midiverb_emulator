@@ -59,14 +59,7 @@ MidiverbAudioProcessorEditor::MidiverbAudioProcessorEditor(MidiverbAudioProcesso
     feedbackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         audioProcessor.getAPVTS(), "feedback", feedbackSlider);
 
-    // Hi-Quality toggle
-    hiQualityButton.setButtonText("Hi-Quality");
-    addAndMakeVisible(hiQualityButton);
-
-    hiQualityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
-        audioProcessor.getAPVTS(), "hiQuality", hiQualityButton);
-
-    setSize(500, 370);
+    setSize(500, 340);
 
     startTimerHz(30);
 }
@@ -158,10 +151,6 @@ void MidiverbAudioProcessorEditor::resized()
     programLabel.setBounds(selectorArea.removeFromTop(20));
     programSelector.setBounds(selectorArea.reduced(20, 5));
 
-    // Hi-Quality toggle
-    auto hiQualityArea = area.removeFromTop(30);
-    hiQualityButton.setBounds(hiQualityArea.reduced(20, 0));
-
     auto knobArea = area.reduced(20, 10);
     auto knobWidth = knobArea.getWidth() / 2;
 
@@ -180,8 +169,20 @@ void MidiverbAudioProcessorEditor::mouseDown(const juce::MouseEvent& e)
 {
     if (e.mods.isPopupMenu())
     {
+        bool floatArithmetic = *audioProcessor.getAPVTS().getRawParameterValue("hiQuality") > 0.5f;
+
         juce::PopupMenu menu;
-        menu.addItem(1, juce::String("Build: ") + __DATE__ + " " + __TIME__, false);
-        menu.showMenuAsync(juce::PopupMenu::Options());
+        menu.addItem(1, "Float arithmetic (not how MIDIVerb sounded)", true, floatArithmetic);
+        menu.addSeparator();
+        menu.addItem(2, juce::String("Build: ") + __DATE__ + " " + __TIME__, false);
+
+        menu.showMenuAsync(juce::PopupMenu::Options(),
+            [this](int result) {
+                if (result == 1) {
+                    auto* param = audioProcessor.getAPVTS().getParameter("hiQuality");
+                    float currentValue = param->getValue();
+                    param->setValueNotifyingHost(currentValue > 0.5f ? 0.0f : 1.0f);
+                }
+            });
     }
 }
