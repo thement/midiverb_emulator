@@ -2,11 +2,11 @@
 Tests for internal clipping detection via harmonic analysis.
 
 When a signal clips internally (before output), it introduces harmonic
-distortion. By analyzing the spectrum of the output, we can detect if
-internal clipping occurred by checking for strong spurious harmonics.
+distortion. Symmetric clipping generates primarily ODD harmonics (3rd, 5th, etc.)
+with the 3rd harmonic being the strongest.
 
-Note: Symmetric clipping generates primarily ODD harmonics (3rd, 5th, etc.)
-while asymmetric clipping generates even harmonics (2nd, 4th, etc.).
+By checking for the presence of a strong 3rd harmonic in the output,
+we can detect if internal clipping occurred.
 """
 import pytest
 import numpy as np
@@ -18,9 +18,9 @@ from conftest import (
 )
 
 
-# Maximum acceptable total harmonic distortion ratio
-# A clean reverb should not introduce significant harmonics
-MAX_THD_RATIO = 0.20  # 20% - some effects naturally add harmonics
+# Maximum acceptable 3rd harmonic ratio
+# A clean reverb should not introduce significant 3rd harmonic
+MAX_3RD_HARMONIC_RATIO = 0.15  # 15%
 
 # Frequencies used in test signal
 LEFT_FREQ = 440
@@ -68,47 +68,12 @@ def get_power_at_frequency(freqs, power, target_freq, tolerance=10):
     return float(np.max(power[mask]))
 
 
-def get_thd_ratio(data, sample_rate, fundamental_freq, channel=0, num_harmonics=5):
+def get_3rd_harmonic_ratio(data, sample_rate, fundamental_freq, channel=0):
     """
-    Calculate Total Harmonic Distortion ratio.
+    Calculate ratio of 3rd harmonic to fundamental.
 
-    THD = sqrt(sum of harmonic powers) / fundamental power
-
-    Args:
-        data: Stereo sample data
-        sample_rate: Sample rate in Hz
-        fundamental_freq: Fundamental frequency
-        channel: 0 for left, 1 for right
-        num_harmonics: Number of harmonics to include (2nd through nth)
-
-    Returns:
-        THD ratio (0 = pure sine, higher = more distortion)
-    """
-    samples = data[:, channel] if len(data.shape) > 1 else data
-    freqs, power = get_spectrum_power(samples, sample_rate)
-
-    fundamental_power = get_power_at_frequency(freqs, power, fundamental_freq)
-
-    if fundamental_power == 0:
-        return 0
-
-    # Sum power of harmonics (2nd through nth)
-    harmonic_power_sum = 0
-    for n in range(2, num_harmonics + 2):
-        harmonic_freq = fundamental_freq * n
-        if harmonic_freq >= sample_rate / 2:  # Above Nyquist
-            break
-        harmonic_power = get_power_at_frequency(freqs, power, harmonic_freq)
-        harmonic_power_sum += harmonic_power ** 2
-
-    return np.sqrt(harmonic_power_sum) / fundamental_power
-
-
-def get_odd_harmonic_ratio(data, sample_rate, fundamental_freq, channel=0):
-    """
-    Calculate ratio of odd harmonics (3rd, 5th) to fundamental.
-
-    Symmetric clipping produces primarily odd harmonics.
+    Symmetric clipping produces strong 3rd harmonic, so this is a good
+    indicator of internal clipping/distortion.
 
     Args:
         data: Stereo sample data
@@ -117,36 +82,32 @@ def get_odd_harmonic_ratio(data, sample_rate, fundamental_freq, channel=0):
         channel: 0 for left, 1 for right
 
     Returns:
-        Ratio of odd harmonic power to fundamental power
+        Ratio of 3rd harmonic power to fundamental power
     """
     samples = data[:, channel] if len(data.shape) > 1 else data
     freqs, power = get_spectrum_power(samples, sample_rate)
 
     fundamental_power = get_power_at_frequency(freqs, power, fundamental_freq)
+    third_harmonic_power = get_power_at_frequency(freqs, power, fundamental_freq * 3)
 
     if fundamental_power == 0:
         return 0
 
-    # Get 3rd and 5th harmonic power
-    h3_power = get_power_at_frequency(freqs, power, fundamental_freq * 3)
-    h5_power = get_power_at_frequency(freqs, power, fundamental_freq * 5)
-
-    return (h3_power + h5_power) / fundamental_power
+    return third_harmonic_power / fundamental_power
 
 
 class TestHarmonicDetection:
     """Verify our harmonic detection method works."""
 
-    def test_clean_sine_has_low_harmonics(self, sine_wav):
-        """A clean sine wave should have minimal harmonic distortion."""
+    def test_clean_sine_has_low_3rd_harmonic(self, sine_wav):
+        """A clean sine wave should have minimal 3rd harmonic."""
         _, data = wavfile.read(str(sine_wav))
 
-        # Check left channel (440 Hz)
-        thd = get_thd_ratio(data, SAMPLE_RATE, LEFT_FREQ, channel=0)
-        assert thd < 0.01, f"Clean sine has unexpected THD: {thd:.4f}"
+        ratio = get_3rd_harmonic_ratio(data, SAMPLE_RATE, LEFT_FREQ, channel=0)
+        assert ratio < 0.01, f"Clean sine has unexpected 3rd harmonic: {ratio:.4f}"
 
-    def test_clipped_sine_has_high_harmonics(self, tmp_path):
-        """A hard-clipped sine should have significant odd harmonics."""
+    def test_clipped_sine_has_high_3rd_harmonic(self, tmp_path):
+        """A hard-clipped sine should have significant 3rd harmonic."""
         # Generate a sine and clip it
         sine_path = tmp_path / "sine.wav"
         generate_sine_wav(sine_path, amplitude=0.49)
@@ -155,37 +116,31 @@ class TestHarmonicDetection:
         # Hard clip to introduce distortion (symmetric clipping)
         clipped = np.clip(data, -8000, 8000)
 
-        # Symmetric clipping generates ODD harmonics (3rd, 5th, etc.)
-        ratio = get_odd_harmonic_ratio(clipped, SAMPLE_RATE, LEFT_FREQ, channel=0)
+        ratio = get_3rd_harmonic_ratio(clipped, SAMPLE_RATE, LEFT_FREQ, channel=0)
         assert ratio > 0.05, \
-            f"Clipped sine should have odd harmonics but ratio is only {ratio:.4f}"
-
-        # Also check THD
-        thd = get_thd_ratio(clipped, SAMPLE_RATE, LEFT_FREQ, channel=0)
-        assert thd > 0.05, \
-            f"Clipped sine should have high THD but got {thd:.4f}"
+            f"Clipped sine should have 3rd harmonic but ratio is only {ratio:.4f}"
 
     def test_soft_clipped_detected(self, tmp_path):
-        """Even soft clipping should be detectable."""
+        """Even soft clipping should be detectable via 3rd harmonic."""
         sine_path = tmp_path / "sine.wav"
         generate_sine_wav(sine_path, amplitude=0.49)
         _, data = wavfile.read(str(sine_path))
 
-        # Soft clip using tanh-like curve (asymmetric introduces even harmonics too)
+        # Soft clip using tanh curve
         soft_clipped = (np.tanh(data.astype(np.float64) / 10000) * 10000).astype(np.int16)
 
-        thd = get_thd_ratio(soft_clipped, SAMPLE_RATE, LEFT_FREQ, channel=0)
-        assert thd > 0.01, \
-            f"Soft clipped sine should have some THD: {thd:.4f}"
+        ratio = get_3rd_harmonic_ratio(soft_clipped, SAMPLE_RATE, LEFT_FREQ, channel=0)
+        assert ratio > 0.01, \
+            f"Soft clipped sine should have some 3rd harmonic: {ratio:.4f}"
 
 
 class TestInternalClipping:
-    """Test effects for internal clipping via harmonic analysis."""
+    """Test effects for internal clipping via 3rd harmonic analysis."""
 
     @pytest.mark.parametrize("model_name,config", MODELS.items())
     def test_no_internal_clipping_emulated(self, model_name, config, sine_wav, tmp_path):
         """
-        Effects should not have strong spurious harmonics (internal clipping).
+        Effects should not have strong 3rd harmonic (internal clipping).
 
         We skip programs that clip externally (at output stage) since those
         will naturally have harmonics from the output clipping.
@@ -209,24 +164,24 @@ class TestInternalClipping:
             if np.max(np.abs(data)) < 500:
                 continue
 
-            # Check THD for left channel (440 Hz input)
-            thd = get_thd_ratio(data, SAMPLE_RATE, LEFT_FREQ, channel=0)
+            # Check 3rd harmonic ratio for left channel (440 Hz input)
+            ratio = get_3rd_harmonic_ratio(data, SAMPLE_RATE, LEFT_FREQ, channel=0)
 
-            if thd > MAX_THD_RATIO:
-                internal_clip_suspects.append((prog, thd))
+            if ratio > MAX_3RD_HARMONIC_RATIO:
+                internal_clip_suspects.append((prog, ratio))
 
         if internal_clip_suspects:
-            print(f"\n{model_name} (emulated) programs with high THD:")
-            for prog, thd in internal_clip_suspects:
-                print(f"  prog {prog}: THD={thd:.3f}")
+            print(f"\n{model_name} (emulated) programs with high 3rd harmonic:")
+            for prog, ratio in internal_clip_suspects:
+                print(f"  prog {prog}: 3rd_harmonic_ratio={ratio:.3f}")
 
-        # Don't fail if some effects have harmonics - this is informational
-        # Some reverbs naturally add harmonics due to their algorithm
+        # Don't fail - this is informational
+        # Some effects may naturally have harmonics due to their algorithm
 
     @pytest.mark.parametrize("model_name,config", MODELS.items())
     def test_no_internal_clipping_decompiled(self, model_name, config, sine_wav, tmp_path):
         """
-        Effects should not have strong spurious harmonics (decompiled mode).
+        Effects should not have strong 3rd harmonic (decompiled mode).
         """
         first, last = config['range']
         defeat = config['defeat']
@@ -247,13 +202,13 @@ class TestInternalClipping:
             if np.max(np.abs(data)) < 500:
                 continue
 
-            # Check THD for left channel
-            thd = get_thd_ratio(data, SAMPLE_RATE, LEFT_FREQ, channel=0)
+            # Check 3rd harmonic ratio for left channel
+            ratio = get_3rd_harmonic_ratio(data, SAMPLE_RATE, LEFT_FREQ, channel=0)
 
-            if thd > MAX_THD_RATIO:
-                internal_clip_suspects.append((prog, thd))
+            if ratio > MAX_3RD_HARMONIC_RATIO:
+                internal_clip_suspects.append((prog, ratio))
 
         if internal_clip_suspects:
-            print(f"\n{model_name} (decompiled) programs with high THD:")
-            for prog, thd in internal_clip_suspects:
-                print(f"  prog {prog}: THD={thd:.3f}")
+            print(f"\n{model_name} (decompiled) programs with high 3rd harmonic:")
+            for prog, ratio in internal_clip_suspects:
+                print(f"  prog {prog}: 3rd_harmonic_ratio={ratio:.3f}")
