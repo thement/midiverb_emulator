@@ -75,6 +75,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout MidiverbAudioProcessor::crea
         juce::ParameterID{"feedback", 1}, "Feedback",
         juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.0f));
 
+    params.push_back(std::make_unique<juce::AudioParameterBool>(
+        juce::ParameterID{"hiQuality", 1}, "Hi-Quality", false));
+
     return { params.begin(), params.end() };
 }
 
@@ -132,6 +135,7 @@ void MidiverbAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBloc
 
     // Reset effect state
     DRAM.fill(0);
+    DRAMFloat.fill(0.0f);
     memoryPointer = 0;
     lastWetL = 0.0;
     lastWetR = 0.0;
@@ -166,14 +170,16 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     int effectIndex = static_cast<int>(*apvts.getRawParameterValue("program"));
     float dryWet = *apvts.getRawParameterValue("dryWet");
     float feedback = *apvts.getRawParameterValue("feedback");
+    bool hiQuality = *apvts.getRawParameterValue("hiQuality") > 0.5f;
 
     // Clamp effect index to valid range for current device
     const auto& dev = devices[deviceIndex];
     if (effectIndex < 0) effectIndex = 0;
     if (effectIndex >= dev.numEffects) effectIndex = dev.numEffects - 1;
 
-    // Get effect function pointer
-    auto effectFn = dev.effects[effectIndex];
+    // Get effect function pointers (both versions)
+    auto effectFn16 = dev.effects[effectIndex];
+    auto effectFnFloat = dev.effectsFloat[effectIndex];
 
     auto* leftChannel = buffer.getWritePointer(0);
     auto* rightChannel = buffer.getWritePointer(1);
@@ -209,14 +215,26 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             double interpolatedInput = inputBuffer.interpolate(inputFrac);
 
             // Process one effect sample at 24kHz
-            // Original hardware uses 13-bit samples (±4095 range, same as >> 3 from 16-bit)
-            int16_t inputInt = static_cast<int16_t>(saturate(static_cast<float>(interpolatedInput)) * 0x0fff);
-            int16_t outLeftInt, outRightInt;
-
-            effectFn(inputInt, &outLeftInt, &outRightInt, DRAM.data(), memoryPointer++);
-
-            float outL = outLeftInt / static_cast<float>(0x0fff);
-            float outR = outRightInt / static_cast<float>(0x0fff);
+            float outL, outR;
+            if (hiQuality)
+            {
+                // Hi-quality mode: use float arithmetic throughout
+                float inputFloat = saturate(static_cast<float>(interpolatedInput));
+                float outLeftFloat, outRightFloat;
+                effectFnFloat(inputFloat, &outLeftFloat, &outRightFloat, DRAMFloat.data(), memoryPointer++);
+                outL = outLeftFloat;
+                outR = outRightFloat;
+            }
+            else
+            {
+                // Standard mode: use int16_t arithmetic (original hardware behavior)
+                // Original hardware uses 13-bit samples (±4095 range, same as >> 3 from 16-bit)
+                int16_t inputInt = static_cast<int16_t>(saturate(static_cast<float>(interpolatedInput)) * 0x0fff);
+                int16_t outLeftInt, outRightInt;
+                effectFn16(inputInt, &outLeftInt, &outRightInt, DRAM.data(), memoryPointer++);
+                outL = outLeftInt / static_cast<float>(0x0fff);
+                outR = outRightInt / static_cast<float>(0x0fff);
+            }
 
             // Push to interpolation buffers
             outputBufferL.push(outL);

@@ -196,8 +196,10 @@ private:
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
-    // Effect state
+    // Effect state (int16_t version for standard mode)
     std::array<int16_t, 0x4000> DRAM;
+    // Effect state (float version for hi-quality mode)
+    std::array<float, 0x4000> DRAMFloat;
     int memoryPointer = 0;
     double lastWetL = 0.0;
     double lastWetR = 0.0;

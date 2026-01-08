@@ -299,15 +299,18 @@ class Accumulator:
         return self
 
 
-def decompile(end_address, encoded_instructions, function_name, f, unoptimized=False, integer_arithmetic=False):
+def decompile(end_address, encoded_instructions, function_name, f, unoptimized=False, integer_arithmetic=False, use_float=False):
     assert end_address == 1, "address counter doesn't end up offseted by 1 - decompiler expects that"
+
+    # Determine type names based on float mode
+    sample_type = "float" if use_float else "int16_t"
 
     if unoptimized:
         print(f'-- Saving (unoptimized) code into a file')
         f.write('#define MEM(a) (DRAM[(ptr + a) & 0x3fff])\n')
         f.write('#define Sgn(a) ((a) < 0 ? 1 : 0)\n')
-        f.write(f'void {function_name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) {{\n')
-        f.write(f'\tint16_t Acc, Data;\n')
+        f.write(f'void {function_name}({sample_type} input, {sample_type} *out_left, {sample_type} *out_right, {sample_type} *DRAM, int ptr) {{\n')
+        f.write(f'\t{sample_type} Acc, Data;\n')
 
         for instr in encoded_instructions:
             s = instr.c_string()
@@ -392,10 +395,10 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
         print(f"Delay line {line.id}: length={line.length}, taps={line.taps}")
     f.write('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])\n')
     f.write('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])\n')
-    f.write(f'void {function_name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {{\n')
+    f.write(f'void {function_name}({sample_type} input, {sample_type} *out_left, {sample_type} *out_right, {sample_type} DRAM[0x4000], int ptr) {{\n')
     local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp_addrs if addr in used_locations]
     local_vars_str = ', '.join(local_vars)
-    f.write(f'\tint16_t {local_vars_str};\n')
+    f.write(f'\t{sample_type} {local_vars_str};\n')
 
     addrs_written = dict()
     acc = None
@@ -584,6 +587,7 @@ def main():
     parser.add_argument("-d", "--decompile", metavar="output.c", help="Decompile effect program to C and save to the specified filename")
     parser.add_argument("-U", "--unoptimized", action='store_true', help="Do not optimize the resulting C function with dead-code elimination and constant-folding")
     parser.add_argument("-i", "--integer-arithmetic", action='store_true', help="Use integer arithmetic instead of float-point arithmetic")
+    parser.add_argument("-f", "--float", action='store_true', help="Output float-based code (float samples and DRAM instead of int16_t)")
     parser.add_argument("-2", "--midiverb2", action='store_true', help="Assume the byte order is same as Midiverb 2, and start at 0x1c00 from program 0")
     parser.add_argument("-p", "--prefix", default="", help="Add custom prefix to decompiled functions")
     parser.add_argument("--lfo1", type=int_or_hex, help="Apply LFO1 modulation (from modulation table)")
@@ -634,11 +638,12 @@ def main():
                 function_name = f'{args.prefix}effect_{program_number}'
             else:
                 function_name = f'{args.prefix}effect'
-            decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic)
+            decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic, args.float)
 
     if decompiler_output is not None and len(decode) > 1:
         f = decompiler_output
-        f.write(f'void (*{args.prefix}effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) = {{\n')
+        sample_type = "float" if args.float else "int16_t"
+        f.write(f'void (*{args.prefix}effects[])({sample_type} input, {sample_type} *out_left, {sample_type} *out_right, {sample_type} *DRAM, int ptr) = {{\n')
         for program_number in decode:
             f.write(f'\t{args.prefix}effect_{program_number},\n')
         f.write('};\n')

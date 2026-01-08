@@ -59,7 +59,14 @@ MidiverbAudioProcessorEditor::MidiverbAudioProcessorEditor(MidiverbAudioProcesso
     feedbackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         audioProcessor.getAPVTS(), "feedback", feedbackSlider);
 
-    setSize(500, 340);
+    // Hi-Quality toggle
+    hiQualityButton.setButtonText("Hi-Quality");
+    addAndMakeVisible(hiQualityButton);
+
+    hiQualityAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
+        audioProcessor.getAPVTS(), "hiQuality", hiQualityButton);
+
+    setSize(500, 370);
 
     startTimerHz(30);
 }
@@ -150,6 +157,10 @@ void MidiverbAudioProcessorEditor::resized()
     auto selectorArea = area.removeFromTop(50);
     programLabel.setBounds(selectorArea.removeFromTop(20));
     programSelector.setBounds(selectorArea.reduced(20, 5));
+
+    // Hi-Quality toggle
+    auto hiQualityArea = area.removeFromTop(30);
+    hiQualityButton.setBounds(hiQualityArea.reduced(20, 0));
 
     auto knobArea = area.reduced(20, 10);
     auto knobWidth = knobArea.getWidth() / 2;
