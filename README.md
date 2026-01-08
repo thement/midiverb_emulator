@@ -1,7 +1,7 @@
 # Midiverb/Midiverb II emulator
 
-![Panel](panel.jpg)
-![Panel2](panel2.png)
+![Panel](web-demo/panel.jpg)
+![Panel2](web-demo/panel2.png)
 
 
 <h3>There's a <a href="https://github.com/thement/midiverb_emulator/releases">VST3 plugin</a> now. Also a <a href="http://ibawizard.net/midiverb">WEB DEMO</a>!</h3>
