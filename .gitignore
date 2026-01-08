@@ -57,4 +57,10 @@ tags
 web-demo/*.rom
 web-demo/*.bin
 
+# Binaries
 midiverb
+
+# Test fixtures (generated)
+tests/fixtures/*.wav
+.pytest_cache/
+__pycache__/
