@@ -68,10 +68,10 @@ struct LowpassFilter8 {
     }
 };
 
-// Output interpolation buffer (linear interpolation)
+// Output interpolation buffer (cubic Hermite interpolation)
 // Used for upsampling: effect rate -> host rate
 struct OutputInterpBuffer {
-    static constexpr int SIZE = 2;
+    static constexpr int SIZE = 4;
     std::array<double, SIZE> data = {};
     int writePos = 0;
 
@@ -85,19 +85,32 @@ struct OutputInterpBuffer {
         writePos = (writePos + 1) % SIZE;
     }
 
-    // Linear interpolation between oldest and newest
-    // frac=0 gives oldest, frac=1 gives newest
+    // Cubic Hermite interpolation, frac in [0, 1)
+    // Interpolates between 3rd and 2nd most recent samples (1-sample latency)
+    // This ensures we have samples on both sides for proper cubic interp
     double interpolate(double frac) const {
-        int i0 = writePos;              // oldest
-        int i1 = (writePos + 1) % SIZE; // newest
-        return data[i0] + frac * (data[i1] - data[i0]);
+        int i0 = writePos;                       // oldest (for slope at start)
+        int i1 = (writePos + 1) % SIZE;          // 3rd most recent (interp start)
+        int i2 = (writePos + 2) % SIZE;          // 2nd most recent (interp end)
+        int i3 = (writePos + 3) % SIZE;          // most recent (for slope at end)
+
+        double y0 = data[i0], y1 = data[i1], y2 = data[i2], y3 = data[i3];
+
+        // Cubic Hermite spline: at frac=0 returns y1, at frac=1 returns y2
+        double c0 = y1;
+        double c1 = 0.5 * (y2 - y0);
+        double c2 = y0 - 2.5 * y1 + 2.0 * y2 - 0.5 * y3;
+        double c3 = 0.5 * (y3 - y0) + 1.5 * (y1 - y2);
+
+        return ((c3 * frac + c2) * frac + c1) * frac + c0;
     }
 };
 
-// Input interpolation buffer (linear interpolation)
+// Input interpolation buffer (cubic Hermite interpolation)
 // Used for downsampling: host rate -> effect rate
+// Extrapolates the "future" sample for slope estimation
 struct InputInterpBuffer {
-    static constexpr int SIZE = 2;
+    static constexpr int SIZE = 4;
     std::array<double, SIZE> data = {};
     int writePos = 0;
 
@@ -111,12 +124,24 @@ struct InputInterpBuffer {
         writePos = (writePos + 1) % SIZE;
     }
 
-    // Linear interpolation between 2nd newest and newest
+    // Cubic Hermite interpolation between 2nd newest and newest samples
     // frac=0 gives 2nd newest, frac=1 gives newest
     double interpolate(double frac) const {
-        int i0 = writePos;              // 2nd newest (older)
-        int i1 = (writePos + 1) % SIZE; // newest
-        return data[i0] + frac * (data[i1] - data[i0]);
+        int i0 = (writePos + 1) % SIZE;  // 3rd newest (for slope at start)
+        int i1 = (writePos + 2) % SIZE;  // 2nd newest (interp start)
+        int i2 = (writePos + 3) % SIZE;  // newest (interp end)
+
+        double y0 = data[i0], y1 = data[i1], y2 = data[i2];
+        // Extrapolate y3 for slope at y2 (linear extrapolation)
+        double y3 = 2.0 * y2 - y1;
+
+        // Cubic Hermite spline
+        double c0 = y1;
+        double c1 = 0.5 * (y2 - y0);
+        double c2 = y0 - 2.5 * y1 + 2.0 * y2 - 0.5 * y3;
+        double c3 = 0.5 * (y3 - y0) + 1.5 * (y1 - y2);
+
+        return ((c3 * frac + c2) * frac + c1) * frac + c0;
     }
 };
 
