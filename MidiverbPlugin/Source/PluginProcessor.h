@@ -68,9 +68,10 @@ struct LowpassFilter8 {
     }
 };
 
-// Small circular buffer for cubic interpolation
-struct InterpBuffer {
-    static constexpr int SIZE = 4;
+// Output interpolation buffer (linear interpolation)
+// Used for upsampling: effect rate -> host rate
+struct OutputInterpBuffer {
+    static constexpr int SIZE = 2;
     std::array<double, SIZE> data = {};
     int writePos = 0;
 
@@ -84,26 +85,38 @@ struct InterpBuffer {
         writePos = (writePos + 1) % SIZE;
     }
 
-    // Cubic Hermite interpolation, frac in [0, 1)
-    // Interpolates between 3rd and 2nd most recent samples (1-sample latency)
-    // This ensures we have samples on both sides for proper cubic interp
+    // Linear interpolation between oldest and newest
+    // frac=0 gives oldest, frac=1 gives newest
     double interpolate(double frac) const {
-        // After push(), writePos points to next write slot
-        // So: writePos = oldest, +1 = 3rd, +2 = 2nd, +3 = most recent
-        int i0 = writePos;                       // oldest (for slope at start)
-        int i1 = (writePos + 1) % SIZE;          // 3rd most recent (interp start)
-        int i2 = (writePos + 2) % SIZE;          // 2nd most recent (interp end)
-        int i3 = (writePos + 3) % SIZE;          // most recent (for slope at end)
+        int i0 = writePos;              // oldest
+        int i1 = (writePos + 1) % SIZE; // newest
+        return data[i0] + frac * (data[i1] - data[i0]);
+    }
+};
 
-        double y0 = data[i0], y1 = data[i1], y2 = data[i2], y3 = data[i3];
+// Input interpolation buffer (linear interpolation)
+// Used for downsampling: host rate -> effect rate
+struct InputInterpBuffer {
+    static constexpr int SIZE = 2;
+    std::array<double, SIZE> data = {};
+    int writePos = 0;
 
-        // Cubic Hermite spline: at frac=0 returns y1, at frac=1 returns y2
-        double c0 = y1;
-        double c1 = 0.5 * (y2 - y0);
-        double c2 = y0 - 2.5 * y1 + 2.0 * y2 - 0.5 * y3;
-        double c3 = 0.5 * (y3 - y0) + 1.5 * (y1 - y2);
+    void reset() {
+        data.fill(0);
+        writePos = 0;
+    }
 
-        return ((c3 * frac + c2) * frac + c1) * frac + c0;
+    void push(double x) {
+        data[writePos] = x;
+        writePos = (writePos + 1) % SIZE;
+    }
+
+    // Linear interpolation between 2nd newest and newest
+    // frac=0 gives 2nd newest, frac=1 gives newest
+    double interpolate(double frac) const {
+        int i0 = writePos;              // 2nd newest (older)
+        int i1 = (writePos + 1) % SIZE; // newest
+        return data[i0] + frac * (data[i1] - data[i0]);
     }
 };
 
@@ -172,16 +185,16 @@ private:
     // Anti-aliasing filter (before downsampling) - mono input
     LowpassFilter8 antiAliasFilter;
 
+    // Input interpolation buffer (for downsampling to effect rate)
+    InputInterpBuffer inputBuffer;
+
     // Output interpolation buffers (effect outputs stereo)
-    InterpBuffer outputBufferL;
-    InterpBuffer outputBufferR;
+    OutputInterpBuffer outputBufferL;
+    OutputInterpBuffer outputBufferR;
 
     // Reconstruction filters (after upsampling) - stereo
     LowpassFilter8 reconstructFilterL;
     LowpassFilter8 reconstructFilterR;
-
-    // Last input sample for effect (filtered, at host rate)
-    double lastFilteredInput = 0.0;
 
     // Input overload detection
     std::atomic<bool> inputOverload{false};

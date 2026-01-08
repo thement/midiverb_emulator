@@ -126,6 +126,7 @@ void MidiverbAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBloc
     reconstructFilterR.reset();
 
     // Reset interpolation buffers
+    inputBuffer.reset();
     outputBufferL.reset();
     outputBufferR.reset();
 
@@ -135,7 +136,6 @@ void MidiverbAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBloc
     lastWetL = 0.0;
     lastWetR = 0.0;
     phase = 0.0;
-    lastFilteredInput = 0.0;
 }
 
 void MidiverbAudioProcessor::releaseResources()
@@ -194,15 +194,23 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             inputOverload.store(true, std::memory_order_relaxed);
         double filtered = antiAliasFilter.process(monoIn);
 
+        // Push filtered sample to input buffer for interpolation
+        inputBuffer.push(filtered);
+
         // Accumulate phase - process effect when we cross sample boundaries
         phase += phaseIncrement;
         while (phase >= 1.0)
         {
             phase -= 1.0;
 
+            // Interpolate input at the exact fractional position where the effect sample falls
+            // This eliminates beat frequency artifacts at non-integer sample rate ratios
+            double inputFrac = 1.0 - phase / phaseIncrement;
+            double interpolatedInput = inputBuffer.interpolate(inputFrac);
+
             // Process one effect sample at 24kHz
             // Original hardware uses 13-bit samples (±4095 range, same as >> 3 from 16-bit)
-            int16_t inputInt = static_cast<int16_t>(saturate(lastFilteredInput) * 0x0fff);
+            int16_t inputInt = static_cast<int16_t>(saturate(static_cast<float>(interpolatedInput)) * 0x0fff);
             int16_t outLeftInt, outRightInt;
 
             effectFn(inputInt, &outLeftInt, &outRightInt, DRAM.data(), memoryPointer++);
@@ -214,7 +222,6 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             outputBufferL.push(outL);
             outputBufferR.push(outR);
         }
-        lastFilteredInput = filtered;
 
         // Interpolate output at host sample rate
         double wetL = outputBufferL.interpolate(phase);
