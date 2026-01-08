@@ -30,6 +30,19 @@ int16_t clip(int32_t input) {
     }
 }
 
+int16_t clip_with_counter(int32_t input, unsigned *counter) {
+    if (input > INT16_MAX) {
+        *counter += 1;
+        return INT16_MAX;
+    } else if (input < INT16_MIN) {
+        *counter += 1;
+        return INT16_MIN;
+    } else {
+        return (int16_t)input;
+    }
+}
+
+
 RomType *detect_rom(const char *rom_file, const char *model_name, bool *out_use_internal_effects) {
     if (rom_file == NULL) {
         if (model_name == NULL) {
@@ -105,7 +118,7 @@ int main(int argc, char *argv[]) {
         effect_fn = rom_type->decompiled[program_index];
     }
     if (rom_type->effect_names) {
-	fprintf(stderr, "effect name: %s\n", rom_type->effect_names[program_index]);
+	fprintf(stderr, "effect name #%d: %s\n", args.program_number, rom_type->effect_names[program_index]);
     }
     reset_machine(&machine);
 
@@ -125,7 +138,7 @@ int main(int argc, char *argv[]) {
     sf_count_t num_samples;
     int sample_rate, channels;
     load_wav_file(args.input_wav, &input_samples, &num_samples, &sample_rate, &channels);
-    printf("channels=%d, sample_rate=%d, num=%ld\n", channels, sample_rate, (long)num_samples);
+    fprintf(stderr, "channels=%d, sample_rate=%d, num=%ld\n", channels, sample_rate, (long)num_samples);
 
     if (channels != 2) {
         free(input_samples);
@@ -143,7 +156,7 @@ int main(int argc, char *argv[]) {
     float dry_wet_ratio = args.dry_wet_ratio;
     float wet_dry_ratio = 1.0 - dry_wet_ratio;
     int32_t output_left = 0, output_right = 0;
-
+    unsigned clipping_counter = 0;
 
     // Process each sample
     for (sf_count_t i = 0; i < num_samples; i += 2) {
@@ -173,8 +186,8 @@ int main(int argc, char *argv[]) {
         output_left = output.s[0] << 3;
         output_right = output.s[1] << 3;
 
-        output_samples[i] = clip(output_left * dry_wet_ratio + input_left * wet_dry_ratio);
-        output_samples[i + 1] = clip(output_right * dry_wet_ratio + input_right * wet_dry_ratio);
+        output_samples[i] = clip_with_counter(output_left * dry_wet_ratio + input_left * wet_dry_ratio, &clipping_counter);
+        output_samples[i + 1] = clip_with_counter(output_right * dry_wet_ratio + input_right * wet_dry_ratio, &clipping_counter);
 
         // Run the LFO at 23437.5 / 8 == 2930 Hz
         if (sample_num % 8 == 0 && run_lfo) {
@@ -183,6 +196,10 @@ int main(int argc, char *argv[]) {
 
             patch_machine(&machine, lfo1_value, lfo2_value, lfo_patch->top1, lfo_patch->top2, lfo_patch->next_instr_opcode);
         }
+    }
+
+    if (clipping_counter > 0) {
+        fprintf(stderr, "%u samples clipped\n", clipping_counter);
     }
 
     // Write output WAV file
