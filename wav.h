@@ -1,5 +1,6 @@
 void load_wav_file(const char *filename, int16_t **samples, sf_count_t *num_samples, int *sample_rate, int *channels) {
     SF_INFO sfinfo;
+    memset(&sfinfo, 0, sizeof(sfinfo));
     SNDFILE *infile = sf_open(filename, SFM_READ, &sfinfo);
     if (!infile) {
         die("Failed to open input file: %s", sf_strerror(NULL));
