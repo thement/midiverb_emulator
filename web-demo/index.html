@@ -30,8 +30,17 @@
   <label for="feedbackAmount">Mixing desk Feedback (DANGEROUS, goes to 250%)</label>
   <br>
   <br>
-  <button id="uploadButton">Upload Custom WAV File</button>
-  <input type="file" id="fileInput" style="display: none;">
+  <label for="soundSelect">Sound Source: </label>
+  <select id="soundSelect">
+    <option value="example.wav">Example WAV</option>
+    <option value="sine_blip">Sine Wave Blip (440Hz, 100ms)</option>
+    <option value="sine_wave">Sine Wave (440Hz, 25% vol, 2s)</option>
+    <option value="noise_burst">Noise Burst (250ms)</option>
+    <option value="impulse">Impulse (click)</option>
+    <option value="chord_sweep">Maj7 Chord Sweep</option>
+    <option value="custom">Custom WAV...</option>
+  </select>
+  <input type="file" id="fileInput" accept=".wav" style="display: none;">
 <br>
 <br>
   <div id="disassemblyContainer"></div>
@@ -41,6 +50,7 @@ sources at <a href="https://github.com/thement/midiverb_emulator">https://github
 code by thement at ibawizard do net
 </pre>
 <button id="fillDramButton">Fill DRAM with Random Numbers</button> - LOUD! Check how it sounds right after Power-On
+  <script src="sound-generators.js"></script>
   <script>
   // ROM type definitions
   const ROM_TYPES = {
@@ -532,7 +542,7 @@ code by thement at ibawizard do net
   const DEFAULT_PROGRAM = 1;
 
   // Global state
-  let audioPath = 'example.wav';
+  let currentSoundSource = 'example.wav';
   let currentDevice = DEFAULT_DEVICE;
   let currentProgram = DEFAULT_PROGRAM;
   const machine = new Machine();
@@ -578,9 +588,7 @@ code by thement at ibawizard do net
     machine.resetMachine();
 
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const response = await fetch(audioPath);
-    const arrayBuffer = await response.arrayBuffer();
-    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+    const audioBuffer = await getAudioBuffer(audioCtx, currentSoundSource);
 
     source = audioCtx.createBufferSource();
     source.buffer = audioBuffer;
@@ -703,21 +711,33 @@ code by thement at ibawizard do net
     feedbackAmount = event.target.value / 100;
   });
 
-  document.getElementById('uploadButton').addEventListener('click', () => {
-    document.getElementById('fileInput').click();
-  });
-
-  document.getElementById('fillDramButton').addEventListener('click', () => {
-    machine.fillDramWithRandomNumbers();
+  document.getElementById('soundSelect').addEventListener('change', (event) => {
+    if (event.target.value === 'custom') {
+      document.getElementById('fileInput').click();
+    } else {
+      currentSoundSource = event.target.value;
+      stopAudio();
+      startAudio();
+    }
   });
 
   document.getElementById('fileInput').addEventListener('change', (event) => {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
-      audioPath = URL.createObjectURL(file);
+      currentSoundSource = URL.createObjectURL(file);
+      // Update dropdown to show custom file name
+      const customOption = document.querySelector('#soundSelect option[value="custom"]');
+      customOption.textContent = `Custom: ${file.name}`;
       stopAudio();
       startAudio();
+    } else {
+      // User cancelled, revert to previous selection
+      document.getElementById('soundSelect').value = currentSoundSource;
     }
+  });
+
+  document.getElementById('fillDramButton').addEventListener('click', () => {
+    machine.fillDramWithRandomNumbers();
   });
 
   // Initialize on load
