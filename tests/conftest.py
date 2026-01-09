@@ -25,7 +25,8 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Fixed paths for test input files (in tests/fixtures/)
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
-SINE_WAV_PATH = os.path.join(FIXTURES_DIR, 'sine_440_1700.wav')
+SINE_WAV_PATH = os.path.join(FIXTURES_DIR, 'sine_440_1700.wav')  # 49% amplitude
+SINE_25_WAV_PATH = os.path.join(FIXTURES_DIR, 'sine_440_1700_25pct.wav')  # 25% amplitude
 NOISE_WAV_PATH = os.path.join(FIXTURES_DIR, 'noise.wav')
 
 
@@ -56,7 +57,10 @@ def _ensure_fixture_files():
     os.makedirs(FIXTURES_DIR, exist_ok=True)
 
     if not os.path.exists(SINE_WAV_PATH):
-        generate_sine_wav(SINE_WAV_PATH)
+        generate_sine_wav(SINE_WAV_PATH, amplitude=0.49)
+
+    if not os.path.exists(SINE_25_WAV_PATH):
+        generate_sine_wav(SINE_25_WAV_PATH, amplitude=0.25)
 
     if not os.path.exists(NOISE_WAV_PATH):
         generate_noise_wav(NOISE_WAV_PATH)
@@ -71,6 +75,13 @@ def sine_wav():
     """Return path to stereo sine WAV: L=440Hz, R=1700Hz at 49% amplitude"""
     _ensure_fixture_files()
     return SINE_WAV_PATH
+
+
+@pytest.fixture(scope="session")
+def sine_wav_25():
+    """Return path to stereo sine WAV: L=440Hz, R=1700Hz at 25% amplitude"""
+    _ensure_fixture_files()
+    return SINE_25_WAV_PATH
 
 
 @pytest.fixture(scope="session")
