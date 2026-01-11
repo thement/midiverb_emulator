@@ -557,23 +557,35 @@ def add16(ahi, alo, bhi, blo):
 def sub16(ahi, alo, bhi, blo):
     return (ahi + bhi + ((alo + blo) >> 8), (alo + blo) & 0xff)
 
-def apply_modulation(program, is_lfo_1, value, lfo_op):
+def apply_modulation(program, lfo1_value, lfo2_value, lfo_op):
     with open('midiverb2_patches.rom', 'rb') as f:
-        patch = bytearray(f.read())
-    i = (value & 0xf0) + (0 if is_lfo_1 else 8)
-    patch = patch[i:]
-    if is_lfo_1:
-        sub = ((patch[1] << 8) | patch[0]) - (value >> 8)
-        add = ((patch[7] << 8) | patch[6]) + (value >> 8)
-        program[0x05] = sub & 0xff
-        program[0x06] = ((sub >> 8) & 0x3f) | 0x40
-        program[0x59] = patch[2]
-        program[0x5a] = patch[3]
-        program[0x5b] = patch[4]
-        program[0x5c] = patch[5]
-        program[0x5d] = add & 0xff
-        program[0x5e] = ((add >> 8) & 0x3f) | lfo_op
-    # TODO: lfo_2
+        patch_table = bytearray(f.read())
+
+    # LFO 1
+    patch = patch_table[(lfo1_value & 0xf0):]
+    sub = ((patch[1] << 8) | patch[0]) - (lfo1_value >> 8)
+    add = ((patch[7] << 8) | patch[6]) + (lfo1_value >> 8)
+    program[0x05] = sub & 0xff
+    program[0x06] = ((sub >> 8) & 0x3f) | 0x40
+    program[0x59] = patch[2]
+    program[0x5a] = patch[3]
+    program[0x5b] = patch[4]
+    program[0x5c] = patch[5]
+    program[0x5d] = add & 0xff
+    program[0x5e] = ((add >> 8) & 0x3f) | lfo_op
+
+    # LFO 2
+    patch = patch_table[8 + (lfo2_value & 0xf0):]
+    sub = ((patch[1] << 8) | patch[0]) - (lfo2_value >> 8)
+    add = ((patch[7] << 8) | patch[6]) + (lfo2_value >> 8)
+    program[0x5f] = sub & 0xff
+    program[0x60] = ((sub >> 8) & 0x3f) | 0x40
+    program[0xb3] = patch[2]
+    program[0xb4] = patch[3]
+    program[0xb5] = patch[4]
+    program[0xb6] = patch[5]
+    program[0xb7] = add & 0xff
+    program[0xb8] = ((add >> 8) & 0x3f) | lfo_op
 
 
 
@@ -620,10 +632,10 @@ def main():
 
         print(f"-- Disassembling program #{program_number}")
         program = list(program)
-        if args.lfo1 is not None:
-            apply_modulation(program, True, args.lfo1, args.lfo_op)
-        if args.lfo2 is not None:
-            apply_modulation(program, False, args.lfo2, args.lfo_op)
+        if args.lfo1 is not None or args.lfo2 is not None:
+            lfo1 = args.lfo1 if args.lfo1 is not None else 0
+            lfo2 = args.lfo2 if args.lfo2 is not None else 0
+            apply_modulation(program, lfo1, lfo2, args.lfo_op)
         disassembled_instructions, end_address, encoded_instructions = disassemble_dsp(program, memory_shift)
         for instr in disassembled_instructions:
             print(instr)
