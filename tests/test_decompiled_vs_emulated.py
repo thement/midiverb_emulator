@@ -22,11 +22,6 @@ MAX_DIFF = int(32767 * MAX_DIFF_RATIO)  # ~3276 for 10%
 REPORT_THRESHOLD_RATIO = 0.02  # 2%
 REPORT_THRESHOLD = int(32767 * REPORT_THRESHOLD_RATIO)
 
-# MidiVerb 2 programs 50-69 use LFO and don't work in decompiled mode
-# (documented in README: "LFO is not supported in the native version")
-MIDIVERB2_LFO_PROGRAMS = set(range(50, 70))
-
-
 class TestDecompiledVsEmulated:
     """Compare decompiled and emulated effect outputs."""
 
@@ -44,11 +39,6 @@ class TestDecompiledVsEmulated:
 
         skipped_lfo = []
         for prog in range(first, last + 1):
-            # Skip LFO programs for MidiVerb 2 (they don't work in decompiled mode)
-            if model_name == 'MidiVerb 2' and prog in MIDIVERB2_LFO_PROGRAMS:
-                skipped_lfo.append(prog)
-                continue
-
             out_emu = tmp_path / f"emu_{prog}.wav"
             out_dec = tmp_path / f"dec_{prog}.wav"
 
@@ -99,11 +89,6 @@ class TestDecompiledVsEmulated:
 
         skipped_lfo = []
         for prog in range(first, last + 1):
-            # Skip LFO programs for MidiVerb 2 (they don't work in decompiled mode)
-            if model_name == 'MidiVerb 2' and prog in MIDIVERB2_LFO_PROGRAMS:
-                skipped_lfo.append(prog)
-                continue
-
             out_emu = tmp_path / f"emu_{prog}.wav"
             out_dec = tmp_path / f"dec_{prog}.wav"
 

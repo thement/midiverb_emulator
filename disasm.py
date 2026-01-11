@@ -499,16 +499,16 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
     f.write('}\n')
     f.write('#undef MEM\n')
 
-def inspect_patched_program(program, memory_shift, lfo_num, original_program=None):
+def inspect_patched_program(program, memory_shift, lfo_num, next_instr_opcode, original_program=None):
     prog = []
     difference_at = {}
     patch_table = {}
     ptlen = 16
     for k in range(ptlen):
         if lfo_num == 1:
-            apply_modulation(program, k * 0x10, 0x00, 0xc0)
+            apply_modulation(program, k * 0x10, 0x00, next_instr_opcode)
         elif lfo_num == 2:
-            apply_modulation(program, 0x00, k * 0x10, 0xc0)
+            apply_modulation(program, 0x00, k * 0x10, next_instr_opcode)
         else:
             assert("oops")
         _, ea, enc = disassemble_dsp(program, memory_shift)
@@ -731,8 +731,12 @@ def main():
             print(instr)
         print(f'-- End address 0x{end_address:x}')
         if program_number >= 50 and program_number <= 69:
-            encoded_instructions = inspect_patched_program(program, memory_shift, 1)
-            encoded_instructions = inspect_patched_program(program, memory_shift, 2, encoded_instructions)
+            if program_number < 60 and program_number % 2 == 0:
+                next_instr_opcode = 0xc0
+            else:
+                next_instr_opcode = 0x80
+            encoded_instructions = inspect_patched_program(program, memory_shift, 1, next_instr_opcode)
+            encoded_instructions = inspect_patched_program(program, memory_shift, 2, next_instr_opcode, encoded_instructions)
 
         if decompiler_output is not None:
             if len(decode) > 1:

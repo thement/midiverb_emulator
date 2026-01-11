@@ -192,10 +192,10 @@ int main(int argc, char *argv[]) {
 
         // Run the LFO at 23437.5 / 8 == 2930 Hz
         if (sample_num % 8 == 0 && run_lfo) {
-            lfo1_value = lfo1.update(&lfo1);
-            lfo2_value = lfo2.update(&lfo2);
+            lfo1_value = lfo1.update(&lfo1) | (lfo_patch->top1 << 16);
+            lfo2_value = lfo2.update(&lfo2) | (lfo_patch->top2 << 16);
 
-            patch_machine(&machine, lfo1_value, lfo2_value, lfo_patch->top1, lfo_patch->top2, lfo_patch->next_instr_opcode);
+            patch_machine(&machine, lfo1_value, lfo2_value, lfo_patch->next_instr_opcode);
         }
     }
 
