@@ -730,8 +730,9 @@ def main():
         for instr in disassembled_instructions:
             print(instr)
         print(f'-- End address 0x{end_address:x}')
-        encoded_instructions = inspect_patched_program(program, memory_shift, 1)
-        encoded_instructions = inspect_patched_program(program, memory_shift, 2, encoded_instructions)
+        if program_number >= 50 and program_number <= 69:
+            encoded_instructions = inspect_patched_program(program, memory_shift, 1)
+            encoded_instructions = inspect_patched_program(program, memory_shift, 2, encoded_instructions)
 
         if decompiler_output is not None:
             if len(decode) > 1:

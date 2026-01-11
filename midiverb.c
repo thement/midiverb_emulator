@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
 
     // Load the machine
     Machine machine;
-    void (*effect_fn)(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr);
+    void (*effect_fn)(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr, uint32_t lfo1_value, uint32_t lfo2_value);
 
     if (!use_internal_effects) {
         load_rom(&machine, rom_type, args.rom_file, args.program_number);
