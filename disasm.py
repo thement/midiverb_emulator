@@ -89,6 +89,16 @@ class Instruction:
     opcode: DSPInstruction
     pc: int
     addr: Optional[int] = None
+    # If present, it means that at this instruction there's a patch table that changes the
+    # instruction address depending on the LFO value fractional bits.
+    #
+    # Fractional bits are the 4 bits after fractional point: `(lfo_value >> 4) & 15`.
+    #
+    # The structure is (lfo_number, (addr_for_0, addr_for_1, ...))
+    patched: Optional[tuple[int, tuple[int, ...]]] = None
+    # If this value is non-None, then the address on this instruction is shifted by the
+    # integer part of the value of the given LFO.
+    lfo_num: Optional[int] = None
 
     def uses_defines(self):
         uses = set()
@@ -122,6 +132,11 @@ class Instruction:
             defines.add("Right")
         else:
             raise Exception('unhandled case variant')
+
+        # If the instruction is "patched", then it's sort-of a phi node. It depends
+        # on all addresses/variables that it could possibly read.
+        if self.patched is not None:
+            uses |= set(self.patched[1])
 
         return uses, defines
 
@@ -221,7 +236,7 @@ class DelayLineStorage:
     def get_tmp_name(addr):
         return f"tmp_{addr:x}"
 
-    def format_read_address(self, addr, was_this_addr_written):
+    def format_read_address(self, addr, was_this_addr_written, indexed_by_lfo=None):
         if addr in self.tmp_addrs:
             if not addr in self.tmp_addrs_that_read_real_memory or was_this_addr_written:
                 return self.get_tmp_name(addr)
@@ -232,16 +247,23 @@ class DelayLineStorage:
             return None
         line = self.lines[id]
         offset = (line.addr - addr) & 0x3fff
-        return f"LINE({line.id}, {line.addr}, {offset})"
+        if indexed_by_lfo is not None:
+            return f"LINE({line.id}, ({line.addr} - (lfo{indexed_by_lfo}_value >> 8)), {offset})"
+        else:
+            return f"LINE({line.id}, {line.addr}, {offset})"
 
-    def format_write_address(self, addr):
+    def format_write_address(self, addr, indexed_by_lfo=None):
         if addr in self.tmp_addrs:
             return self.get_tmp_name(addr)
         id = self.write_addrs.get(addr)
         if id is None:
             return None
+
         line = self.lines[id]
-        return f"WRITE_LINE({line.id}, {line.addr})"
+        if indexed_by_lfo is not None:
+            return f"WRITE_LINE({line.id}, ({line.addr} - (lfo{indexed_by_lfo}_value >> 8)))"
+        else:
+            return f"WRITE_LINE({line.id}, {line.addr})"
 
 class Accumulator:
     def __init__(self, terms):
@@ -385,14 +407,14 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
             used_locations |= uses
             print(instr.pretty_string())
             pass3_instructions.append(instr)
-    pass3_instructions = reversed(pass3_instructions)
+    pass3_instructions = list(reversed(pass3_instructions))
 
     print(f'-- Pass 4: Output C program into a file')
     for line in delay_line_storage.lines:
         print(f"Delay line {line.id}: length={line.length}, taps={line.taps}")
     f.write('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])\n')
     f.write('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])\n')
-    f.write(f'void {function_name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {{\n')
+    f.write(f'void {function_name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {{\n')
     local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp_addrs if addr in used_locations]
     local_vars_str = ', '.join(local_vars)
     f.write(f'\tint16_t {local_vars_str};\n')
@@ -410,17 +432,55 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
         if acc is None:
             acc = Accumulator.term('Acc', 1, 1)
 
-    for instr in pass3_instructions:
+    i = 0
+    while i < len(pass3_instructions):
+        instr = pass3_instructions[i]
         s = None
         if instr.addr is not None:
-            read_addr_str = delay_line_storage.format_read_address(instr.addr, instr.addr in addrs_written)
-            write_addr_str = delay_line_storage.format_write_address(instr.addr)
+            read_addr_str = delay_line_storage.format_read_address(instr.addr, instr.addr in addrs_written, instr.lfo_num)
+            write_addr_str = delay_line_storage.format_write_address(instr.addr, instr.lfo_num)
         else:
             read_addr_str = None
             write_addr_str = None
 
+        # If instruction is patched:
+        #
+        # - find sequence of patched instructions in a row
+        # - create a switch statement on fract value of selected LFO
+        # - decompile each patched block
+        # - skip those instruction in the regular pass
+        if instr.patched is not None:
+            lfo_num = instr.patched[0]
+            num_patched = 0
+            while pass3_instructions[i + num_patched].patched is not None and pass3_instructions[i + num_patched].patched[0] == lfo_num:
+                num_patched += 1
+
+            flush_acc()
+            f.write(f"\tswitch ((lfo{lfo_num}_value >> 4) & 15) {{\n")
+            for k in range(16):
+                f.write(f"\tcase {k}:\n")
+                for j in range(num_patched):
+                    instr = pass3_instructions[i + j]
+                    addr = instr.patched[1][k]
+                    read_addr_str = delay_line_storage.format_read_address(addr, addr in addrs_written, instr.lfo_num)
+                    if instr.opcode == DSPInstruction.SUMHLF:
+                        default_acc()
+                        acc += Accumulator.term(read_addr_str, 1, 2)
+                    elif instr.opcode == DSPInstruction.LDHLF:
+                        acc = Accumulator.term(read_addr_str, 1, 2)
+                    else:
+                        raise Exception("unsupported instr")
+                f.write(f"\t")
+                flush_acc()
+                f.write(f"\t\tbreak;\n")
+
+            f.write(f"\t}}\n")
+
+            i += num_patched
+            continue
+
         if instr.opcode == DSPInstruction.SUMHLF:
-            default_acc()
+            default_acc( )
             acc += Accumulator.term(read_addr_str, 1, 2)
         elif instr.opcode == DSPInstruction.LDHLF:
             acc = Accumulator.term(read_addr_str, 1, 2)
@@ -453,11 +513,77 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
             pass
         if s is not None:
             f.write(f"\t{s};\n")
+        i += 1
+
     flush_acc()
     f.write('}\n')
     f.write('#undef LINE\n')
     f.write('#undef WRITE_LINE\n')
 
+
+# This is a really hacky solution to decompiling effects where the 8031 is live-patching
+# effect programs with LFO coefficients, but YOLO, this whole decompiler needs
+# to be decompiled as SSA anyway.
+#
+# How does it work?
+#
+#   * All choruses/flangers on Midiverb 2 are patched with the same coefficients
+#     * There's a place in program where address is decremented by lfo offset (the integer
+#       part), and another where it's incremented by the same offset.
+#     * We annotate all instruction in-between to add this offset
+#   * There are around two instructions in the program that are patched to select the
+#     right interpolated value (there is 8 values and either one of them is selected,
+#     or value exactly in between is selected). The fractional offset selects this value.
+#   * We generate patched program for every of these 16 possible fractional points.
+#   * We compare the program and find all instructions that changed.
+#   * We assume the instruction type didn't change, only the offset.
+#   * For each instruction we generate a patch table with possible addresses.
+#   * This table is later decompiled as a `switch(fract)` statement
+#
+def patch_instructions_for_lfo(program, memory_shift, lfo_num, next_instr_opcode, pc1, pc2, original_program=None):
+    prog = []
+    difference_at = {}
+    patch_table = {}
+    ptlen = 16
+    for k in range(ptlen):
+        if lfo_num == 1:
+            apply_modulation(program, k * 0x10, 0x00, next_instr_opcode)
+        elif lfo_num == 2:
+            apply_modulation(program, 0x00, k * 0x10, next_instr_opcode)
+        else:
+            assert "oops"
+        _, ea, enc = disassemble_dsp(program, memory_shift)
+        prog.append(enc)
+        assert(ea == 1)
+        assert(len(prog[0]) == len(prog[k]))
+        for i in range(len(prog[0])):
+            a = prog[0][i]
+            b = prog[k][i]
+            assert a.opcode == b.opcode, 'different opcode?'
+            assert a.pc == b.pc, 'different pc?'
+
+            if a.addr != b.addr:
+                difference_at[i] = True
+
+    for i in difference_at.keys():
+        addrs = []
+        for k in range(ptlen):
+            a = prog[k][i].addr
+            addrs.append(a)
+
+        patch_table[i] = addrs
+
+    # construct new program that has patches
+    progx = original_program or prog[0].copy()
+    for i in patch_table.keys():
+        instr = progx[i]
+        progx[i] = Instruction(instr.opcode, addr=instr.addr, pc=instr.pc, lfo_num=instr.lfo_num, patched=(lfo_num, tuple(patch_table[i])))
+    for i in range(len(progx)):
+        instr = progx[i]
+        if instr.pc > pc1 and instr.pc <= pc2:
+            progx[i] = Instruction(instr.opcode, addr=instr.addr, pc=instr.pc, patched=instr.patched, lfo_num=lfo_num)
+
+    return progx
 
 def disassemble_dsp(program, memory_shift):
     def decode_instruction(pc, address, op, offset):
@@ -640,6 +766,16 @@ def main():
         for instr in disassembled_instructions:
             print(instr)
         print(f'-- End address 0x{end_address:x}')
+        # Only patch LFO for midiverb and only the selected programs.
+        if args.midiverb2 and (program_number >= 50 and program_number <= 69):
+            # These values should be read from a table but ...
+            if program_number < 60 and program_number % 2 == 0:
+                next_instr_opcode = 0xc0
+            else:
+                next_instr_opcode = 0x80
+            # Patch the program
+            encoded_instructions = patch_instructions_for_lfo(program, memory_shift, 1, next_instr_opcode, 0x03, 0x2f)
+            encoded_instructions = patch_instructions_for_lfo(program, memory_shift, 2, next_instr_opcode, 0x30, 0x5c, encoded_instructions)
 
         if decompiler_output is not None:
             if len(decode) > 1:
@@ -650,7 +786,7 @@ def main():
 
     if decompiler_output is not None and len(decode) > 1:
         f = decompiler_output
-        f.write(f'void (*{args.prefix}effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) = {{\n')
+        f.write(f'void (*{args.prefix}effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr, uint32_t lfo1_value, uint32_t lfo2_value) = {{\n')
         for program_number in decode:
             f.write(f'\t{args.prefix}effect_{program_number},\n')
         f.write('};\n')

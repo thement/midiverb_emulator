@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
 
     // Load the machine
     Machine machine;
-    void (*effect_fn)(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr);
+    void (*effect_fn)(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr, uint32_t lfo1_value, uint32_t lfo2_value);
 
     if (!use_internal_effects) {
         load_rom(&machine, rom_type, args.rom_file, args.program_number);
@@ -157,6 +157,7 @@ int main(int argc, char *argv[]) {
     float wet_dry_ratio = 1.0 - dry_wet_ratio;
     int32_t output_left = 0, output_right = 0;
     unsigned clipping_counter = 0;
+    uint32_t lfo1_value = 0, lfo2_value = 0;
 
     // Process each sample
     for (sf_count_t i = 0; i < num_samples; i += 2) {
@@ -176,7 +177,7 @@ int main(int argc, char *argv[]) {
 
         if (effect_fn != NULL) {
             // Run decompiled version
-            effect_fn(input_mono, &output.s[0], &output.s[1], machine.dram, machine.address++);
+            effect_fn(input_mono, &output.s[0], &output.s[1], machine.dram, machine.address++, lfo1_value, lfo2_value);
         } else {
             run_machine_tick(&machine, input_mono, &output);
         }
@@ -191,10 +192,10 @@ int main(int argc, char *argv[]) {
 
         // Run the LFO at 23437.5 / 8 == 2930 Hz
         if (sample_num % 8 == 0 && run_lfo) {
-            uint32_t lfo1_value = lfo1.update(&lfo1);
-            uint32_t lfo2_value = lfo2.update(&lfo2);
+            lfo1_value = lfo1.update(&lfo1) | (lfo_patch->top1 << 16);
+            lfo2_value = lfo2.update(&lfo2) | (lfo_patch->top2 << 16);
 
-            patch_machine(&machine, lfo1_value, lfo2_value, lfo_patch->top1, lfo_patch->top2, lfo_patch->next_instr_opcode);
+            patch_machine(&machine, lfo1_value, lfo2_value, lfo_patch->next_instr_opcode);
         }
     }
 

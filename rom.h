@@ -11,7 +11,7 @@ struct RomType {
     int has_lfo;
     int memory_shift;
     const char **effect_names;
-    void (**decompiled)(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr);
+    void (**decompiled)(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr, uint32_t lfo1_value, uint32_t lfo2_value);
 };
 
 static const char *names_midiverb[] = {

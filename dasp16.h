@@ -79,11 +79,11 @@ void reset_machine(Machine *machine) {
     machine->address = 0;
 }
 
-void patch_machine(Machine *machine, uint32_t lfo1_value, uint32_t lfo2_value, uint8_t top1, uint8_t top2, uint8_t next_instr_opcode) {
+void patch_machine(Machine *machine, uint32_t lfo1_value, uint32_t lfo2_value, uint8_t next_instr_opcode) {
     uint8_t *program = machine->program;
     {
         // Memory shift is the value of lfo (in 8.8 fixed point) plus some effect-specific offset
-        uint32_t memory_shift = lfo1_value | (((uint32_t)top1) << 16);
+        uint32_t memory_shift = lfo1_value;
         uint8_t *patch = &machine->interpolation_patch_table[memory_shift & 0xf0];
         // First we subtract this offset from an instruction offset field: this will shift all
         // subsequent memory accesses backward
@@ -101,7 +101,7 @@ void patch_machine(Machine *machine, uint32_t lfo1_value, uint32_t lfo2_value, u
         program[0x5e] = ((add >> 8) & 0x3f) | next_instr_opcode;
     }
     {
-        uint32_t memory_shift = lfo2_value | (((uint32_t)top2) << 16);
+        uint32_t memory_shift = lfo2_value;
         uint8_t *patch = &machine->interpolation_patch_table[8 + (memory_shift & 0xf0)];
         int sub = ((patch[1] << 8) | patch[0]) - (memory_shift >> 8);
         int add = ((patch[7] << 8) | patch[6]) + (memory_shift >> 8);
