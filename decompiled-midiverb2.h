@@ -2615,7 +2615,7 @@ void midiverb2_effect_51(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -2682,9 +2682,9 @@ void midiverb2_effect_51(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -2905,7 +2905,7 @@ void midiverb2_effect_53(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -2972,9 +2972,9 @@ void midiverb2_effect_53(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -3195,7 +3195,7 @@ void midiverb2_effect_55(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -3262,9 +3262,9 @@ void midiverb2_effect_55(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -3485,7 +3485,7 @@ void midiverb2_effect_57(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -3552,9 +3552,9 @@ void midiverb2_effect_57(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -3775,7 +3775,7 @@ void midiverb2_effect_59(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -3842,9 +3842,9 @@ void midiverb2_effect_59(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -3920,7 +3920,7 @@ void midiverb2_effect_60(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -3987,9 +3987,9 @@ void midiverb2_effect_60(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -4065,7 +4065,7 @@ void midiverb2_effect_61(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -4132,9 +4132,9 @@ void midiverb2_effect_61(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -4210,7 +4210,7 @@ void midiverb2_effect_62(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -4277,9 +4277,9 @@ void midiverb2_effect_62(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -4355,7 +4355,7 @@ void midiverb2_effect_63(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -4422,9 +4422,9 @@ void midiverb2_effect_63(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -4500,7 +4500,7 @@ void midiverb2_effect_64(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -4567,9 +4567,9 @@ void midiverb2_effect_64(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -4645,7 +4645,7 @@ void midiverb2_effect_65(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -4712,9 +4712,9 @@ void midiverb2_effect_65(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -4790,7 +4790,7 @@ void midiverb2_effect_66(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -4857,9 +4857,9 @@ void midiverb2_effect_66(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -4935,7 +4935,7 @@ void midiverb2_effect_67(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -5002,9 +5002,9 @@ void midiverb2_effect_67(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -5080,7 +5080,7 @@ void midiverb2_effect_68(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -5147,9 +5147,9 @@ void midiverb2_effect_68(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
@@ -5225,7 +5225,7 @@ void midiverb2_effect_69(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_1f4d / 2 + MEM(16281 - (lfo1_value >> 8)) / 2;
 		break;
 	}
-	tmp_3 = -Acc;
+	tmp_3 = Acc;
 	Acc = MEM(16286 - (lfo2_value >> 8)) * 9 / 512 + MEM(16277 - (lfo2_value >> 8)) * 9 / 512 + MEM(16285 - (lfo2_value >> 8)) * -9 / 256 + MEM(16278 - (lfo2_value >> 8)) * -9 / 256 + MEM(16284 - (lfo2_value >> 8)) * 9 / 128 + MEM(16279 - (lfo2_value >> 8)) * 9 / 128 + MEM(16283 - (lfo2_value >> 8)) * -9 / 64 + MEM(16280 - (lfo2_value >> 8)) * -9 / 64 + MEM(16282 - (lfo2_value >> 8)) * 27 / 64 + MEM(16281 - (lfo2_value >> 8)) * 27 / 64;
 	MEM(4006 - (lfo2_value >> 8)) = Acc;
 	Acc = Acc * 3 / 2;
@@ -5292,9 +5292,9 @@ void midiverb2_effect_69(int16_t input, int16_t *out_left, int16_t *out_right, i
 		Acc = tmp_fad / 2 + MEM(16281 - (lfo2_value >> 8)) / 2;
 		break;
 	}
-	tmp_5 = -Acc;
+	tmp_5 = Acc;
 	*out_left = tmp_5;
-	Acc = -Acc / 32768;
+	Acc = Acc * 3 / 32768;
 	MEM(16374) = -Acc;
 	*out_right = tmp_3;
 }
