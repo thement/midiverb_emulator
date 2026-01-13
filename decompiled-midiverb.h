@@ -1,6 +1,6 @@
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_1(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_1(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_b, tmp_1, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(10, 15992, 64) / 2 + LINE(7, 15290, 131) / 2 + LINE(5, 14835, 120) / 2 + LINE(4, 14696, 179) / 2;
@@ -54,7 +54,7 @@ void midiverb_effect_1(int16_t input, int16_t *out_left, int16_t *out_right, int
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_2(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_2(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_b, tmp_1, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(11, 15992, 64) / 2 + LINE(8, 15290, 131) / 2 + LINE(6, 14835, 120) / 2 + LINE(5, 14696, 179) / 2;
@@ -110,7 +110,7 @@ void midiverb_effect_2(int16_t input, int16_t *out_left, int16_t *out_right, int
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_3(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_3(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_b, tmp_1, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(10, 15812, 64) / 2 + LINE(8, 14975, 396) / 2 + LINE(6, 13974, 339) / 2 + LINE(4, 13216, 179) / 2;
@@ -164,7 +164,7 @@ void midiverb_effect_3(int16_t input, int16_t *out_left, int16_t *out_right, int
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_4(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_4(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_b, tmp_1, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(10, 15992, 64) / 2 + LINE(8, 15255, 396) / 2 + LINE(6, 14554, 339) / 2 + LINE(4, 13796, 179) / 2;
@@ -218,7 +218,7 @@ void midiverb_effect_4(int16_t input, int16_t *out_left, int16_t *out_right, int
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_5(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_5(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_b, tmp_1, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(11, 15978, 64) / 2 + LINE(9, 15141, 196) / 2 + LINE(7, 14340, 339) / 2 + LINE(5, 13582, 179) / 2;
@@ -274,7 +274,7 @@ void midiverb_effect_5(int16_t input, int16_t *out_left, int16_t *out_right, int
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_6(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_6(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_b, tmp_1, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(10, 15812, 64) / 2 + LINE(8, 14975, 396) / 2 + LINE(6, 13974, 339) / 2 + LINE(4, 13216, 179) / 2;
@@ -328,7 +328,7 @@ void midiverb_effect_6(int16_t input, int16_t *out_left, int16_t *out_right, int
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_7(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_7(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_b, tmp_1, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(11, 15812, 64) / 4 + -LINE(9, 14975, 396) / 4 + -LINE(7, 13974, 339) / 4 + -LINE(5, 13216, 179) / 4;
@@ -380,7 +380,7 @@ void midiverb_effect_7(int16_t input, int16_t *out_left, int16_t *out_right, int
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_8(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_8(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(10, 15645, 64) / 2 + LINE(8, 14568, 496) / 2 + LINE(4, 11989, 339) / 2 + LINE(11, 16230, 24) / 2;
@@ -434,7 +434,7 @@ void midiverb_effect_8(int16_t input, int16_t *out_left, int16_t *out_right, int
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_9(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_9(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(11, 14322, 123) / 4 + -LINE(9, 11770, 987) / 4 + -LINE(5, 6614, 678) / 4 + -LINE(14, 16182, 142) / 4;
@@ -484,7 +484,7 @@ void midiverb_effect_9(int16_t input, int16_t *out_left, int16_t *out_right, int
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_10(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_10(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(11, 14322, 123) / 4 + -LINE(9, 11770, 987) / 4 + -LINE(5, 6614, 678) / 4 + -LINE(14, 16182, 142) / 4;
@@ -534,7 +534,7 @@ void midiverb_effect_10(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_11(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_11(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(10, 15645, 64) / 4 + -LINE(8, 14468, 496) / 4 + -LINE(4, 11789, 339) / 4 + -LINE(11, 16230, 24) / 4;
@@ -584,7 +584,7 @@ void midiverb_effect_11(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_12(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_12(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(8, 13241, 21) / 2 + LINE(6, 9821, 1591) / 2 + LINE(4, 5436, 1203) / 2;
@@ -632,7 +632,7 @@ void midiverb_effect_12(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_13(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_13(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(11, 15785, 64) / 4 + -LINE(9, 14908, 496) / 4 + -LINE(5, 12759, 339) / 4 + -LINE(12, 16230, 24) / 4;
@@ -684,7 +684,7 @@ void midiverb_effect_13(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_14(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_14(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(11, 14236, 123) / 2 + LINE(9, 11884, 987) / 2 + LINE(5, 6908, 678) / 2 + LINE(14, 16182, 142) / 2;
@@ -738,7 +738,7 @@ void midiverb_effect_14(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_15(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_15(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(10, 13855, 123) / 4 + -LINE(8, 11303, 987) / 4 + -LINE(4, 5447, 678) / 4 + -LINE(13, 16182, 142) / 4;
@@ -786,7 +786,7 @@ void midiverb_effect_15(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_16(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_16(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(11, 14124, 123) / 4 + -LINE(9, 11572, 987) / 4 + -LINE(5, 5716, 678) / 4 + -LINE(14, 16182, 142) / 4;
@@ -836,7 +836,7 @@ void midiverb_effect_16(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_17(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_17(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(11, 15084, 12) / 4 + -LINE(9, 13237, 987) / 4 + -LINE(7, 10675, 978) / 4 + -LINE(5, 8381, 745) / 4;
@@ -884,7 +884,7 @@ void midiverb_effect_17(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_18(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_18(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_3, tmp_5, tmp_b;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(10, 15084, 12) / 4 + -LINE(8, 13237, 987) / 4 + -LINE(6, 10675, 978) / 4 + -LINE(4, 8381, 745) / 4;
@@ -930,7 +930,7 @@ void midiverb_effect_18(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_19(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_19(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 13793, 211) / 4 + -LINE(6, 10473, 1391) / 4 + -LINE(4, 6488, 1403) / 4;
@@ -976,7 +976,7 @@ void midiverb_effect_19(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_20(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_20(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12941, 211) / 4 + -LINE(6, 9021, 1391) / 4 + -LINE(4, 4636, 1403) / 4;
@@ -1022,7 +1022,7 @@ void midiverb_effect_20(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_21(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_21(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(8, 13306, 21) / 2 + LINE(6, 10886, 1391) / 2 + LINE(4, 7601, 1503) / 2;
@@ -1072,7 +1072,7 @@ void midiverb_effect_21(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_22(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_22(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 14810, 11) / 4 + -LINE(6, 13099, 796) / 4 + -LINE(4, 10902, 1001) / 4;
@@ -1118,7 +1118,7 @@ void midiverb_effect_22(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_23(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_23(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 13409, 21) / 4 + -LINE(5, 10389, 1491) / 4 + -LINE(3, 6804, 1703) / 4;
@@ -1162,7 +1162,7 @@ void midiverb_effect_23(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_24(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_24(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12841, 21) / 4 + -LINE(5, 9821, 1491) / 4 + -LINE(3, 6236, 1703) / 4;
@@ -1206,7 +1206,7 @@ void midiverb_effect_24(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_25(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_25(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12941, 211) / 4 + -LINE(6, 9221, 1591) / 4 + -LINE(4, 4836, 1403) / 4;
@@ -1252,7 +1252,7 @@ void midiverb_effect_25(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_26(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_26(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12941, 211) / 4 + -LINE(5, 9221, 1591) / 4 + -LINE(3, 4836, 1403) / 4;
@@ -1296,7 +1296,7 @@ void midiverb_effect_26(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_27(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_27(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12741, 21) / 4 + -LINE(6, 9621, 1491) / 4 + -LINE(4, 5536, 1703) / 4;
@@ -1342,7 +1342,7 @@ void midiverb_effect_27(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_28(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_28(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12941, 211) / 4 + -LINE(5, 9721, 1591) / 4 + -LINE(3, 5336, 403) / 4;
@@ -1386,7 +1386,7 @@ void midiverb_effect_28(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_29(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_29(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9421, 1891) / 4 + -LINE(4, 5136, 1403) / 4;
@@ -1432,7 +1432,7 @@ void midiverb_effect_29(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_30(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_30(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 13241, 21) / 4 + -LINE(6, 9821, 1591) / 4 + -LINE(4, 5436, 2003) / 4;
@@ -1478,7 +1478,7 @@ void midiverb_effect_30(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_31(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_31(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9021, 1891) / 4 + -LINE(4, 4536, 2003) / 4;
@@ -1524,7 +1524,7 @@ void midiverb_effect_31(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_32(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_32(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 13241, 21) / 4 + -LINE(5, 9621, 1591) / 4 + -LINE(3, 5036, 2003) / 4;
@@ -1568,7 +1568,7 @@ void midiverb_effect_32(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_33(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_33(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 13241, 21) / 4 + -LINE(6, 9821, 1591) / 4 + -LINE(4, 5436, 2003) / 4;
@@ -1614,7 +1614,7 @@ void midiverb_effect_33(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_34(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_34(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 14377, 21) / 4 + -LINE(4, 10748, 79) / 4 + -LINE(3, 8945, 1356) / 4;
@@ -1658,7 +1658,7 @@ void midiverb_effect_34(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_35(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_35(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9621, 1691) / 4 + -LINE(3, 5836, 1903) / 4;
@@ -1702,7 +1702,7 @@ void midiverb_effect_35(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_36(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_36(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9021, 1891) / 4 + -LINE(3, 4536, 2003) / 4;
@@ -1746,7 +1746,7 @@ void midiverb_effect_36(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_37(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_37(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9021, 1891) / 4 + -LINE(4, 4536, 2003) / 4;
@@ -1792,7 +1792,7 @@ void midiverb_effect_37(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_38(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_38(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 13441, 21) / 4 + -LINE(6, 9821, 1591) / 4 + -LINE(4, 5736, 2003) / 4;
@@ -1838,7 +1838,7 @@ void midiverb_effect_38(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_39(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_39(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9021, 1891) / 4 + -LINE(3, 4536, 2003) / 4;
@@ -1882,7 +1882,7 @@ void midiverb_effect_39(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_40(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_40(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9021, 1891) / 4 + -LINE(4, 4536, 1703) / 4;
@@ -1928,7 +1928,7 @@ void midiverb_effect_40(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_41(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_41(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9021, 1891) / 4 + -LINE(4, 4536, 2003) / 4;
@@ -1974,7 +1974,7 @@ void midiverb_effect_41(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_42(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_42(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9021, 1891) / 4 + -LINE(3, 4536, 2003) / 4;
@@ -2018,7 +2018,7 @@ void midiverb_effect_42(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_43(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_43(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9321, 1891) / 4 + -LINE(4, 4836, 2003) / 4;
@@ -2064,7 +2064,7 @@ void midiverb_effect_43(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_44(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_44(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9021, 1891) / 4 + -LINE(3, 4536, 1703) / 4;
@@ -2108,7 +2108,7 @@ void midiverb_effect_44(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_45(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_45(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9021, 1891) / 4 + -LINE(4, 4536, 2003) / 4;
@@ -2154,7 +2154,7 @@ void midiverb_effect_45(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_46(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_46(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 12641, 21) / 4 + -LINE(5, 9021, 1891) / 4 + -LINE(3, 4536, 2003) / 4;
@@ -2198,7 +2198,7 @@ void midiverb_effect_46(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_47(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_47(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12641, 21) / 4 + -LINE(6, 9021, 1591) / 4 + -LINE(4, 4436, 2003) / 4;
@@ -2244,7 +2244,7 @@ void midiverb_effect_47(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_48(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_48(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 12665, 21) / 4 + -LINE(6, 9345, 1591) / 4 + -LINE(4, 5360, 1403) / 4;
@@ -2288,7 +2288,7 @@ void midiverb_effect_48(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_49(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_49(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_1, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(7, 13033, 21) / 4 + -LINE(5, 9413, 1891) / 4 + -LINE(3, 4928, 2003) / 4;
@@ -2328,7 +2328,7 @@ void midiverb_effect_49(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_50(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_50(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_2, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = -LINE(8, 13033, 21) / 4 + -LINE(6, 9413, 1891) / 4 + -LINE(4, 4928, 2003) / 4;
@@ -2368,7 +2368,7 @@ void midiverb_effect_50(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_51(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_51(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(2, 11, 2) / 2 + LINE(8, 2298, 21) / 2;
@@ -2396,7 +2396,7 @@ void midiverb_effect_51(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_52(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_52(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(2, 11, 2) / 2 + LINE(8, 2298, 21) / 2;
@@ -2424,7 +2424,7 @@ void midiverb_effect_52(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_53(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_53(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(2, 11, 2) / 2 + LINE(8, 2298, 21) / 2;
@@ -2452,7 +2452,7 @@ void midiverb_effect_53(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_54(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_54(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(2, 11, 2) / 2 + LINE(8, 2298, 21) / 2;
@@ -2480,7 +2480,7 @@ void midiverb_effect_54(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_55(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_55(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(2, 11, 2) / 2 + LINE(8, 2298, 21) / 2;
@@ -2508,7 +2508,7 @@ void midiverb_effect_55(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_56(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_56(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(2, 11, 2) / 2 + LINE(8, 2298, 21) / 2;
@@ -2536,7 +2536,7 @@ void midiverb_effect_56(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_57(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_57(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(2, 11, 2) / 2 + LINE(8, 2298, 21) / 2;
@@ -2564,7 +2564,7 @@ void midiverb_effect_57(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_58(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_58(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(2, 11, 2) / 2 + LINE(8, 2298, 21) / 2;
@@ -2592,7 +2592,7 @@ void midiverb_effect_58(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_59(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_59(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(2, 11, 2) / 2 + LINE(8, 2298, 21) / 2;
@@ -2620,7 +2620,7 @@ void midiverb_effect_59(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_60(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_60(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(1, 11, 2) / 2 + LINE(7, 2298, 21) / 2;
@@ -2648,7 +2648,7 @@ void midiverb_effect_60(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_61(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_61(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(1, 11, 2) / 2 + LINE(7, 2298, 21) / 2;
@@ -2676,7 +2676,7 @@ void midiverb_effect_61(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_62(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_62(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(1, 11, 2) / 2 + LINE(7, 2298, 21) / 2;
@@ -2704,7 +2704,7 @@ void midiverb_effect_62(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_63(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_63(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc, tmp_3, tmp_5;
 	WRITE_LINE(0, 0) = input;
 	Acc = LINE(1, 11, 2) / 2 + LINE(7, 2298, 21) / 2;
@@ -2732,7 +2732,7 @@ void midiverb_effect_63(int16_t input, int16_t *out_left, int16_t *out_right, in
 #undef WRITE_LINE
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
-void midiverb_effect_64(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr) {
+void midiverb_effect_64(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
 	int16_t Acc;
 	*out_left = LINE(0, 140, 135);
 	*out_right = LINE(0, 140, 137);
@@ -2741,7 +2741,7 @@ void midiverb_effect_64(int16_t input, int16_t *out_left, int16_t *out_right, in
 }
 #undef LINE
 #undef WRITE_LINE
-void (*midiverb_effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) = {
+void (*midiverb_effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr, uint32_t lfo1_value, uint32_t lfo2_value) = {
 	midiverb_effect_1,
 	midiverb_effect_2,
 	midiverb_effect_3,
