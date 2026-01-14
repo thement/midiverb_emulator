@@ -6,6 +6,10 @@
 #include <cstdint>
 #include <cmath>
 
+// Forward declarations for LFO types (defined in lfo.h)
+struct Lfo;
+struct LfoPatch;
+
 // Biquad filter section (transposed direct form II)
 struct Biquad {
     double b0 = 1, b1 = 0, b2 = 0;
@@ -198,6 +202,17 @@ private:
 
     // Input overload detection
     std::atomic<bool> inputOverload{false};
+
+    // LFO state for MIDIVerb 2 flanger/chorus effects (50-69)
+    Lfo* lfo1 = nullptr;
+    Lfo* lfo2 = nullptr;
+    LfoPatch* currentLfoPatch = nullptr;
+    uint32_t lfo1Value = 0;
+    uint32_t lfo2Value = 0;
+    int lfoSampleCounter = 0;
+    int lastDeviceIndex = -1;
+    int lastEffectIndex = -1;
+    static constexpr int LFO_UPDATE_INTERVAL = 8;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiverbAudioProcessor)
 };

@@ -20,13 +20,16 @@ static const char* names_midiverb2[] = {
 #include "../../names-midiverb2.h"
 };
 
+// Effect function pointer type (with LFO parameters for MIDIVerb 2 compatibility)
+using EffectFn = void (*)(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr, uint32_t lfo1_value, uint32_t lfo2_value);
+
 // Device info structure
 struct DeviceInfo {
     const char* name;
     int numEffects;     // Number of effects
     int displayOffset;  // Added to 0-based index for display (1 for MIDIVerb/MidiFex, 0 for MIDIVerb 2)
     const char** effectNames;
-    void (**effects)(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr);
+    EffectFn* effects;
 };
 
 static const DeviceInfo devices[] = {
