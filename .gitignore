@@ -63,7 +63,7 @@ midiverb
 # ROMs (not distributed)
 roms/
 
-# Test fixtures (generated)
-tests/fixtures/*.wav
+# WAV files
+*.wav
 .pytest_cache/
 __pycache__/
