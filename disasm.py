@@ -321,8 +321,12 @@ class Accumulator:
         return self
 
 
-def decompile(end_address, encoded_instructions, function_name, f, unoptimized=False, integer_arithmetic=False):
+def decompile(end_address, encoded_instructions, function_name, f, unoptimized=False, integer_arithmetic=False, effect_number=None, effect_name=None):
     assert end_address == 1, "address counter doesn't end up offseted by 1 - decompiler expects that"
+
+    # Output effect comment if name is provided
+    if effect_name is not None:
+        f.write(f'/* Effect {effect_number}: {effect_name} */\n')
 
     if unoptimized:
         print(f'-- Saving (unoptimized) code into a file')
@@ -540,16 +544,16 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
 #   * For each instruction we generate a patch table with possible addresses.
 #   * This table is later decompiled as a `switch(fract)` statement
 #
-def patch_instructions_for_lfo(program, memory_shift, lfo_num, next_instr_opcode, pc1, pc2, original_program=None):
+def patch_instructions_for_lfo(program, memory_shift, lfo_num, next_instr_opcode, pc1, pc2, original_program=None, interpolation_patch_table=None):
     prog = []
     difference_at = {}
     patch_table = {}
     ptlen = 16
     for k in range(ptlen):
         if lfo_num == 1:
-            apply_modulation(program, k * 0x10, 0x00, next_instr_opcode)
+            apply_modulation(program, k * 0x10, 0x00, next_instr_opcode, interpolation_patch_table)
         elif lfo_num == 2:
-            apply_modulation(program, 0x00, k * 0x10, next_instr_opcode)
+            apply_modulation(program, 0x00, k * 0x10, next_instr_opcode, interpolation_patch_table)
         else:
             assert "oops"
         _, ea, enc = disassemble_dsp(program, memory_shift)
@@ -677,15 +681,26 @@ def int_or_hex(value):
     except ValueError:
         raise argparse.ArgumentTypeError(f"{value!r} is not a valid int or hex value")
 
+def parse_names_file(path, first_program_number):
+    """Parse a names file containing one quoted string per line.
+    Returns a dict mapping program number to name."""
+    names = {}
+    with open(path, 'r') as f:
+        for i, line in enumerate(f):
+            line = line.strip()
+            if line.startswith('"') and line.rstrip(',').endswith('"'):
+                # Remove quotes and trailing comma
+                name = line.rstrip(',')[1:-1]
+                names[first_program_number + i] = name
+    return names
+
 def add16(ahi, alo, bhi, blo):
     return (ahi + bhi + ((alo + blo) >> 8), (alo + blo) & 0xff)
 
 def sub16(ahi, alo, bhi, blo):
     return (ahi + bhi + ((alo + blo) >> 8), (alo + blo) & 0xff)
 
-def apply_modulation(program, lfo1_value, lfo2_value, lfo_op):
-    with open('midiverb2_patches.rom', 'rb') as f:
-        patch_table = bytearray(f.read())
+def apply_modulation(program, lfo1_value, lfo2_value, lfo_op, patch_table):
 
     # LFO 1
     patch = patch_table[(lfo1_value & 0xf0):]
@@ -724,6 +739,7 @@ def main():
     parser.add_argument("-i", "--integer-arithmetic", action='store_true', help="Use integer arithmetic instead of float-point arithmetic")
     parser.add_argument("-2", "--midiverb2", action='store_true', help="Assume the byte order is same as Midiverb 2, and start at 0x1c00 from program 0")
     parser.add_argument("-p", "--prefix", default="", help="Add custom prefix to decompiled functions")
+    parser.add_argument("-n", "--names", metavar="FILE", help="File with effect names (one per line, quoted strings)")
     parser.add_argument("--lfo1", type=int_or_hex, help="Apply LFO1 modulation (from modulation table)")
     parser.add_argument("--lfo2", type=int_or_hex, help="Apply LFO2 modulation (from modulation table)")
     parser.add_argument("--lfo-op", type=int_or_hex, help="LFO operator")
@@ -735,16 +751,26 @@ def main():
         first_program_number = 0
         start_offset = 0x1c00
         memory_shift = 1
+        # Load interpolation patch table for LFO effects (offset 0x1b00, 256 bytes)
+        with open(args.rompath, 'rb') as f:
+            f.seek(0x1b00)
+            interpolation_patch_table = bytearray(f.read(256))
     else:
         first_program_number = 1
         start_offset = 0
         memory_shift = 2
+        interpolation_patch_table = None
 
     programs = Programs(args.rompath, first_program_number, start_offset)
     if args.program_number is not None:
         decode = [args.program_number]
     else:
         decode = programs.all_programs()
+
+    # Parse effect names if provided
+    effect_names = {}
+    if args.names is not None:
+        effect_names = parse_names_file(args.names, first_program_number)
 
     if args.decompile is not None:
         decompiler_output = open(args.decompile, 'w')
@@ -761,7 +787,7 @@ def main():
         if args.lfo1 is not None or args.lfo2 is not None:
             lfo1 = args.lfo1 if args.lfo1 is not None else 0
             lfo2 = args.lfo2 if args.lfo2 is not None else 0
-            apply_modulation(program, lfo1, lfo2, args.lfo_op)
+            apply_modulation(program, lfo1, lfo2, args.lfo_op, interpolation_patch_table)
         disassembled_instructions, end_address, encoded_instructions = disassemble_dsp(program, memory_shift)
         for instr in disassembled_instructions:
             print(instr)
@@ -774,15 +800,16 @@ def main():
             else:
                 next_instr_opcode = 0x80
             # Patch the program
-            encoded_instructions = patch_instructions_for_lfo(program, memory_shift, 1, next_instr_opcode, 0x03, 0x2f)
-            encoded_instructions = patch_instructions_for_lfo(program, memory_shift, 2, next_instr_opcode, 0x30, 0x5c, encoded_instructions)
+            encoded_instructions = patch_instructions_for_lfo(program, memory_shift, 1, next_instr_opcode, 0x03, 0x2f, interpolation_patch_table=interpolation_patch_table)
+            encoded_instructions = patch_instructions_for_lfo(program, memory_shift, 2, next_instr_opcode, 0x30, 0x5c, encoded_instructions, interpolation_patch_table=interpolation_patch_table)
 
         if decompiler_output is not None:
             if len(decode) > 1:
                 function_name = f'{args.prefix}effect_{program_number}'
             else:
                 function_name = f'{args.prefix}effect'
-            decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic)
+            effect_name = effect_names.get(program_number)
+            decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic, program_number, effect_name)
 
     if decompiler_output is not None and len(decode) > 1:
         f = decompiler_output

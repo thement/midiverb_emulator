@@ -60,6 +60,9 @@ web-demo/*.bin
 # Binaries
 midiverb
 
+# ROMs (not distributed)
+roms/
+
 # Test fixtures (generated)
 tests/fixtures/*.wav
 .pytest_cache/
