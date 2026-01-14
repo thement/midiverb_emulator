@@ -59,7 +59,19 @@ MidiverbAudioProcessorEditor::MidiverbAudioProcessorEditor(MidiverbAudioProcesso
     feedbackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         audioProcessor.getAPVTS(), "feedback", feedbackSlider);
 
-    setSize(500, 340);
+    // Threshold slider (for flanger retrigger)
+    thresholdLabel.setText("Threshold", juce::dontSendNotification);
+    thresholdLabel.setJustificationType(juce::Justification::centred);
+    addAndMakeVisible(thresholdLabel);
+
+    thresholdSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    thresholdSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
+    addAndMakeVisible(thresholdSlider);
+
+    thresholdAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        audioProcessor.getAPVTS(), "threshold", thresholdSlider);
+
+    setSize(600, 340);
 
     startTimerHz(30);
 }
@@ -109,16 +121,32 @@ void MidiverbAudioProcessorEditor::timerCallback()
     // Check for device changes (this also syncs the program selector)
     updateProgramSelector();
 
+    bool needsRepaint = false;
+
     if (audioProcessor.getAndClearInputOverload())
     {
         showOverload = true;
-        repaint();
+        needsRepaint = true;
     }
     else if (showOverload)
     {
         showOverload = false;
-        repaint();
+        needsRepaint = true;
     }
+
+    if (audioProcessor.getAndClearSignalTriggered())
+    {
+        showSignal = true;
+        needsRepaint = true;
+    }
+    else if (showSignal)
+    {
+        showSignal = false;
+        needsRepaint = true;
+    }
+
+    if (needsRepaint)
+        repaint();
 }
 
 void MidiverbAudioProcessorEditor::paint(juce::Graphics& g)
@@ -130,10 +158,15 @@ void MidiverbAudioProcessorEditor::paint(juce::Graphics& g)
     g.drawFittedText("Midiverb Emulator", getLocalBounds().removeFromTop(40),
                      juce::Justification::centred, 1);
 
-    // Input overload indicator
-    auto indicatorBounds = juce::Rectangle<float>(getWidth() - 25.0f, 10.0f, 15.0f, 15.0f);
+    // Signal trigger indicator (green LED)
+    auto signalBounds = juce::Rectangle<float>(getWidth() - 45.0f, 10.0f, 15.0f, 15.0f);
+    g.setColour(showSignal ? juce::Colours::limegreen : juce::Colours::darkgreen);
+    g.fillEllipse(signalBounds);
+
+    // Input overload indicator (red LED)
+    auto overloadBounds = juce::Rectangle<float>(getWidth() - 25.0f, 10.0f, 15.0f, 15.0f);
     g.setColour(showOverload ? juce::Colours::red : juce::Colours::darkred);
-    g.fillEllipse(indicatorBounds);
+    g.fillEllipse(overloadBounds);
 }
 
 void MidiverbAudioProcessorEditor::resized()
@@ -152,7 +185,7 @@ void MidiverbAudioProcessorEditor::resized()
     programSelector.setBounds(selectorArea.reduced(20, 5));
 
     auto knobArea = area.reduced(20, 10);
-    auto knobWidth = knobArea.getWidth() / 2;
+    auto knobWidth = knobArea.getWidth() / 3;
 
     // Dry/Wet knob
     auto dryWetArea = knobArea.removeFromLeft(knobWidth);
@@ -160,9 +193,14 @@ void MidiverbAudioProcessorEditor::resized()
     dryWetSlider.setBounds(dryWetArea.reduced(10, 0));
 
     // Feedback knob
-    auto feedbackArea = knobArea;
+    auto feedbackArea = knobArea.removeFromLeft(knobWidth);
     feedbackLabel.setBounds(feedbackArea.removeFromTop(20));
     feedbackSlider.setBounds(feedbackArea.reduced(10, 0));
+
+    // Threshold knob
+    auto thresholdArea = knobArea;
+    thresholdLabel.setBounds(thresholdArea.removeFromTop(20));
+    thresholdSlider.setBounds(thresholdArea.reduced(10, 0));
 }
 
 void MidiverbAudioProcessorEditor::mouseDown(const juce::MouseEvent& e)

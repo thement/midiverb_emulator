@@ -171,6 +171,9 @@ public:
     // Input overload detection
     bool getAndClearInputOverload() { return inputOverload.exchange(false); }
 
+    // Signal trigger detection (for retrigger LED)
+    bool getAndClearSignalTriggered() { return signalTriggered.exchange(false); }
+
 private:
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
@@ -202,6 +205,13 @@ private:
 
     // Input overload detection
     std::atomic<bool> inputOverload{false};
+
+    // Retrigger state for flanger effects (50, 53, 57)
+    float signalEnvelope = 0.0f;
+    bool retriggerArmed = true;  // Armed when envelope drops below 0.8 * threshold
+    std::atomic<bool> signalTriggered{false};
+    static constexpr float ENVELOPE_COEFF = 0.004f;  // ~10ms time constant at 24kHz
+    static constexpr float RETRIGGER_HYSTERESIS = 0.8f;  // Must drop to 80% of threshold to re-arm
 
     // LFO state for MIDIVerb 2 flanger/chorus effects (50-69)
     Lfo* lfo1 = nullptr;

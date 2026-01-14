@@ -80,6 +80,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout MidiverbAudioProcessor::crea
         juce::ParameterID{"feedback", 1}, "Feedback",
         juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.0f));
 
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(
+        juce::ParameterID{"threshold", 1}, "Threshold",
+        juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f), 0.5f));
+
     return { params.begin(), params.end() };
 }
 
@@ -149,6 +153,10 @@ void MidiverbAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBloc
     lfoSampleCounter = 0;
     lastDeviceIndex = -1;
     lastEffectIndex = -1;
+
+    // Reset retrigger state
+    signalEnvelope = 0.0f;
+    retriggerArmed = true;
 }
 
 void MidiverbAudioProcessor::releaseResources()
@@ -179,6 +187,7 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     int effectIndex = static_cast<int>(*apvts.getRawParameterValue("program"));
     float dryWet = *apvts.getRawParameterValue("dryWet");
     float feedback = *apvts.getRawParameterValue("feedback");
+    float threshold = *apvts.getRawParameterValue("threshold");
 
     // Clamp effect index to valid range for current device
     const auto& dev = devices[deviceIndex];
@@ -246,6 +255,34 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             // Original hardware uses 13-bit samples (±4095 range, same as >> 3 from 16-bit)
             int16_t inputInt = static_cast<int16_t>(saturate(static_cast<float>(interpolatedInput)) * 0x0fff);
             int16_t outLeftInt, outRightInt;
+
+            // Retrigger logic for flanger effects (50, 53, 57)
+            if (currentLfoPatch != nullptr && currentLfoPatch->do_retrigger)
+            {
+                // Update envelope (lowpass filter of absolute input)
+                float inputAbs = std::abs(inputInt) / 4095.0f;
+                signalEnvelope += ENVELOPE_COEFF * (inputAbs - signalEnvelope);
+
+                bool isAboveThreshold = signalEnvelope > threshold;
+
+                // Light LED when envelope is above threshold
+                if (isAboveThreshold)
+                    signalTriggered.store(true, std::memory_order_relaxed);
+
+                // Arm retrigger when envelope drops below hysteresis level
+                if (signalEnvelope < threshold * RETRIGGER_HYSTERESIS)
+                    retriggerArmed = true;
+
+                // Retrigger when armed and envelope crosses above threshold
+                if (isAboveThreshold && retriggerArmed)
+                {
+                    lfo1->reset(lfo1);
+                    lfo2->reset(lfo2);
+                    lfo1Value = lfo1->update(lfo1) | (static_cast<uint32_t>(currentLfoPatch->top1) << 16);
+                    lfo2Value = lfo2->update(lfo2) | (static_cast<uint32_t>(currentLfoPatch->top2) << 16);
+                    retriggerArmed = false;
+                }
+            }
 
             effectFn(inputInt, &outLeftInt, &outRightInt, DRAM.data(), memoryPointer++, lfo1Value, lfo2Value);
 

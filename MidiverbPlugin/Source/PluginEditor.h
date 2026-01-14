@@ -40,8 +40,16 @@ private:
     juce::Label feedbackLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> feedbackAttachment;
 
-    // Input overload indicator
+    // Threshold knob (for flanger retrigger)
+    juce::Slider thresholdSlider;
+    juce::Label thresholdLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> thresholdAttachment;
+
+    // Input overload indicator (red LED)
     bool showOverload = false;
+
+    // Signal trigger indicator (green LED)
+    bool showSignal = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiverbAudioProcessorEditor)
 };
