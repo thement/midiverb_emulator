@@ -2,6 +2,7 @@
 #include "PluginEditor.h"
 #include <cmath>
 
+#include "Lfo.h"
 #include "Effects.h"
 
 const char* MidiverbAudioProcessor::getDeviceName(int deviceIndex)
@@ -49,10 +50,14 @@ MidiverbAudioProcessor::MidiverbAudioProcessor()
       apvts(*this, nullptr, "Parameters", createParameterLayout())
 {
     DRAM.fill(0);
+    lfo1 = new Lfo();
+    lfo2 = new Lfo();
 }
 
 MidiverbAudioProcessor::~MidiverbAudioProcessor()
 {
+    delete lfo1;
+    delete lfo2;
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout MidiverbAudioProcessor::createParameterLayout()
@@ -136,6 +141,14 @@ void MidiverbAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBloc
     lastWetL = 0.0;
     lastWetR = 0.0;
     phase = 0.0;
+
+    // Reset LFO state
+    currentLfoPatch = nullptr;
+    lfo1Value = 0;
+    lfo2Value = 0;
+    lfoSampleCounter = 0;
+    lastDeviceIndex = -1;
+    lastEffectIndex = -1;
 }
 
 void MidiverbAudioProcessor::releaseResources()
@@ -175,6 +188,27 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
     // Get effect function pointer
     auto effectFn = dev.effects[effectIndex];
 
+    // Check if device or effect changed - reinitialize LFOs if needed
+    if (deviceIndex != lastDeviceIndex || effectIndex != lastEffectIndex)
+    {
+        lastDeviceIndex = deviceIndex;
+        lastEffectIndex = effectIndex;
+
+        // Find LFO patch for this effect (only MIDIVerb 2 effects 50-69 have LFO)
+        if (init_lfo_for_program(effectIndex, lfo1, lfo2, &currentLfoPatch) && deviceIndex == 2)
+        {
+            lfoSampleCounter = 0;
+            lfo1Value = lfo1->update(lfo1) | (static_cast<uint32_t>(currentLfoPatch->top1) << 16);
+            lfo2Value = lfo2->update(lfo2) | (static_cast<uint32_t>(currentLfoPatch->top2) << 16);
+        }
+        else
+        {
+            currentLfoPatch = nullptr;
+            lfo1Value = 0;
+            lfo2Value = 0;
+        }
+    }
+
     auto* leftChannel = buffer.getWritePointer(0);
     auto* rightChannel = buffer.getWritePointer(1);
     int numSamples = buffer.getNumSamples();
@@ -213,7 +247,19 @@ void MidiverbAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
             int16_t inputInt = static_cast<int16_t>(saturate(static_cast<float>(interpolatedInput)) * 0x0fff);
             int16_t outLeftInt, outRightInt;
 
-            effectFn(inputInt, &outLeftInt, &outRightInt, DRAM.data(), memoryPointer++);
+            effectFn(inputInt, &outLeftInt, &outRightInt, DRAM.data(), memoryPointer++, lfo1Value, lfo2Value);
+
+            // Update LFO every 8 effect samples (at ~2930 Hz)
+            if (currentLfoPatch != nullptr)
+            {
+                lfoSampleCounter++;
+                if (lfoSampleCounter >= LFO_UPDATE_INTERVAL)
+                {
+                    lfoSampleCounter = 0;
+                    lfo1Value = lfo1->update(lfo1) | (static_cast<uint32_t>(currentLfoPatch->top1) << 16);
+                    lfo2Value = lfo2->update(lfo2) | (static_cast<uint32_t>(currentLfoPatch->top2) << 16);
+                }
+            }
 
             float outL = outLeftInt / static_cast<float>(0x0fff);
             float outR = outRightInt / static_cast<float>(0x0fff);
