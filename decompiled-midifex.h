@@ -1,4 +1,4 @@
-/* Effect 1: ECHO LONG FLAT AMBI */
+/* Midifex effect 1: ECHO LONG FLAT AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_1(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -25,7 +25,7 @@ void midifex_effect_1(int16_t input, int16_t *out_left, int16_t *out_right, int1
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 2: ECHO LONG FLAT THICK */
+/* Midifex effect 2: ECHO LONG FLAT THICK */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_2(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -74,7 +74,7 @@ void midifex_effect_2(int16_t input, int16_t *out_left, int16_t *out_right, int1
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 3: ECHO LONG HPF */
+/* Midifex effect 3: ECHO LONG HPF */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_3(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -105,7 +105,7 @@ void midifex_effect_3(int16_t input, int16_t *out_left, int16_t *out_right, int1
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 4: ECHO LONG HPF WIDE */
+/* Midifex effect 4: ECHO LONG HPF WIDE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_4(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -136,7 +136,7 @@ void midifex_effect_4(int16_t input, int16_t *out_left, int16_t *out_right, int1
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 5: ECHO LONG BPF AMBI */
+/* Midifex effect 5: ECHO LONG BPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_5(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -173,7 +173,7 @@ void midifex_effect_5(int16_t input, int16_t *out_left, int16_t *out_right, int1
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 6: ECHO LONG LPF WIDE */
+/* Midifex effect 6: ECHO LONG LPF WIDE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_6(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -234,7 +234,7 @@ void midifex_effect_6(int16_t input, int16_t *out_left, int16_t *out_right, int1
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 7: ECHO MED FLAT AMBI */
+/* Midifex effect 7: ECHO MED FLAT AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_7(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -261,7 +261,7 @@ void midifex_effect_7(int16_t input, int16_t *out_left, int16_t *out_right, int1
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 8: ECHO MED FLAT WIDE */
+/* Midifex effect 8: ECHO MED FLAT WIDE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_8(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -316,7 +316,7 @@ void midifex_effect_8(int16_t input, int16_t *out_left, int16_t *out_right, int1
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 9: ECHO MED HPF AMBI */
+/* Midifex effect 9: ECHO MED HPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_9(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -359,7 +359,7 @@ void midifex_effect_9(int16_t input, int16_t *out_left, int16_t *out_right, int1
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 10: ECHO MED BPF AMBI */
+/* Midifex effect 10: ECHO MED BPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_10(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -396,7 +396,7 @@ void midifex_effect_10(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 11: ECHO MED LPF AMBI */
+/* Midifex effect 11: ECHO MED LPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_11(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -433,7 +433,7 @@ void midifex_effect_11(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 12: ECHO MED LPF WIDE */
+/* Midifex effect 12: ECHO MED LPF WIDE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_12(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -498,7 +498,7 @@ void midifex_effect_12(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 13: ECHO MED FLAT THICK */
+/* Midifex effect 13: ECHO MED FLAT THICK */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_13(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -547,7 +547,7 @@ void midifex_effect_13(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 14: ECHO SHORT FLAT */
+/* Midifex effect 14: ECHO SHORT FLAT */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_14(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -562,7 +562,7 @@ void midifex_effect_14(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 15: ECHO SHORT LPF AMBI */
+/* Midifex effect 15: ECHO SHORT LPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_15(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -599,7 +599,7 @@ void midifex_effect_15(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 16: ECHO SHORT HPF AMBI */
+/* Midifex effect 16: ECHO SHORT HPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_16(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -642,7 +642,7 @@ void midifex_effect_16(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 17: ECHO SHORT BPF AMBI */
+/* Midifex effect 17: ECHO SHORT BPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_17(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -679,7 +679,7 @@ void midifex_effect_17(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 18: ECHO SHORT FLAT */
+/* Midifex effect 18: ECHO SHORT FLAT */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_18(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -694,7 +694,7 @@ void midifex_effect_18(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 19: ECHO SHORT FLAT WIDE */
+/* Midifex effect 19: ECHO SHORT FLAT WIDE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_19(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -749,7 +749,7 @@ void midifex_effect_19(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 20: ECHO XSHORT FLAT */
+/* Midifex effect 20: ECHO XSHORT FLAT */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_20(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -764,7 +764,7 @@ void midifex_effect_20(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 21: ECHO XSHORT BPF WIDE */
+/* Midifex effect 21: ECHO XSHORT BPF WIDE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_21(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -821,7 +821,7 @@ void midifex_effect_21(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 22: 2TAP MED FLAT AMBI */
+/* Midifex effect 22: 2TAP MED FLAT AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_22(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -848,7 +848,7 @@ void midifex_effect_22(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 23: 2TAP MED HPF AMBI */
+/* Midifex effect 23: 2TAP MED HPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_23(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -899,7 +899,7 @@ void midifex_effect_23(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 24: 2TAP MED BPF AMBI */
+/* Midifex effect 24: 2TAP MED BPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_24(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -948,7 +948,7 @@ void midifex_effect_24(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 25: 2TAP MED FLAT THICK */
+/* Midifex effect 25: 2TAP MED FLAT THICK */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_25(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -991,7 +991,7 @@ void midifex_effect_25(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 26: 2TAP SHORT FLAT WIDE */
+/* Midifex effect 26: 2TAP SHORT FLAT WIDE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_26(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1006,7 +1006,7 @@ void midifex_effect_26(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 27: 2TAP SHORT HPF PAN */
+/* Midifex effect 27: 2TAP SHORT HPF PAN */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_27(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1051,7 +1051,7 @@ void midifex_effect_27(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 28: 2TAP SHORT BPF AMBI */
+/* Midifex effect 28: 2TAP SHORT BPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_28(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1100,7 +1100,7 @@ void midifex_effect_28(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 29: 2TAP SHORT LPF AMBI */
+/* Midifex effect 29: 2TAP SHORT LPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_29(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1137,7 +1137,7 @@ void midifex_effect_29(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 30: 2TAP XSHORT FLAT WIDE */
+/* Midifex effect 30: 2TAP XSHORT FLAT WIDE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_30(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1152,7 +1152,7 @@ void midifex_effect_30(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 31: 3TAP MED FLAT PAN */
+/* Midifex effect 31: 3TAP MED FLAT PAN */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_31(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1171,7 +1171,7 @@ void midifex_effect_31(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 32: 3TAP SHORT FLAT PAN */
+/* Midifex effect 32: 3TAP SHORT FLAT PAN */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_32(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1190,7 +1190,7 @@ void midifex_effect_32(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 33: 3TAP SHORT LPF AMBI */
+/* Midifex effect 33: 3TAP SHORT LPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_33(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1231,7 +1231,7 @@ void midifex_effect_33(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 34: 3TAP SHORT BPF AMBI */
+/* Midifex effect 34: 3TAP SHORT BPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_34(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1290,7 +1290,7 @@ void midifex_effect_34(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 35: 3TAP SHORT HPF AMBI */
+/* Midifex effect 35: 3TAP SHORT HPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_35(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1345,7 +1345,7 @@ void midifex_effect_35(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 36: 3TAP XSHORT FLAT AMBI */
+/* Midifex effect 36: 3TAP XSHORT FLAT AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_36(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1376,7 +1376,7 @@ void midifex_effect_36(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 37: REGEN MED FLAT */
+/* Midifex effect 37: REGEN MED FLAT */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_37(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1393,7 +1393,7 @@ void midifex_effect_37(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 38: REGEN MED HPF AMBI */
+/* Midifex effect 38: REGEN MED HPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_38(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1430,7 +1430,7 @@ void midifex_effect_38(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 39: REGEN MED BPF AMBI */
+/* Midifex effect 39: REGEN MED BPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_39(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1477,7 +1477,7 @@ void midifex_effect_39(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 40: REGEN MED LPF AMBI */
+/* Midifex effect 40: REGEN MED LPF AMBI */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_40(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1508,7 +1508,7 @@ void midifex_effect_40(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 41: REGEN SHORT FLAT */
+/* Midifex effect 41: REGEN SHORT FLAT */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_41(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1525,7 +1525,7 @@ void midifex_effect_41(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 42: REGEN XSHORT FLAT */
+/* Midifex effect 42: REGEN XSHORT FLAT */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_42(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1542,7 +1542,7 @@ void midifex_effect_42(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 43: SLAP1 */
+/* Midifex effect 43: SLAP1 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_43(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1557,7 +1557,7 @@ void midifex_effect_43(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 44: SLAP2 */
+/* Midifex effect 44: SLAP2 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_44(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1572,7 +1572,7 @@ void midifex_effect_44(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 45: SLAP3 */
+/* Midifex effect 45: SLAP3 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_45(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1587,7 +1587,7 @@ void midifex_effect_45(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 46: SLAP4 */
+/* Midifex effect 46: SLAP4 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_46(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1602,7 +1602,7 @@ void midifex_effect_46(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 47: SLAP5 */
+/* Midifex effect 47: SLAP5 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_47(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1617,7 +1617,7 @@ void midifex_effect_47(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 48: REVERB SHORT GATE */
+/* Midifex effect 48: REVERB SHORT GATE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_48(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1654,7 +1654,7 @@ void midifex_effect_48(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 49: REVERB MEDIUM WARM */
+/* Midifex effect 49: REVERB MEDIUM WARM */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_49(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1705,7 +1705,7 @@ void midifex_effect_49(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 50: REVERB MEDIUM BLOOM */
+/* Midifex effect 50: REVERB MEDIUM BLOOM */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_50(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1772,7 +1772,7 @@ void midifex_effect_50(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 51: REVERB MEDIUM PAN */
+/* Midifex effect 51: REVERB MEDIUM PAN */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_51(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1817,7 +1817,7 @@ void midifex_effect_51(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 52: REVERB LONG HPF */
+/* Midifex effect 52: REVERB LONG HPF */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_52(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1870,7 +1870,7 @@ void midifex_effect_52(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 53: REVERB REVERSE */
+/* Midifex effect 53: REVERB REVERSE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_53(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1899,7 +1899,7 @@ void midifex_effect_53(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 54: REVERB REVERSE REGEN */
+/* Midifex effect 54: REVERB REVERSE REGEN */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_54(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1930,7 +1930,7 @@ void midifex_effect_54(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 55: MULTITAP PAN */
+/* Midifex effect 55: MULTITAP PAN */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_55(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1945,7 +1945,7 @@ void midifex_effect_55(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 56: MULTITAP REVERB */
+/* Midifex effect 56: MULTITAP REVERB */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_56(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1960,7 +1960,7 @@ void midifex_effect_56(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 57: MULTITAP REVERSE PAN */
+/* Midifex effect 57: MULTITAP REVERSE PAN */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_57(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1987,7 +1987,7 @@ void midifex_effect_57(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 58: THICKENER */
+/* Midifex effect 58: THICKENER */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_58(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2036,7 +2036,7 @@ void midifex_effect_58(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 59: THICKENER DENSE */
+/* Midifex effect 59: THICKENER DENSE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_59(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2063,7 +2063,7 @@ void midifex_effect_59(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 60: STEREOGEN AMBIENT */
+/* Midifex effect 60: STEREOGEN AMBIENT */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_60(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2086,7 +2086,7 @@ void midifex_effect_60(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 61: STEREOGEN THICK */
+/* Midifex effect 61: STEREOGEN THICK */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_61(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2107,7 +2107,7 @@ void midifex_effect_61(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 62: STEREOGEN WIDE */
+/* Midifex effect 62: STEREOGEN WIDE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_62(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2122,7 +2122,7 @@ void midifex_effect_62(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 63: STEREOGEN XWIDE */
+/* Midifex effect 63: STEREOGEN XWIDE */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_63(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2177,7 +2177,7 @@ void midifex_effect_63(int16_t input, int16_t *out_left, int16_t *out_right, int
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 64: DEFEAT */
+/* Midifex effect 64: DEFEAT */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midifex_effect_64(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {

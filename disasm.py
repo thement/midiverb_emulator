@@ -321,12 +321,13 @@ class Accumulator:
         return self
 
 
-def decompile(end_address, encoded_instructions, function_name, f, unoptimized=False, integer_arithmetic=False, effect_number=None, effect_name=None):
+def decompile(end_address, encoded_instructions, function_name, f, unoptimized=False, integer_arithmetic=False, effect_number=None, effect_name=None, unit_name=None):
     assert end_address == 1, "address counter doesn't end up offseted by 1 - decompiler expects that"
 
     # Output effect comment if name is provided
     if effect_name is not None:
-        f.write(f'/* Effect {effect_number}: {effect_name} */\n')
+        unit_prefix = f'{unit_name} ' if unit_name else ''
+        f.write(f'/* {unit_prefix}effect {effect_number}: {effect_name} */\n')
 
     if unoptimized:
         print(f'-- Saving (unoptimized) code into a file')
@@ -740,6 +741,7 @@ def main():
     parser.add_argument("-2", "--midiverb2", action='store_true', help="Assume the byte order is same as Midiverb 2, and start at 0x1c00 from program 0")
     parser.add_argument("-p", "--prefix", default="", help="Add custom prefix to decompiled functions")
     parser.add_argument("-n", "--names", metavar="FILE", help="File with effect names (one per line, quoted strings)")
+    parser.add_argument("-u", "--unit-name", metavar="NAME", help="Unit name for comments (e.g., 'Midiverb 2')")
     parser.add_argument("--lfo1", type=int_or_hex, help="Apply LFO1 modulation (from modulation table)")
     parser.add_argument("--lfo2", type=int_or_hex, help="Apply LFO2 modulation (from modulation table)")
     parser.add_argument("--lfo-op", type=int_or_hex, help="LFO operator")
@@ -809,7 +811,7 @@ def main():
             else:
                 function_name = f'{args.prefix}effect'
             effect_name = effect_names.get(program_number)
-            decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic, program_number, effect_name)
+            decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic, program_number, effect_name, args.unit_name)
 
     if decompiler_output is not None and len(decode) > 1:
         f = decompiler_output

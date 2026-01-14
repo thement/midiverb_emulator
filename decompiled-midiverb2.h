@@ -1,4 +1,4 @@
-/* Effect 0: Defeat */
+/* Midiverb 2 effect 0: Defeat */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_0(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -10,7 +10,7 @@ void midiverb2_effect_0(int16_t input, int16_t *out_left, int16_t *out_right, in
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 1: Small Bright .1 Sec */
+/* Midiverb 2 effect 1: Small Bright .1 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_1(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -73,7 +73,7 @@ void midiverb2_effect_1(int16_t input, int16_t *out_left, int16_t *out_right, in
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 2: Small Bright .2 Sec */
+/* Midiverb 2 effect 2: Small Bright .2 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_2(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -140,7 +140,7 @@ void midiverb2_effect_2(int16_t input, int16_t *out_left, int16_t *out_right, in
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 3: Small Bright .3 Sec */
+/* Midiverb 2 effect 3: Small Bright .3 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_3(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -207,7 +207,7 @@ void midiverb2_effect_3(int16_t input, int16_t *out_left, int16_t *out_right, in
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 4: Medium Warm 1.1 Sec */
+/* Midiverb 2 effect 4: Medium Warm 1.1 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_4(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -252,7 +252,7 @@ void midiverb2_effect_4(int16_t input, int16_t *out_left, int16_t *out_right, in
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 5: Medium Bright .6 Sec */
+/* Midiverb 2 effect 5: Medium Bright .6 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_5(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -317,7 +317,7 @@ void midiverb2_effect_5(int16_t input, int16_t *out_left, int16_t *out_right, in
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 6: Large Bright 1.2 Sec */
+/* Midiverb 2 effect 6: Large Bright 1.2 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_6(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -364,7 +364,7 @@ void midiverb2_effect_6(int16_t input, int16_t *out_left, int16_t *out_right, in
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 7: Large Dark 1.0 Sec */
+/* Midiverb 2 effect 7: Large Dark 1.0 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_7(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -413,7 +413,7 @@ void midiverb2_effect_7(int16_t input, int16_t *out_left, int16_t *out_right, in
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 8: Medium Dark .6 Sec */
+/* Midiverb 2 effect 8: Medium Dark .6 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_8(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -478,7 +478,7 @@ void midiverb2_effect_8(int16_t input, int16_t *out_left, int16_t *out_right, in
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 9: Medium Dark .5 Sec */
+/* Midiverb 2 effect 9: Medium Dark .5 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_9(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -539,7 +539,7 @@ void midiverb2_effect_9(int16_t input, int16_t *out_left, int16_t *out_right, in
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 10: Medium Bright .6 Sec */
+/* Midiverb 2 effect 10: Medium Bright .6 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_10(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -598,7 +598,7 @@ void midiverb2_effect_10(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 11: Medium Bright .8 Sec */
+/* Midiverb 2 effect 11: Medium Bright .8 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_11(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -661,7 +661,7 @@ void midiverb2_effect_11(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 12: Large Warm 1.0 Sec */
+/* Midiverb 2 effect 12: Large Warm 1.0 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_12(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -726,7 +726,7 @@ void midiverb2_effect_12(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 13: Large Warm 1.1 Sec */
+/* Midiverb 2 effect 13: Large Warm 1.1 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_13(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -791,7 +791,7 @@ void midiverb2_effect_13(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 14: Medium Dark 1.0 Sec */
+/* Midiverb 2 effect 14: Medium Dark 1.0 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_14(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -852,7 +852,7 @@ void midiverb2_effect_14(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 15: Medium Bright 1.1 Sec */
+/* Midiverb 2 effect 15: Medium Bright 1.1 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_15(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -917,7 +917,7 @@ void midiverb2_effect_15(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 16: Medium Bright 1.15 Sec */
+/* Midiverb 2 effect 16: Medium Bright 1.15 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_16(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -978,7 +978,7 @@ void midiverb2_effect_16(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 17: Large Bright 1.6 Sec */
+/* Midiverb 2 effect 17: Large Bright 1.6 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_17(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1023,7 +1023,7 @@ void midiverb2_effect_17(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 18: Large Dark 1.7 Sec */
+/* Midiverb 2 effect 18: Large Dark 1.7 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_18(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1068,7 +1068,7 @@ void midiverb2_effect_18(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 19: Medum Bright 1.65 Sec */
+/* Midiverb 2 effect 19: Medum Bright 1.65 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_19(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1119,7 +1119,7 @@ void midiverb2_effect_19(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 20: Medium Bright 1.9 Sec */
+/* Midiverb 2 effect 20: Medium Bright 1.9 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_20(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1170,7 +1170,7 @@ void midiverb2_effect_20(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 21: Large Warm 2.2 Sec */
+/* Midiverb 2 effect 21: Large Warm 2.2 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_21(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1231,7 +1231,7 @@ void midiverb2_effect_21(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 22: Large Warm 1.75 Sec */
+/* Midiverb 2 effect 22: Large Warm 1.75 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_22(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1292,7 +1292,7 @@ void midiverb2_effect_22(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 23: Large Bright 1.45 Sec */
+/* Midiverb 2 effect 23: Large Bright 1.45 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_23(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1337,7 +1337,7 @@ void midiverb2_effect_23(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 24: Large Dark 2.2 Sec */
+/* Midiverb 2 effect 24: Large Dark 2.2 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_24(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1382,7 +1382,7 @@ void midiverb2_effect_24(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 25: Large Warm 2.3 Sec */
+/* Midiverb 2 effect 25: Large Warm 2.3 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_25(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1427,7 +1427,7 @@ void midiverb2_effect_25(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 26: Large Bright 2.4 Sec */
+/* Midiverb 2 effect 26: Large Bright 2.4 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_26(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1472,7 +1472,7 @@ void midiverb2_effect_26(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 27: Large Bright 2.5 Sec */
+/* Midiverb 2 effect 27: Large Bright 2.5 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_27(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1531,7 +1531,7 @@ void midiverb2_effect_27(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 28: Xlarge Warm 5.0 Sec */
+/* Midiverb 2 effect 28: Xlarge Warm 5.0 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_28(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1578,7 +1578,7 @@ void midiverb2_effect_28(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 29: Xlarge Warm 15.0 Sec */
+/* Midiverb 2 effect 29: Xlarge Warm 15.0 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_29(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1625,7 +1625,7 @@ void midiverb2_effect_29(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 30: Slow Gate 100 Msec */
+/* Midiverb 2 effect 30: Slow Gate 100 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_30(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1678,7 +1678,7 @@ void midiverb2_effect_30(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 31: Slow Gate 200 Msec */
+/* Midiverb 2 effect 31: Slow Gate 200 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_31(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1731,7 +1731,7 @@ void midiverb2_effect_31(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 32: Slow Gate 250 Msec */
+/* Midiverb 2 effect 32: Slow Gate 250 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_32(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1786,7 +1786,7 @@ void midiverb2_effect_32(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 33: Slow Gate 400 Msec */
+/* Midiverb 2 effect 33: Slow Gate 400 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_33(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1841,7 +1841,7 @@ void midiverb2_effect_33(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 34: Slow Gate 450 Msec */
+/* Midiverb 2 effect 34: Slow Gate 450 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_34(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1894,7 +1894,7 @@ void midiverb2_effect_34(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 35: Fast Gate 150 Msec */
+/* Midiverb 2 effect 35: Fast Gate 150 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_35(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1935,7 +1935,7 @@ void midiverb2_effect_35(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 36: Fast Gate 75 Msec */
+/* Midiverb 2 effect 36: Fast Gate 75 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_36(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -1972,7 +1972,7 @@ void midiverb2_effect_36(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 37: Fast Gate 200 Msec */
+/* Midiverb 2 effect 37: Fast Gate 200 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_37(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2017,7 +2017,7 @@ void midiverb2_effect_37(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 38: Fast Gate 100 Msec */
+/* Midiverb 2 effect 38: Fast Gate 100 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_38(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2050,7 +2050,7 @@ void midiverb2_effect_38(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 39: Fast Gate 175 Msec */
+/* Midiverb 2 effect 39: Fast Gate 175 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_39(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2091,7 +2091,7 @@ void midiverb2_effect_39(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 40: Reverse 400 Msec */
+/* Midiverb 2 effect 40: Reverse 400 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_40(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2128,7 +2128,7 @@ void midiverb2_effect_40(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 41: Reverse 450 Msec */
+/* Midiverb 2 effect 41: Reverse 450 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_41(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2157,7 +2157,7 @@ void midiverb2_effect_41(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 42: Reverse 250 Msec */
+/* Midiverb 2 effect 42: Reverse 250 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_42(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2186,7 +2186,7 @@ void midiverb2_effect_42(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 43: Reverse 200 Msec */
+/* Midiverb 2 effect 43: Reverse 200 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_43(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2215,7 +2215,7 @@ void midiverb2_effect_43(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 44: Reverse 150 Msec */
+/* Midiverb 2 effect 44: Reverse 150 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_44(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2244,7 +2244,7 @@ void midiverb2_effect_44(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 45: Bloom 1 8 Sec */
+/* Midiverb 2 effect 45: Bloom 1 8 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_45(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2311,7 +2311,7 @@ void midiverb2_effect_45(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 46: Reverse 500 Msec */
+/* Midiverb 2 effect 46: Reverse 500 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_46(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2352,7 +2352,7 @@ void midiverb2_effect_46(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 47: Reverse Regen. 2 Sec */
+/* Midiverb 2 effect 47: Reverse Regen. 2 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_47(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2391,7 +2391,7 @@ void midiverb2_effect_47(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 48: Reverse Regen. 8 Sec */
+/* Midiverb 2 effect 48: Reverse Regen. 8 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_48(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2432,7 +2432,7 @@ void midiverb2_effect_48(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 49: Bloom 2 7 Sec */
+/* Midiverb 2 effect 49: Bloom 2 7 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_49(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2499,7 +2499,7 @@ void midiverb2_effect_49(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 50: Triggered Flange */
+/* Midiverb 2 effect 50: Triggered Flange */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_50(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2646,7 +2646,7 @@ void midiverb2_effect_50(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 51: Flange Pan 1 */
+/* Midiverb 2 effect 51: Flange Pan 1 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_51(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2793,7 +2793,7 @@ void midiverb2_effect_51(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 52: Flange Pan 2 */
+/* Midiverb 2 effect 52: Flange Pan 2 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_52(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -2940,7 +2940,7 @@ void midiverb2_effect_52(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 53: Triggered Flange 2 */
+/* Midiverb 2 effect 53: Triggered Flange 2 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_53(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -3087,7 +3087,7 @@ void midiverb2_effect_53(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 54: Flange Pan 3 */
+/* Midiverb 2 effect 54: Flange Pan 3 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_54(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -3234,7 +3234,7 @@ void midiverb2_effect_54(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 55: Flange Pan 4 */
+/* Midiverb 2 effect 55: Flange Pan 4 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_55(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -3381,7 +3381,7 @@ void midiverb2_effect_55(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 56: Flange Pan 5 */
+/* Midiverb 2 effect 56: Flange Pan 5 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_56(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -3528,7 +3528,7 @@ void midiverb2_effect_56(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 57: Triggered Flange 3 */
+/* Midiverb 2 effect 57: Triggered Flange 3 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_57(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -3675,7 +3675,7 @@ void midiverb2_effect_57(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 58: Flange Pan 6 */
+/* Midiverb 2 effect 58: Flange Pan 6 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_58(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -3822,7 +3822,7 @@ void midiverb2_effect_58(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 59: Flange Pan 7 */
+/* Midiverb 2 effect 59: Flange Pan 7 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_59(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -3969,7 +3969,7 @@ void midiverb2_effect_59(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 60: Light Chorus 1 */
+/* Midiverb 2 effect 60: Light Chorus 1 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_60(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -4116,7 +4116,7 @@ void midiverb2_effect_60(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 61: Light Chorus 2 */
+/* Midiverb 2 effect 61: Light Chorus 2 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_61(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -4263,7 +4263,7 @@ void midiverb2_effect_61(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 62: Medium Chorus 1 */
+/* Midiverb 2 effect 62: Medium Chorus 1 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_62(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -4410,7 +4410,7 @@ void midiverb2_effect_62(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 63: Medium Chorus 2 */
+/* Midiverb 2 effect 63: Medium Chorus 2 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_63(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -4557,7 +4557,7 @@ void midiverb2_effect_63(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 64: Medium Chorus 3 */
+/* Midiverb 2 effect 64: Medium Chorus 3 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_64(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -4704,7 +4704,7 @@ void midiverb2_effect_64(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 65: Deep Chorus 1 */
+/* Midiverb 2 effect 65: Deep Chorus 1 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_65(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -4851,7 +4851,7 @@ void midiverb2_effect_65(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 66: Deep Chorus 2 */
+/* Midiverb 2 effect 66: Deep Chorus 2 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_66(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -4998,7 +4998,7 @@ void midiverb2_effect_66(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 67: Deep Chorus 3 */
+/* Midiverb 2 effect 67: Deep Chorus 3 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_67(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5145,7 +5145,7 @@ void midiverb2_effect_67(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 68: Fast Chorus 1 */
+/* Midiverb 2 effect 68: Fast Chorus 1 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_68(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5292,7 +5292,7 @@ void midiverb2_effect_68(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 69: Fast Chorus 2 */
+/* Midiverb 2 effect 69: Fast Chorus 2 */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_69(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5439,7 +5439,7 @@ void midiverb2_effect_69(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 70: 35 Msec */
+/* Midiverb 2 effect 70: 35 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_70(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5454,7 +5454,7 @@ void midiverb2_effect_70(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 71: 55 Msec */
+/* Midiverb 2 effect 71: 55 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_71(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5469,7 +5469,7 @@ void midiverb2_effect_71(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 72: 75 Msec */
+/* Midiverb 2 effect 72: 75 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_72(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5484,7 +5484,7 @@ void midiverb2_effect_72(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 73: 115 Msec */
+/* Midiverb 2 effect 73: 115 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_73(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5499,7 +5499,7 @@ void midiverb2_effect_73(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 74: 140 Msec */
+/* Midiverb 2 effect 74: 140 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_74(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5514,7 +5514,7 @@ void midiverb2_effect_74(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 75: 155 Msec */
+/* Midiverb 2 effect 75: 155 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_75(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5529,7 +5529,7 @@ void midiverb2_effect_75(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 76: 160 Msec */
+/* Midiverb 2 effect 76: 160 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_76(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5544,7 +5544,7 @@ void midiverb2_effect_76(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 77: 170 Msec */
+/* Midiverb 2 effect 77: 170 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_77(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5559,7 +5559,7 @@ void midiverb2_effect_77(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 78: 175 Msec */
+/* Midiverb 2 effect 78: 175 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_78(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5574,7 +5574,7 @@ void midiverb2_effect_78(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 79: 180 Msec */
+/* Midiverb 2 effect 79: 180 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_79(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5589,7 +5589,7 @@ void midiverb2_effect_79(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 80: 185 Msec */
+/* Midiverb 2 effect 80: 185 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_80(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5604,7 +5604,7 @@ void midiverb2_effect_80(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 81: 195 Msec */
+/* Midiverb 2 effect 81: 195 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_81(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5619,7 +5619,7 @@ void midiverb2_effect_81(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 82: 205 Msec */
+/* Midiverb 2 effect 82: 205 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_82(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5634,7 +5634,7 @@ void midiverb2_effect_82(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 83: 210 Msec */
+/* Midiverb 2 effect 83: 210 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_83(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5649,7 +5649,7 @@ void midiverb2_effect_83(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 84: 220 Msec */
+/* Midiverb 2 effect 84: 220 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_84(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5664,7 +5664,7 @@ void midiverb2_effect_84(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 85: 240 Msec */
+/* Midiverb 2 effect 85: 240 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_85(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5679,7 +5679,7 @@ void midiverb2_effect_85(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 86: 250 Msec */
+/* Midiverb 2 effect 86: 250 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_86(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5694,7 +5694,7 @@ void midiverb2_effect_86(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 87: 275 Msec */
+/* Midiverb 2 effect 87: 275 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_87(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5709,7 +5709,7 @@ void midiverb2_effect_87(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 88: 375 Msec */
+/* Midiverb 2 effect 88: 375 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_88(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5724,7 +5724,7 @@ void midiverb2_effect_88(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 89: 460 Msec */
+/* Midiverb 2 effect 89: 460 Msec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_89(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5739,7 +5739,7 @@ void midiverb2_effect_89(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 90: 2 Tap Ambient */
+/* Midiverb 2 effect 90: 2 Tap Ambient */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_90(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5766,7 +5766,7 @@ void midiverb2_effect_90(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 91: 3 Tap Pan */
+/* Midiverb 2 effect 91: 3 Tap Pan */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_91(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5785,7 +5785,7 @@ void midiverb2_effect_91(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 92: Multitap */
+/* Midiverb 2 effect 92: Multitap */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_92(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5800,7 +5800,7 @@ void midiverb2_effect_92(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 93: Multitap Reverse Pan */
+/* Midiverb 2 effect 93: Multitap Reverse Pan */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_93(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5827,7 +5827,7 @@ void midiverb2_effect_93(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 94: Thickener/frozen Flange */
+/* Midiverb 2 effect 94: Thickener/frozen Flange */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_94(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5854,7 +5854,7 @@ void midiverb2_effect_94(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 95: Stereo Generation */
+/* Midiverb 2 effect 95: Stereo Generation */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_95(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5869,7 +5869,7 @@ void midiverb2_effect_95(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 96: Stereo Generation Wide */
+/* Midiverb 2 effect 96: Stereo Generation Wide */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_96(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5924,7 +5924,7 @@ void midiverb2_effect_96(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 97: Regenerated Delay 2 Sec */
+/* Midiverb 2 effect 97: Regenerated Delay 2 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_97(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5941,7 +5941,7 @@ void midiverb2_effect_97(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 98: Regenerated Delay 3 Sec */
+/* Midiverb 2 effect 98: Regenerated Delay 3 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_98(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
@@ -5958,7 +5958,7 @@ void midiverb2_effect_98(int16_t input, int16_t *out_left, int16_t *out_right, i
 }
 #undef LINE
 #undef WRITE_LINE
-/* Effect 99: Regenerated Delay 4 Sec */
+/* Midiverb 2 effect 99: Regenerated Delay 4 Sec */
 #define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])
 #define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])
 void midiverb2_effect_99(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {
