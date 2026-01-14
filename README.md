@@ -23,22 +23,10 @@ There's a decompiler that outputs C code which makes it possible to run at *full
 
 ## Support
 
+All of Midiverb, Midifex and Midiverb II are fully supported with these exceptions:
 
-
-|  | CLI emulator | web demo | VST3 plugin |
-|---|---|---|---|
-| Midiverb+Midifex emulation |  100% | 100% | - |
-| Midiverb 2 emulation | 90%<sup>*</sup> | 90%<sup>*</sup> | - |
-| Midiverb+Midifex native | 100% | - | 100% |
-| Midiverb 2 native | 90%<sup>*</sup> | - | 90%<sup>*</sup> |
-
-What is missing:
-
-<sup>*</sup> Triggers for flanger are not implemented<br>
-Pre-emphasis/antialiasing filter modelling, output filter modelling<br>
-
-
-
+* Triggers for flanger are not implemented
+* Pre-emphasis/antialiasing filter modelling, output filter modelling
 
 ## `midiverb` CLI tool
 
