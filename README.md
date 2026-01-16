@@ -156,6 +156,22 @@ There is [a plugin using the JUCE library](MidiverbPlugin/) that works very much
 
 There are precompiled binaries in releases.
 
+### Building on Windows
+
+* Get MSVC from https://visualstudio.microsoft.com/downloads/ - you need "Desktop development with C++"
+* Open "Developer Command Prompt for VS ..."
+* Clone the plugin: `git clone https://github.com/thement/midiverb_emulator`
+* In the terminal:
+
+```
+cd path\to\MidiverbPlugin
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+```
+
+After that in one of the build subdirectories there should be a `MidiverbPlugin.vst3` plugin ready.
 
 ## Supported ROMs
 
