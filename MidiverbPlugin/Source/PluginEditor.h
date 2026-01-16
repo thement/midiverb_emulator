@@ -29,6 +29,7 @@ private:
     // Program selector (manually managed, not using attachment due to variable effect counts)
     juce::ComboBox programSelector;
     juce::Label programLabel;
+    int lastProgramIndex = -1;  // Track last synced parameter value
 
     // Dry/Wet knob
     juce::Slider dryWetSlider;

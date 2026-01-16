@@ -72,36 +72,45 @@ MidiverbAudioProcessorEditor::~MidiverbAudioProcessorEditor()
 void MidiverbAudioProcessorEditor::updateProgramSelector()
 {
     int deviceIndex = static_cast<int>(*audioProcessor.getAPVTS().getRawParameterValue("device"));
-
-    if (deviceIndex == lastDeviceIndex)
-        return;
-
-    lastDeviceIndex = deviceIndex;
-
-    // Save current effect index (0-based)
     int currentIndex = static_cast<int>(*audioProcessor.getAPVTS().getRawParameterValue("program"));
 
-    programSelector.clear(juce::dontSendNotification);
+    // Rebuild combo box items only when device changes
+    if (deviceIndex != lastDeviceIndex)
+    {
+        lastDeviceIndex = deviceIndex;
+        lastProgramIndex = -1;  // Force sync after device change
+        programSelector.clear(juce::dontSendNotification);
 
-    int numEffects = MidiverbAudioProcessor::getDeviceNumEffects(deviceIndex);
-    int displayOffset = MidiverbAudioProcessor::getDeviceDisplayOffset(deviceIndex);
+        int numEffects = MidiverbAudioProcessor::getDeviceNumEffects(deviceIndex);
+        int displayOffset = MidiverbAudioProcessor::getDeviceDisplayOffset(deviceIndex);
 
-    // ComboBox ID = effect index + 1 (direct mapping, no normalization)
-    for (int i = 0; i < numEffects; ++i) {
-        int displayNum = i + displayOffset;
-        juce::String name = MidiverbAudioProcessor::getEffectName(deviceIndex, i);
-        programSelector.addItem(juce::String(displayNum) + ": " + name, i + 1);
+        // ComboBox ID = effect index + 1 (direct mapping, no normalization)
+        for (int i = 0; i < numEffects; ++i) {
+            int displayNum = i + displayOffset;
+            juce::String name = MidiverbAudioProcessor::getEffectName(deviceIndex, i);
+            programSelector.addItem(juce::String(displayNum) + ": " + name, i + 1);
+        }
     }
 
-    // Clamp current index to valid range for this device
+    // Clamp to valid range
+    int numEffects = MidiverbAudioProcessor::getDeviceNumEffects(deviceIndex);
     if (currentIndex < 0) currentIndex = 0;
     if (currentIndex >= numEffects) currentIndex = numEffects - 1;
 
-    programSelector.setSelectedId(currentIndex + 1, juce::dontSendNotification);
+    // Only sync combo box when parameter value has changed (not on every tick)
+    // This avoids fighting with user interaction
+    if (currentIndex != lastProgramIndex)
+    {
+        lastProgramIndex = currentIndex;
+        programSelector.setSelectedId(currentIndex + 1, juce::dontSendNotification);
+    }
 
-    // Update parameter if it was clamped
-    auto* param = audioProcessor.getAPVTS().getParameter("program");
-    param->setValueNotifyingHost(param->convertTo0to1(static_cast<float>(currentIndex)));
+    // Update parameter only if it was clamped
+    int paramValue = static_cast<int>(*audioProcessor.getAPVTS().getRawParameterValue("program"));
+    if (currentIndex != paramValue) {
+        auto* param = audioProcessor.getAPVTS().getParameter("program");
+        param->setValueNotifyingHost(param->convertTo0to1(static_cast<float>(currentIndex)));
+    }
 }
 
 void MidiverbAudioProcessorEditor::timerCallback()
