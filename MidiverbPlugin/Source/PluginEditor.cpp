@@ -61,8 +61,7 @@ MidiverbAudioProcessorEditor::MidiverbAudioProcessorEditor(MidiverbAudioProcesso
 
     setSize(defaultWidth, defaultHeight);
     setResizable(true, true);
-    setResizeLimits(400, 272, 1000, 680);
-    getConstrainer()->setFixedAspectRatio(static_cast<double>(defaultWidth) / defaultHeight);
+    setResizeLimits(400, 272, 10000, 10000);
 
     startTimerHz(30);
 }
