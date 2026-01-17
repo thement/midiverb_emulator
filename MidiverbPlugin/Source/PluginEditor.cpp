@@ -162,6 +162,15 @@ void MidiverbAudioProcessorEditor::resized()
     const float scale = static_cast<float>(getHeight()) / defaultHeight;
     auto area = getLocalBounds();
 
+    // Scale fonts for labels
+    const float labelFontSize = 14.0f * scale;
+    juce::Font labelFont = juce::Font(juce::FontOptions().withHeight(labelFontSize));
+
+    deviceLabel.setFont(labelFont);
+    programLabel.setFont(labelFont);
+    dryWetLabel.setFont(labelFont);
+    feedbackLabel.setFont(labelFont);
+
     // Title area: ~15% of height
     const int titleHeight = static_cast<int>(50 * scale);
     area.removeFromTop(titleHeight);
