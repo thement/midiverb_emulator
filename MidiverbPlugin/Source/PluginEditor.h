@@ -8,6 +8,9 @@ class MidiverbAudioProcessorEditor : public juce::AudioProcessorEditor,
                                      private juce::Timer
 {
 public:
+    static constexpr int defaultWidth = 500;
+    static constexpr int defaultHeight = 340;
+
     explicit MidiverbAudioProcessorEditor(MidiverbAudioProcessor&);
     ~MidiverbAudioProcessorEditor() override;
 

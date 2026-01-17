@@ -59,7 +59,10 @@ MidiverbAudioProcessorEditor::MidiverbAudioProcessorEditor(MidiverbAudioProcesso
     feedbackAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         audioProcessor.getAPVTS(), "feedback", feedbackSlider);
 
-    setSize(500, 340);
+    setSize(defaultWidth, defaultHeight);
+    setResizable(true, true);
+    setResizeLimits(400, 272, 1000, 680);
+    getConstrainer()->setFixedAspectRatio(static_cast<double>(defaultWidth) / defaultHeight);
 
     startTimerHz(30);
 }
@@ -132,46 +135,74 @@ void MidiverbAudioProcessorEditor::timerCallback()
 
 void MidiverbAudioProcessorEditor::paint(juce::Graphics& g)
 {
+    const float scale = static_cast<float>(getHeight()) / defaultHeight;
+
     g.fillAll(juce::Colours::darkgrey);
 
     g.setColour(juce::Colours::white);
-    g.setFont(20.0f);
-    g.drawFittedText("Midiverb Emulator", getLocalBounds().removeFromTop(40),
+    g.setFont(20.0f * scale);
+    const int titleHeight = static_cast<int>(40 * scale);
+    g.drawFittedText("Midiverb Emulator", getLocalBounds().removeFromTop(titleHeight),
                      juce::Justification::centred, 1);
 
-    // Input overload indicator
-    auto indicatorBounds = juce::Rectangle<float>(getWidth() - 25.0f, 10.0f, 15.0f, 15.0f);
+    // Input overload indicator (positioned relative to top-right)
+    const float indicatorSize = 15.0f * scale;
+    const float indicatorMargin = 10.0f * scale;
+    auto indicatorBounds = juce::Rectangle<float>(
+        getWidth() - indicatorSize - indicatorMargin,
+        indicatorMargin,
+        indicatorSize,
+        indicatorSize);
     g.setColour(showOverload ? juce::Colours::red : juce::Colours::darkred);
     g.fillEllipse(indicatorBounds);
 }
 
 void MidiverbAudioProcessorEditor::resized()
 {
+    const float scale = static_cast<float>(getHeight()) / defaultHeight;
     auto area = getLocalBounds();
-    area.removeFromTop(50); // Space for title
+
+    // Title area: ~15% of height
+    const int titleHeight = static_cast<int>(50 * scale);
+    area.removeFromTop(titleHeight);
+
+    // Selector rows: ~15% each
+    const int selectorRowHeight = static_cast<int>(50 * scale);
+    const int labelHeight = static_cast<int>(20 * scale);
+    const int hPadding = static_cast<int>(20 * scale);
+    const int vPadding = static_cast<int>(5 * scale);
 
     // Device selector
-    auto deviceArea = area.removeFromTop(50);
-    deviceLabel.setBounds(deviceArea.removeFromTop(20));
-    deviceSelector.setBounds(deviceArea.reduced(20, 5));
+    auto deviceArea = area.removeFromTop(selectorRowHeight);
+    deviceLabel.setBounds(deviceArea.removeFromTop(labelHeight));
+    deviceSelector.setBounds(deviceArea.reduced(hPadding, vPadding));
 
     // Program selector
-    auto selectorArea = area.removeFromTop(50);
-    programLabel.setBounds(selectorArea.removeFromTop(20));
-    programSelector.setBounds(selectorArea.reduced(20, 5));
+    auto selectorArea = area.removeFromTop(selectorRowHeight);
+    programLabel.setBounds(selectorArea.removeFromTop(labelHeight));
+    programSelector.setBounds(selectorArea.reduced(hPadding, vPadding));
 
-    auto knobArea = area.reduced(20, 10);
+    // Knob area: remaining space
+    const int knobPaddingH = static_cast<int>(20 * scale);
+    const int knobPaddingV = static_cast<int>(10 * scale);
+    auto knobArea = area.reduced(knobPaddingH, knobPaddingV);
     auto knobWidth = knobArea.getWidth() / 2;
+
+    // Scale text box size proportionally
+    const int textBoxWidth = static_cast<int>(60 * scale);
+    const int textBoxHeight = static_cast<int>(20 * scale);
+    dryWetSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
+    feedbackSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, textBoxWidth, textBoxHeight);
 
     // Dry/Wet knob
     auto dryWetArea = knobArea.removeFromLeft(knobWidth);
-    dryWetLabel.setBounds(dryWetArea.removeFromTop(20));
-    dryWetSlider.setBounds(dryWetArea.reduced(10, 0));
+    dryWetLabel.setBounds(dryWetArea.removeFromTop(labelHeight));
+    dryWetSlider.setBounds(dryWetArea.reduced(static_cast<int>(10 * scale), 0));
 
     // Feedback knob
     auto feedbackArea = knobArea;
-    feedbackLabel.setBounds(feedbackArea.removeFromTop(20));
-    feedbackSlider.setBounds(feedbackArea.reduced(10, 0));
+    feedbackLabel.setBounds(feedbackArea.removeFromTop(labelHeight));
+    feedbackSlider.setBounds(feedbackArea.reduced(static_cast<int>(10 * scale), 0));
 }
 
 void MidiverbAudioProcessorEditor::mouseDown(const juce::MouseEvent& e)
