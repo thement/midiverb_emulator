@@ -30,7 +30,7 @@ juce_add_plugin(MidiverbPlugin
     COPY_PLUGIN_AFTER_BUILD FALSE
     PLUGIN_MANUFACTURER_CODE Mdvb
     PLUGIN_CODE Mvb1
-    FORMATS VST3 Standalone
+    FORMATS AU VST3 Standalone
     PRODUCT_NAME "Midiverb Emulator"
 )
 

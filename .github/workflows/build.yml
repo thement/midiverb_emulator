@@ -1,0 +1,94 @@
+name: Build
+
+on:
+  push:
+    branches: [main, master, devel, rc-*]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure
+        run: |
+          cd MidiverbPlugin
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: |
+          cd MidiverbPlugin
+          cmake --build build --config Release -j$(sysctl -n hw.ncpu)
+
+      - name: Upload AU
+        uses: actions/upload-artifact@v4
+        with:
+          name: Midiverb-Emulator-AU
+          path: MidiverbPlugin/build/MidiverbPlugin_artefacts/Release/AU/*.component
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: Midiverb-Emulator-VST3-macOS
+          path: MidiverbPlugin/build/MidiverbPlugin_artefacts/Release/VST3/*.vst3
+
+      - name: Upload Standalone
+        uses: actions/upload-artifact@v4
+        with:
+          name: Midiverb-Emulator-Standalone-macOS
+          path: MidiverbPlugin/build/MidiverbPlugin_artefacts/Release/Standalone/*.app
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libasound2-dev libfreetype6-dev libx11-dev \
+            libxcomposite-dev libxcursor-dev libxext-dev libxinerama-dev \
+            libxrandr-dev libxrender-dev libwebkit2gtk-4.1-dev libcurl4-openssl-dev
+
+      - name: Configure
+        run: |
+          cd MidiverbPlugin
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: |
+          cd MidiverbPlugin
+          cmake --build build --config Release -j$(nproc)
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: Midiverb-Emulator-VST3-Linux
+          path: MidiverbPlugin/build/MidiverbPlugin_artefacts/Release/VST3/*.vst3
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure
+        run: |
+          cd MidiverbPlugin
+          cmake -B build
+
+      - name: Build
+        run: |
+          cd MidiverbPlugin
+          cmake --build build --config Release -j $env:NUMBER_OF_PROCESSORS
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: Midiverb-Emulator-VST3-Windows
+          path: MidiverbPlugin/build/MidiverbPlugin_artefacts/Release/VST3/*.vst3
