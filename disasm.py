@@ -211,6 +211,314 @@ class DelayLine:
                 f"taps={self.taps}, length={self.length})")
 
 
+# =============================================================================
+# Backend Interface for Decompiler Output
+# =============================================================================
+#
+# Term types for expressions:
+#   - (line_id, write_addr, offset) : memory read from delay line
+#   - (line_id, write_addr, offset, lfo_num) : memory read with LFO modulation
+#   - 'temp_name' : temp variable
+#   - 'Acc' : accumulator
+#
+# Expression = list of (term, numerator, denominator)
+# Example: LINE(0,100,50)/2 + temp_x*3/4 - Acc/8
+#   = [((0, 100, 50), 1, 2), ('temp_x', 3, 4), ('Acc', -1, 8)]
+
+class Backend:
+    """Base class for decompiler output backends."""
+
+    def __init__(self, output_file):
+        self.f = output_file
+        self._indent_level = 1  # Base indentation level (inside function)
+
+    def begin(self, name: str, temps: list, effect_num: int = None, effect_name: str = None, unit_name: str = None):
+        """Emit function header and declare locals (Acc, temps, out_left, out_right)."""
+        raise NotImplementedError
+
+    def end(self):
+        """Emit function footer (return statement for JS, closing brace)."""
+        raise NotImplementedError
+
+    def input(self, line_id: int, addr: int, lfo_num: int = None):
+        """Emit: DRAM[addr] = input."""
+        raise NotImplementedError
+
+    def output(self, which: str, expr: list):
+        """Emit: out_{which} = formatted(expr). which is 'left' or 'right'."""
+        raise NotImplementedError
+
+    def acc(self, expr: list):
+        """Emit: Acc = formatted(expr)."""
+        raise NotImplementedError
+
+    def store(self, line_id: int, addr: int, expr: list, lfo_num: int = None):
+        """Emit: DRAM[addr] = formatted(expr)."""
+        raise NotImplementedError
+
+    def temp(self, name: str, expr: list, lfo_num: int = None):
+        """Emit: temp_name = formatted(expr)."""
+        raise NotImplementedError
+
+    def switch_begin(self, lfo_num: int):
+        """Emit: switch ((lfoN_value >> 4) & 15) {"""
+        raise NotImplementedError
+
+    def switch_case(self, value: int):
+        """Emit: case N:"""
+        raise NotImplementedError
+
+    def switch_break(self):
+        """Emit: break;"""
+        raise NotImplementedError
+
+    def switch_end(self):
+        """Emit: }"""
+        raise NotImplementedError
+
+    def function_table(self, prefix: str, programs: list):
+        """Emit function pointer array (C) or object (JS)."""
+        raise NotImplementedError
+
+    def format_expr(self, expr: list) -> str:
+        """Format an expression as a string. To be implemented by subclasses."""
+        raise NotImplementedError
+
+    def format_term(self, term, num: int, denom: int) -> str:
+        """Format a single term with coefficient. To be implemented by subclasses."""
+        raise NotImplementedError
+
+    def format_mem_read(self, line_id: int, addr: int, offset: int, lfo_num: int = None) -> str:
+        """Format a memory read expression."""
+        raise NotImplementedError
+
+
+class CBackend(Backend):
+    """C code output backend."""
+
+    def _indent(self) -> str:
+        """Return the current indentation string."""
+        return '\t' * self._indent_level
+
+    def begin(self, name: str, temps: list, effect_num: int = None, effect_name: str = None, unit_name: str = None):
+        self._indent_level = 1
+        if effect_name is not None:
+            unit_prefix = f'{unit_name} ' if unit_name else ''
+            self.f.write(f'/* {unit_prefix}effect {effect_num}: {effect_name} */\n')
+        self.f.write('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])\n')
+        self.f.write('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])\n')
+        self.f.write(f'void {name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {{\n')
+        local_vars = ['Acc'] + temps
+        local_vars_str = ', '.join(local_vars)
+        self.f.write(f'{self._indent()}int16_t {local_vars_str};\n')
+
+    def end(self):
+        self.f.write('}\n')
+        self.f.write('#undef LINE\n')
+        self.f.write('#undef WRITE_LINE\n')
+
+    def input(self, line_id: int, addr: int, lfo_num: int = None):
+        write_str = self._format_write_addr(line_id, addr, lfo_num)
+        self.f.write(f'{self._indent()}{write_str} = input;\n')
+
+    def output(self, which: str, expr: list):
+        expr_str = self.format_expr(expr)
+        self.f.write(f'{self._indent()}*out_{which} = {expr_str};\n')
+
+    def acc(self, expr: list):
+        expr_str = self.format_expr(expr)
+        self.f.write(f'{self._indent()}Acc = {expr_str};\n')
+
+    def store(self, line_id: int, addr: int, expr: list, lfo_num: int = None):
+        write_str = self._format_write_addr(line_id, addr, lfo_num)
+        expr_str = self.format_expr(expr)
+        self.f.write(f'{self._indent()}{write_str} = {expr_str};\n')
+
+    def temp(self, name: str, expr: list, lfo_num: int = None):
+        expr_str = self.format_expr(expr)
+        self.f.write(f'{self._indent()}{name} = {expr_str};\n')
+
+    def switch_begin(self, lfo_num: int):
+        self.f.write(f"{self._indent()}switch ((lfo{lfo_num}_value >> 4) & 15) {{\n")
+        self._indent_level += 1
+
+    def switch_case(self, value: int):
+        # Case labels are at switch level (one less indent)
+        self.f.write(f"{'\t' * (self._indent_level - 1)}case {value}:\n")
+
+    def switch_break(self):
+        self.f.write(f"{self._indent()}break;\n")
+
+    def switch_end(self):
+        self._indent_level -= 1
+        self.f.write(f"{self._indent()}}}\n")
+
+    def function_table(self, prefix: str, programs: list):
+        self.f.write(f'void (*{prefix}effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr, uint32_t lfo1_value, uint32_t lfo2_value) = {{\n')
+        for program_number in programs:
+            self.f.write(f'\t{prefix}effect_{program_number},\n')
+        self.f.write('};\n')
+
+    def _format_write_addr(self, line_id: int, addr: int, lfo_num: int = None) -> str:
+        if lfo_num is not None:
+            return f"WRITE_LINE({line_id}, ({addr} - (lfo{lfo_num}_value >> 8)))"
+        else:
+            return f"WRITE_LINE({line_id}, {addr})"
+
+    def format_mem_read(self, line_id: int, addr: int, offset: int, lfo_num: int = None) -> str:
+        if lfo_num is not None:
+            return f"LINE({line_id}, ({addr} - (lfo{lfo_num}_value >> 8)), {offset})"
+        else:
+            return f"LINE({line_id}, {addr}, {offset})"
+
+    def format_term(self, term_str: str, num: int, denom: int) -> str:
+        """Format a single term with coefficient for C."""
+        frac = Fraction(num, denom)
+        if frac == Fraction(1, 1):
+            return term_str
+        elif frac == Fraction(-1, 1):
+            return f"-{term_str}"
+        elif frac.numerator == 1:
+            return f"{term_str} / {frac.denominator}"
+        elif frac.numerator == -1:
+            return f"-{term_str} / {frac.denominator}"
+        else:
+            return f"{term_str} * {frac.numerator} / {frac.denominator}"
+
+    def format_expr(self, expr: list) -> str:
+        """Format an expression as C code."""
+        if len(expr) == 0:
+            return "0"
+        terms = []
+        for term, num, denom in expr:
+            if isinstance(term, tuple):
+                if len(term) == 4:
+                    # Memory read with LFO: (line_id, addr, offset, lfo_num)
+                    term_str = self.format_mem_read(term[0], term[1], term[2], term[3])
+                else:
+                    # Memory read: (line_id, addr, offset)
+                    term_str = self.format_mem_read(term[0], term[1], term[2])
+            else:
+                # String term: 'Acc', 'tmp_x', etc.
+                term_str = term
+            terms.append(self.format_term(term_str, num, denom))
+        return " + ".join(terms)
+
+
+class JSBackend(Backend):
+    """JavaScript code output backend."""
+
+    def _indent(self) -> str:
+        """Return the current indentation string (2 spaces per level)."""
+        return '  ' * self._indent_level
+
+    def begin(self, name: str, temps: list, effect_num: int = None, effect_name: str = None, unit_name: str = None):
+        self._indent_level = 1
+        if effect_name is not None:
+            unit_prefix = f'{unit_name} ' if unit_name else ''
+            self.f.write(f'/* {unit_prefix}effect {effect_num}: {effect_name} */\n')
+        self.f.write(f'function {name}(input, DRAM, ptr, lfo1_value, lfo2_value) {{\n')
+        self.f.write(f'{self._indent()}const LINE = (id, w_addr, r_offset) => DRAM[(ptr + w_addr - r_offset) & 0x3fff];\n')
+        self.f.write(f'{self._indent()}const WRITE_LINE = (id, w_addr, val) => {{ DRAM[(ptr + w_addr) & 0x3fff] = val; }};\n')
+        local_vars = ['Acc'] + temps + ['out_left', 'out_right']
+        local_vars_str = ', '.join(local_vars)
+        self.f.write(f'{self._indent()}let {local_vars_str};\n')
+
+    def end(self):
+        self.f.write(f'{self._indent()}return [out_left, out_right];\n')
+        self.f.write('}\n')
+
+    def input(self, line_id: int, addr: int, lfo_num: int = None):
+        if lfo_num is not None:
+            self.f.write(f"{self._indent()}WRITE_LINE(0, ({addr} - (lfo{lfo_num}_value >> 8)), input);\n")
+        else:
+            self.f.write(f"{self._indent()}WRITE_LINE(0, {addr}, input);\n")
+
+    def output(self, which: str, expr: list):
+        expr_str = self.format_expr(expr)
+        self.f.write(f'{self._indent()}out_{which} = {expr_str};\n')
+
+    def acc(self, expr: list):
+        expr_str = self.format_expr(expr)
+        self.f.write(f'{self._indent()}Acc = {expr_str};\n')
+
+    def store(self, line_id: int, addr: int, expr: list, lfo_num: int = None):
+        expr_str = self.format_expr(expr)
+        if lfo_num is not None:
+            self.f.write(f"{self._indent()}WRITE_LINE(0, ({addr} - (lfo{lfo_num}_value >> 8)), {expr_str});\n")
+        else:
+            self.f.write(f"{self._indent()}WRITE_LINE(0, {addr}, {expr_str});\n")
+
+    def temp(self, name: str, expr: list, lfo_num: int = None):
+        expr_str = self.format_expr(expr)
+        self.f.write(f'{self._indent()}{name} = {expr_str};\n')
+
+    def switch_begin(self, lfo_num: int):
+        self.f.write(f"{self._indent()}switch ((lfo{lfo_num}_value >> 4) & 15) {{\n")
+        self._indent_level += 1
+
+    def switch_case(self, value: int):
+        # Case labels are at switch level (one less indent)
+        self.f.write(f"{'  ' * (self._indent_level - 1)}case {value}:\n")
+
+    def switch_break(self):
+        self.f.write(f"{self._indent()}break;\n")
+
+    def switch_end(self):
+        self._indent_level -= 1
+        self.f.write(f"{self._indent()}}}\n")
+
+    def function_table(self, prefix: str, programs: list):
+        self.f.write(f'\nconst {prefix}effects = {{\n')
+        for program_number in programs:
+            self.f.write(f'  {program_number}: {prefix}effect_{program_number},\n')
+        self.f.write('};\n')
+
+    def format_mem_read(self, line_id: int, addr: int, offset: int, lfo_num: int = None) -> str:
+        if lfo_num is not None:
+            return f"LINE({line_id}, ({addr} - (lfo{lfo_num}_value >> 8)), {offset})"
+        else:
+            return f"LINE({line_id}, {addr}, {offset})"
+
+    def format_term(self, term_str: str, num: int, denom: int) -> str:
+        """Format a single term with coefficient for JavaScript.
+
+        Only adds |0 truncation for division operations (where precision loss occurs).
+        Simple negation (-Acc) doesn't need truncation since it's integer arithmetic.
+        """
+        frac = Fraction(num, denom)
+        if frac == Fraction(1, 1):
+            return term_str
+        elif frac == Fraction(-1, 1):
+            # Simple negation - no truncation needed
+            return f"-{term_str}"
+        elif frac.numerator == 1:
+            return f"(({term_str} / {frac.denominator}) | 0)"
+        elif frac.numerator == -1:
+            return f"((-{term_str} / {frac.denominator}) | 0)"
+        else:
+            return f"(({term_str} * {frac.numerator} / {frac.denominator}) | 0)"
+
+    def format_expr(self, expr: list) -> str:
+        """Format an expression as JavaScript code."""
+        if len(expr) == 0:
+            return "0"
+        terms = []
+        for term, num, denom in expr:
+            if isinstance(term, tuple):
+                if len(term) == 4:
+                    # Memory read with LFO: (line_id, addr, offset, lfo_num)
+                    term_str = self.format_mem_read(term[0], term[1], term[2], term[3])
+                else:
+                    # Memory read: (line_id, addr, offset)
+                    term_str = self.format_mem_read(term[0], term[1], term[2])
+            else:
+                # String term: 'Acc', 'tmp_x', etc.
+                term_str = term
+            terms.append(self.format_term(term_str, num, denom))
+        return " + ".join(terms)
+
+
 class DelayLineStorage:
     def __init__(self):
         self.lines = []
@@ -266,6 +574,8 @@ class DelayLineStorage:
             return f"WRITE_LINE({line.id}, {line.addr})"
 
 class Accumulator:
+    """Represents an accumulator expression as a sum of terms with fractional coefficients."""
+
     def __init__(self, terms):
         self.terms = terms
 
@@ -278,33 +588,12 @@ class Accumulator:
         terms={name: Fraction(a, b)}
         return Accumulator(terms)
 
-    def to_string(self, integer_arithmetic=False, javascript_truncate=False):
-        def multiplicand(k, v):
-            if v == Fraction(1, 1):
-                return k
-            elif v == Fraction(-1, 1):
-                if javascript_truncate:
-                    return f"((-{k}) | 0)"
-                return f"-{k}"
-            elif v.numerator == 1:
-                if javascript_truncate:
-                    return f"(({k} / {v.denominator}) | 0)"
-                return f"{k} / {v.denominator}"
-            elif v.numerator == -1:
-                if javascript_truncate:
-                    return f"((-{k} / {v.denominator}) | 0)"
-                return f"-{k} / {v.denominator}"
-            else:
-                if javascript_truncate:
-                    return f"(({k} * {v.numerator} / {v.denominator}) | 0)"
-                elif integer_arithmetic:
-                    return f"{k} * {v.numerator} / {v.denominator}"
-                else:
-                    return f"{k} * {float(v)}"
-        terms = [multiplicand(k, v) for k, v in self.terms.items()]
-        if len(terms) == 0:
-            return "0"
-        return " + ".join(terms)
+    def to_expr_list(self) -> list:
+        """Convert the accumulator to an expression list for the backend."""
+        result = []
+        for k, v in self.terms.items():
+            result.append((k, v.numerator, v.denominator))
+        return result
 
     def __neg__(self):
         return Accumulator({ k: -v for k, v in self.terms.items() })
@@ -329,28 +618,14 @@ class Accumulator:
         return self
 
 
-def decompile(end_address, encoded_instructions, function_name, f, unoptimized=False, integer_arithmetic=False, effect_number=None, effect_name=None, unit_name=None):
+def decompile_with_backend(end_address, encoded_instructions, function_name, backend: Backend, effect_number=None, effect_name=None, unit_name=None):
+    """
+    Decompile DSP instructions using the provided backend.
+
+    This unified function handles the optimization passes and emits code
+    through the backend interface, which formats output for C or JavaScript.
+    """
     assert end_address == 1, "address counter doesn't end up offseted by 1 - decompiler expects that"
-
-    # Output effect comment if name is provided
-    if effect_name is not None:
-        unit_prefix = f'{unit_name} ' if unit_name else ''
-        f.write(f'/* {unit_prefix}effect {effect_number}: {effect_name} */\n')
-
-    if unoptimized:
-        print(f'-- Saving (unoptimized) code into a file')
-        f.write('#define MEM(a) (DRAM[(ptr + a) & 0x3fff])\n')
-        f.write('#define Sgn(a) ((a) < 0 ? 1 : 0)\n')
-        f.write(f'void {function_name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr) {{\n')
-        f.write(f'\tint16_t Acc, Data;\n')
-
-        for instr in encoded_instructions:
-            s = instr.c_string()
-            f.write(f'\t{s};\n')
-        f.write('}\n')
-        f.write('#undef MEM\n')
-        f.write('#undef Sgn\n')
-        return
 
     print('-- Pass 1: Find uses/defines of the whole program')
     prev_used = set()
@@ -406,9 +681,6 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
     will_be_needed = used_writes | set(['Left', 'Right'])
     used_locations = set()
     pass3_instructions = []
-    # Accumulator is probably not used in between iterations, but just in case...
-    #if 'Acc' in prev_used:
-    #    will_be_needed.add('Acc')
 
     for instr in reversed(encoded_instructions):
         uses, defines = instr.uses_defines()
@@ -422,24 +694,51 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
             pass3_instructions.append(instr)
     pass3_instructions = list(reversed(pass3_instructions))
 
-    print(f'-- Pass 4: Output C program into a file')
+    print(f'-- Pass 4: Output program via backend')
     for line in delay_line_storage.lines:
         print(f"Delay line {line.id}: length={line.length}, taps={line.taps}")
-    f.write('#define LINE(id,w_addr,r_offset) (DRAM[(ptr + w_addr - r_offset) & 0x3fff])\n')
-    f.write('#define WRITE_LINE(id,w_addr) (DRAM[(ptr + w_addr) & 0x3fff])\n')
-    f.write(f'void {function_name}(int16_t input, int16_t *out_left, int16_t *out_right, int16_t DRAM[0x4000], int ptr, uint32_t lfo1_value, uint32_t lfo2_value) {{\n')
-    local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp_addrs if addr in used_locations]
-    local_vars_str = ', '.join(local_vars)
-    f.write(f'\tint16_t {local_vars_str};\n')
+
+    # Collect temp variable names
+    temps = [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp_addrs if addr in used_locations]
+
+    backend.begin(function_name, temps, effect_number, effect_name, unit_name)
+
+    # Helper to create a memory read term for the expression list
+    def make_read_term(addr, was_written, lfo_num=None):
+        """Create a term representing a memory read."""
+        if addr in delay_line_storage.tmp_addrs:
+            if not addr in delay_line_storage.tmp_addrs_that_read_real_memory or was_written:
+                return delay_line_storage.get_tmp_name(addr)
+        line_id = delay_line_storage.read_addrs.get(addr)
+        if line_id is None:
+            line_id = delay_line_storage.write_addrs.get(addr)
+        if line_id is None:
+            return None
+        line = delay_line_storage.lines[line_id]
+        offset = (line.addr - addr) & 0x3fff
+        if lfo_num is not None:
+            return (line_id, line.addr, offset, lfo_num)
+        else:
+            return (line_id, line.addr, offset)
+
+    def get_write_info(addr, lfo_num=None):
+        """Get write information: (line_id, addr, lfo_num) or None if it's a temp."""
+        if addr in delay_line_storage.tmp_addrs:
+            return None  # It's a temp variable
+        line_id = delay_line_storage.write_addrs.get(addr)
+        if line_id is None:
+            return None
+        return (line_id, addr, lfo_num)
 
     addrs_written = dict()
     acc = None
+
     def flush_acc():
         nonlocal acc
         if acc is not None:
-            acc_str = acc.to_string(integer_arithmetic)
-            f.write(f'\tAcc = {acc_str};\n')
+            backend.acc(acc.to_expr_list())
             acc = None
+
     def default_acc():
         nonlocal acc
         if acc is None:
@@ -448,16 +747,8 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
     i = 0
     while i < len(pass3_instructions):
         instr = pass3_instructions[i]
-        s = None
-        if instr.addr is not None:
-            read_addr_str = delay_line_storage.format_read_address(instr.addr, instr.addr in addrs_written, instr.lfo_num)
-            write_addr_str = delay_line_storage.format_write_address(instr.addr, instr.lfo_num)
-        else:
-            read_addr_str = None
-            write_addr_str = None
 
         # If instruction is patched:
-        #
         # - find sequence of patched instructions in a row
         # - create a switch statement on fract value of selected LFO
         # - decompile each patched block
@@ -469,69 +760,78 @@ def decompile(end_address, encoded_instructions, function_name, f, unoptimized=F
                 num_patched += 1
 
             flush_acc()
-            f.write(f"\tswitch ((lfo{lfo_num}_value >> 4) & 15) {{\n")
+            backend.switch_begin(lfo_num)
             for k in range(16):
-                f.write(f"\tcase {k}:\n")
+                backend.switch_case(k)
                 for j in range(num_patched):
                     instr = pass3_instructions[i + j]
                     addr = instr.patched[1][k]
-                    read_addr_str = delay_line_storage.format_read_address(addr, addr in addrs_written, instr.lfo_num)
+                    read_term = make_read_term(addr, addr in addrs_written, instr.lfo_num)
                     if instr.opcode == DSPInstruction.SUMHLF:
                         default_acc()
-                        acc += Accumulator.term(read_addr_str, 1, 2)
+                        acc += Accumulator.term(read_term, 1, 2)
                     elif instr.opcode == DSPInstruction.LDHLF:
-                        acc = Accumulator.term(read_addr_str, 1, 2)
+                        acc = Accumulator.term(read_term, 1, 2)
                     else:
                         raise Exception("unsupported instr")
-                f.write(f"\t")
                 flush_acc()
-                f.write(f"\t\tbreak;\n")
+                backend.switch_break()
 
-            f.write(f"\t}}\n")
+            backend.switch_end()
 
             i += num_patched
             continue
 
         if instr.opcode == DSPInstruction.SUMHLF:
-            default_acc( )
-            acc += Accumulator.term(read_addr_str, 1, 2)
+            read_term = make_read_term(instr.addr, instr.addr in addrs_written, instr.lfo_num)
+            default_acc()
+            acc += Accumulator.term(read_term, 1, 2)
         elif instr.opcode == DSPInstruction.LDHLF:
-            acc = Accumulator.term(read_addr_str, 1, 2)
+            read_term = make_read_term(instr.addr, instr.addr in addrs_written, instr.lfo_num)
+            acc = Accumulator.term(read_term, 1, 2)
         elif instr.opcode == DSPInstruction.INPUT:
             flush_acc()
-            s = f"{write_addr_str} = input"
+            write_info = get_write_info(instr.addr, instr.lfo_num)
+            if write_info:
+                backend.input(write_info[0], write_info[1], write_info[2])
+            else:
+                # Input to a temp (shouldn't happen normally)
+                backend.temp(delay_line_storage.get_tmp_name(instr.addr), [('input', 1, 1)], instr.lfo_num)
             addrs_written[instr.addr] = True
         elif instr.opcode == DSPInstruction.OUTPUT_LEFT:
-            s = f"*out_left = {read_addr_str}"
+            read_term = make_read_term(instr.addr, instr.addr in addrs_written, instr.lfo_num)
+            backend.output('left', [(read_term, 1, 1)])
         elif instr.opcode == DSPInstruction.OUTPUT_RIGHT:
-            s = f"*out_right = {read_addr_str}"
+            read_term = make_read_term(instr.addr, instr.addr in addrs_written, instr.lfo_num)
+            backend.output('right', [(read_term, 1, 1)])
         elif instr.opcode == DSPInstruction.STORE:
             flush_acc()
-            s = f"{write_addr_str} = Acc"
+            write_info = get_write_info(instr.addr, instr.lfo_num)
+            if write_info:
+                backend.store(write_info[0], write_info[1], [('Acc', 1, 1)], write_info[2])
+            else:
+                backend.temp(delay_line_storage.get_tmp_name(instr.addr), [('Acc', 1, 1)], instr.lfo_num)
             addrs_written[instr.addr] = True
         elif instr.opcode == DSPInstruction.STOREN:
             flush_acc()
-            s = f"{write_addr_str} = -Acc"
+            write_info = get_write_info(instr.addr, instr.lfo_num)
+            if write_info:
+                backend.store(write_info[0], write_info[1], [('Acc', -1, 1)], write_info[2])
+            else:
+                backend.temp(delay_line_storage.get_tmp_name(instr.addr), [('Acc', -1, 1)], instr.lfo_num)
             addrs_written[instr.addr] = True
         elif instr.opcode == DSPInstruction.ADDHLF:
-            #s = f"Acc = Acc + Acc/2"
             default_acc()
             acc += acc / 2
         elif instr.opcode == DSPInstruction.NEGHLF:
-            #s = f"Acc = -Acc/2"
             default_acc()
             acc = (-acc) / 2
         else:
             raise Exception('unhandled instruction')
-            pass
-        if s is not None:
-            f.write(f"\t{s};\n")
         i += 1
 
     flush_acc()
-    f.write('}\n')
-    f.write('#undef LINE\n')
-    f.write('#undef WRITE_LINE\n')
+    backend.end()
 
 
 # This is a really hacky solution to decompiling effects where the 8031 is live-patching
@@ -739,220 +1039,6 @@ def apply_modulation(program, lfo1_value, lfo2_value, lfo_op, patch_table):
 
 
 
-
-
-def decompile_javascript(end_address, encoded_instructions, function_name, f, unoptimized=False, integer_arithmetic=False, effect_number=None, effect_name=None, unit_name=None):
-    """Decompile DSP instructions to JavaScript code."""
-    assert end_address == 1, "address counter doesn't end up offseted by 1 - decompiler expects that"
-
-    # Output effect comment if name is provided
-    if effect_name is not None:
-        unit_prefix = f'{unit_name} ' if unit_name else ''
-        f.write(f'/* {unit_prefix}effect {effect_number}: {effect_name} */\n')
-
-    if unoptimized:
-        print(f'-- Saving (unoptimized) JavaScript code into a file')
-        f.write(f'function {function_name}(input, DRAM, ptr, lfo1_value, lfo2_value) {{\n')
-        f.write(f'  const MEM = (a) => DRAM[(ptr + a) & 0x3fff];\n')
-        f.write(f'  const SETMEM = (a, v) => {{ DRAM[(ptr + a) & 0x3fff] = v; }};\n')
-        f.write(f'  const Sgn = (a) => (a < 0 ? 1 : 0);\n')
-        f.write(f'  let Acc, Data, out_left, out_right;\n')
-
-        for instr in encoded_instructions:
-            s = instr.c_string()
-            # Convert C to JavaScript
-            s = s.replace('MEM(', 'MEM(').replace('*out_left', 'out_left').replace('*out_right', 'out_right')
-            f.write(f'  {s};\n')
-        f.write('  return [out_left, out_right];\n')
-        f.write('}\n')
-        return
-
-    print('-- Pass 1: Find uses/defines of the whole program')
-    prev_used = set()
-    prev_defined = set()
-    for instr in encoded_instructions:
-        uses, defines = instr.uses_defines()
-        prev_used |= uses - prev_defined
-        prev_defined |= defines
-
-    print('Program used:', prev_used)
-    print('Program defined:', prev_defined)
-
-    print('-- Pass 2: Calculate which addresses start a delay line and get used on following samples')
-    used_address = {x for x in prev_used if isinstance(x, int)}
-    defined_address = {x for x in prev_defined if isinstance(x, int)}
-    memory_locations = []
-    for addr in used_address.union(defined_address):
-        memory_locations.append({
-            'addr': addr,
-            'write': addr in defined_address,
-            'read': addr in used_address,
-        })
-    memory_locations.sort(key=lambda x: x['addr'])
-    print('Read/write locations:', memory_locations)
-
-    # Calculate all delay lines
-    n = len(memory_locations)
-    delay_line_storage = DelayLineStorage()
-    not_read = set()
-    used_writes = set()
-    for i, location in enumerate(memory_locations):
-        if location['write']:
-            taps = []
-            j = (i - 1) % n
-            while j != i:
-                if memory_locations[j]['read']:
-                    taps.append(memory_locations[j]['addr'])
-                if memory_locations[j]['write']:
-                    break
-                j = (j - 1) % n
-            if len(taps) == 0:
-                not_read.add(location['addr'])
-                delay_line_storage.add_tmp(location['addr'], location['read'])
-            else:
-                used_writes.add(location['addr'])
-                delay_line = DelayLine(addr=location['addr'], tap_addrs=taps)
-                delay_line_storage.add(delay_line)
-
-    print('Writes not read:', not_read)
-    print('Writes read:', used_writes)
-
-    print('-- Pass 3: Eliminate dead instructions')
-    will_be_needed = used_writes | set(['Left', 'Right'])
-    used_locations = set()
-    pass3_instructions = []
-
-    for instr in reversed(encoded_instructions):
-        uses, defines = instr.uses_defines()
-        if defines.isdisjoint(will_be_needed):
-            print('// eliminated:', instr.pretty_string())
-            pass
-        else:
-            will_be_needed = (will_be_needed - defines) | uses
-            used_locations |= uses
-            print(instr.pretty_string())
-            pass3_instructions.append(instr)
-    pass3_instructions = list(reversed(pass3_instructions))
-
-    print(f'-- Pass 4: Output JavaScript program into a file')
-    for line in delay_line_storage.lines:
-        print(f"Delay line {line.id}: length={line.length}, taps={line.taps}")
-
-    f.write(f'function {function_name}(input, DRAM, ptr, lfo1_value, lfo2_value) {{\n')
-    f.write(f'  const LINE = (id, w_addr, r_offset) => DRAM[(ptr + w_addr - r_offset) & 0x3fff];\n')
-    f.write(f'  const WRITE_LINE = (id, w_addr, val) => {{ DRAM[(ptr + w_addr) & 0x3fff] = val; }};\n')
-    local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp_addrs if addr in used_locations]
-    local_vars_str = ', '.join(local_vars)
-    f.write(f'  let {local_vars_str}, out_left, out_right;\n')
-
-    addrs_written = dict()
-    acc = None
-    def flush_acc():
-        nonlocal acc
-        if acc is not None:
-            # Use javascript_truncate=True to truncate each term individually
-            acc_str = acc.to_string(integer_arithmetic=True, javascript_truncate=True)
-            f.write(f'  Acc = {acc_str};\n')
-            acc = None
-    def default_acc():
-        nonlocal acc
-        if acc is None:
-            acc = Accumulator.term('Acc', 1, 1)
-
-    i = 0
-    while i < len(pass3_instructions):
-        instr = pass3_instructions[i]
-        s = None
-        if instr.addr is not None:
-            read_addr_str = delay_line_storage.format_read_address(instr.addr, instr.addr in addrs_written, instr.lfo_num)
-            write_addr_str = delay_line_storage.format_write_address(instr.addr, instr.lfo_num)
-        else:
-            read_addr_str = None
-            write_addr_str = None
-
-        # If instruction is patched (for LFO effects)
-        if instr.patched is not None:
-            lfo_num = instr.patched[0]
-            num_patched = 0
-            while pass3_instructions[i + num_patched].patched is not None and pass3_instructions[i + num_patched].patched[0] == lfo_num:
-                num_patched += 1
-
-            flush_acc()
-            f.write(f"  switch ((lfo{lfo_num}_value >> 4) & 15) {{\n")
-            for k in range(16):
-                f.write(f"  case {k}:\n")
-                for j in range(num_patched):
-                    instr = pass3_instructions[i + j]
-                    addr = instr.patched[1][k]
-                    read_addr_str = delay_line_storage.format_read_address(addr, addr in addrs_written, instr.lfo_num)
-                    if instr.opcode == DSPInstruction.SUMHLF:
-                        default_acc()
-                        acc += Accumulator.term(read_addr_str, 1, 2)
-                    elif instr.opcode == DSPInstruction.LDHLF:
-                        acc = Accumulator.term(read_addr_str, 1, 2)
-                    else:
-                        raise Exception("unsupported instr")
-                f.write(f"  ")
-                flush_acc()
-                f.write(f"    break;\n")
-
-            f.write(f"  }}\n")
-
-            i += num_patched
-            continue
-
-        # Helper to generate JavaScript write statement
-        def js_write(addr, value, lfo_num=None):
-            if addr in delay_line_storage.tmp_addrs:
-                # Write to temp variable
-                tmp_name = delay_line_storage.get_tmp_name(addr)
-                return f"{tmp_name} = {value}"
-            else:
-                # Write to DRAM via WRITE_LINE (Int16Array auto-truncates)
-                if lfo_num is not None:
-                    return f"WRITE_LINE(0, ({addr} - (lfo{lfo_num}_value >> 8)), {value})"
-                else:
-                    return f"WRITE_LINE(0, {addr}, {value})"
-
-        if instr.opcode == DSPInstruction.SUMHLF:
-            default_acc()
-            acc += Accumulator.term(read_addr_str, 1, 2)
-        elif instr.opcode == DSPInstruction.LDHLF:
-            acc = Accumulator.term(read_addr_str, 1, 2)
-        elif instr.opcode == DSPInstruction.INPUT:
-            flush_acc()
-            s = js_write(instr.addr, "input", instr.lfo_num)
-            addrs_written[instr.addr] = True
-        elif instr.opcode == DSPInstruction.OUTPUT_LEFT:
-            s = f"out_left = {read_addr_str}"
-        elif instr.opcode == DSPInstruction.OUTPUT_RIGHT:
-            s = f"out_right = {read_addr_str}"
-        elif instr.opcode == DSPInstruction.STORE:
-            flush_acc()
-            s = js_write(instr.addr, "Acc", instr.lfo_num)
-            addrs_written[instr.addr] = True
-        elif instr.opcode == DSPInstruction.STOREN:
-            flush_acc()
-            s = js_write(instr.addr, "-Acc", instr.lfo_num)
-            addrs_written[instr.addr] = True
-        elif instr.opcode == DSPInstruction.ADDHLF:
-            default_acc()
-            acc += acc / 2
-        elif instr.opcode == DSPInstruction.NEGHLF:
-            default_acc()
-            acc = (-acc) / 2
-        else:
-            raise Exception('unhandled instruction')
-            pass
-        if s is not None:
-            f.write(f"  {s};\n")
-        i += 1
-
-    flush_acc()
-    f.write('  return [out_left, out_right];\n')
-    f.write('}\n')
-
-
 def main():
     parser = argparse.ArgumentParser(description="Disassemble MidiVerb program and optionally decompile it to C.")
     parser.add_argument("-d", "--decompile", metavar="output.c", help="Decompile effect program to C and save to the specified filename")
@@ -995,8 +1081,13 @@ def main():
     if args.names is not None:
         effect_names = parse_names_file(args.names, first_program_number)
 
+    # Create backends based on command-line arguments
+    c_backend = None
+    js_backend = None
+
     if args.decompile is not None:
         decompiler_output = open(args.decompile, 'w')
+        c_backend = CBackend(decompiler_output)
     else:
         decompiler_output = None
 
@@ -1004,6 +1095,7 @@ def main():
         javascript_output = open(args.javascript, 'w')
         javascript_output.write('// Auto-generated JavaScript DSP code from disasm.py\n')
         javascript_output.write('// These functions share the same DRAM array with the emulator\n\n')
+        js_backend = JSBackend(javascript_output)
     else:
         javascript_output = None
 
@@ -1033,35 +1125,31 @@ def main():
             encoded_instructions = patch_instructions_for_lfo(program, memory_shift, 1, next_instr_opcode, 0x03, 0x2f, interpolation_patch_table=interpolation_patch_table)
             encoded_instructions = patch_instructions_for_lfo(program, memory_shift, 2, next_instr_opcode, 0x30, 0x5c, encoded_instructions, interpolation_patch_table=interpolation_patch_table)
 
-        if decompiler_output is not None:
-            if len(decode) > 1:
-                function_name = f'{args.prefix}effect_{program_number}'
-            else:
-                function_name = f'{args.prefix}effect'
-            effect_name = effect_names.get(program_number)
-            decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic, program_number, effect_name, args.unit_name)
+        # Determine function name
+        if len(decode) > 1:
+            function_name = f'{args.prefix}effect_{program_number}'
+        else:
+            function_name = f'{args.prefix}effect'
+        effect_name = effect_names.get(program_number)
 
-        if javascript_output is not None:
-            if len(decode) > 1:
-                function_name = f'{args.prefix}effect_{program_number}'
-            else:
-                function_name = f'{args.prefix}effect'
-            effect_name = effect_names.get(program_number)
-            decompile_javascript(end_address, encoded_instructions, function_name, javascript_output, args.unoptimized, args.integer_arithmetic, program_number, effect_name, args.unit_name)
+        # Decompile using backends
+        if c_backend is not None:
+            decompile_with_backend(end_address, encoded_instructions, function_name, c_backend, program_number, effect_name, args.unit_name)
 
-    if decompiler_output is not None and len(decode) > 1:
-        f = decompiler_output
-        f.write(f'void (*{args.prefix}effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr, uint32_t lfo1_value, uint32_t lfo2_value) = {{\n')
-        for program_number in decode:
-            f.write(f'\t{args.prefix}effect_{program_number},\n')
-        f.write('};\n')
+        if js_backend is not None:
+            decompile_with_backend(end_address, encoded_instructions, function_name, js_backend, program_number, effect_name, args.unit_name)
 
-    if javascript_output is not None and len(decode) > 1:
-        f = javascript_output
-        f.write(f'\nconst {args.prefix}effects = {{\n')
-        for program_number in decode:
-            f.write(f'  {program_number}: {args.prefix}effect_{program_number},\n')
-        f.write('};\n')
+    # Output function tables
+    if c_backend is not None and len(decode) > 1:
+        c_backend.function_table(args.prefix, decode)
+
+    if js_backend is not None and len(decode) > 1:
+        js_backend.function_table(args.prefix, decode)
+
+    # Close output files
+    if decompiler_output is not None:
+        decompiler_output.close()
+    if javascript_output is not None:
         javascript_output.close()
 
 if __name__ == "__main__":
