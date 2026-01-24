@@ -278,18 +278,26 @@ class Accumulator:
         terms={name: Fraction(a, b)}
         return Accumulator(terms)
 
-    def to_string(self, integer_arithmetic=False):
+    def to_string(self, integer_arithmetic=False, javascript_truncate=False):
         def multiplicand(k, v):
             if v == Fraction(1, 1):
                 return k
             elif v == Fraction(-1, 1):
+                if javascript_truncate:
+                    return f"((-{k}) | 0)"
                 return f"-{k}"
             elif v.numerator == 1:
+                if javascript_truncate:
+                    return f"(({k} / {v.denominator}) | 0)"
                 return f"{k} / {v.denominator}"
             elif v.numerator == -1:
+                if javascript_truncate:
+                    return f"((-{k} / {v.denominator}) | 0)"
                 return f"-{k} / {v.denominator}"
             else:
-                if integer_arithmetic:
+                if javascript_truncate:
+                    return f"(({k} * {v.numerator} / {v.denominator}) | 0)"
+                elif integer_arithmetic:
                     return f"{k} * {v.numerator} / {v.denominator}"
                 else:
                     return f"{k} * {float(v)}"
@@ -733,9 +741,222 @@ def apply_modulation(program, lfo1_value, lfo2_value, lfo_op, patch_table):
 
 
 
+def decompile_javascript(end_address, encoded_instructions, function_name, f, unoptimized=False, integer_arithmetic=False, effect_number=None, effect_name=None, unit_name=None):
+    """Decompile DSP instructions to JavaScript code."""
+    assert end_address == 1, "address counter doesn't end up offseted by 1 - decompiler expects that"
+
+    # Output effect comment if name is provided
+    if effect_name is not None:
+        unit_prefix = f'{unit_name} ' if unit_name else ''
+        f.write(f'/* {unit_prefix}effect {effect_number}: {effect_name} */\n')
+
+    if unoptimized:
+        print(f'-- Saving (unoptimized) JavaScript code into a file')
+        f.write(f'function {function_name}(input, DRAM, ptr, lfo1_value, lfo2_value) {{\n')
+        f.write(f'  const MEM = (a) => DRAM[(ptr + a) & 0x3fff];\n')
+        f.write(f'  const SETMEM = (a, v) => {{ DRAM[(ptr + a) & 0x3fff] = v; }};\n')
+        f.write(f'  const Sgn = (a) => (a < 0 ? 1 : 0);\n')
+        f.write(f'  let Acc, Data, out_left, out_right;\n')
+
+        for instr in encoded_instructions:
+            s = instr.c_string()
+            # Convert C to JavaScript
+            s = s.replace('MEM(', 'MEM(').replace('*out_left', 'out_left').replace('*out_right', 'out_right')
+            f.write(f'  {s};\n')
+        f.write('  return [out_left, out_right];\n')
+        f.write('}\n')
+        return
+
+    print('-- Pass 1: Find uses/defines of the whole program')
+    prev_used = set()
+    prev_defined = set()
+    for instr in encoded_instructions:
+        uses, defines = instr.uses_defines()
+        prev_used |= uses - prev_defined
+        prev_defined |= defines
+
+    print('Program used:', prev_used)
+    print('Program defined:', prev_defined)
+
+    print('-- Pass 2: Calculate which addresses start a delay line and get used on following samples')
+    used_address = {x for x in prev_used if isinstance(x, int)}
+    defined_address = {x for x in prev_defined if isinstance(x, int)}
+    memory_locations = []
+    for addr in used_address.union(defined_address):
+        memory_locations.append({
+            'addr': addr,
+            'write': addr in defined_address,
+            'read': addr in used_address,
+        })
+    memory_locations.sort(key=lambda x: x['addr'])
+    print('Read/write locations:', memory_locations)
+
+    # Calculate all delay lines
+    n = len(memory_locations)
+    delay_line_storage = DelayLineStorage()
+    not_read = set()
+    used_writes = set()
+    for i, location in enumerate(memory_locations):
+        if location['write']:
+            taps = []
+            j = (i - 1) % n
+            while j != i:
+                if memory_locations[j]['read']:
+                    taps.append(memory_locations[j]['addr'])
+                if memory_locations[j]['write']:
+                    break
+                j = (j - 1) % n
+            if len(taps) == 0:
+                not_read.add(location['addr'])
+                delay_line_storage.add_tmp(location['addr'], location['read'])
+            else:
+                used_writes.add(location['addr'])
+                delay_line = DelayLine(addr=location['addr'], tap_addrs=taps)
+                delay_line_storage.add(delay_line)
+
+    print('Writes not read:', not_read)
+    print('Writes read:', used_writes)
+
+    print('-- Pass 3: Eliminate dead instructions')
+    will_be_needed = used_writes | set(['Left', 'Right'])
+    used_locations = set()
+    pass3_instructions = []
+
+    for instr in reversed(encoded_instructions):
+        uses, defines = instr.uses_defines()
+        if defines.isdisjoint(will_be_needed):
+            print('// eliminated:', instr.pretty_string())
+            pass
+        else:
+            will_be_needed = (will_be_needed - defines) | uses
+            used_locations |= uses
+            print(instr.pretty_string())
+            pass3_instructions.append(instr)
+    pass3_instructions = list(reversed(pass3_instructions))
+
+    print(f'-- Pass 4: Output JavaScript program into a file')
+    for line in delay_line_storage.lines:
+        print(f"Delay line {line.id}: length={line.length}, taps={line.taps}")
+
+    f.write(f'function {function_name}(input, DRAM, ptr, lfo1_value, lfo2_value) {{\n')
+    f.write(f'  const LINE = (id, w_addr, r_offset) => DRAM[(ptr + w_addr - r_offset) & 0x3fff];\n')
+    f.write(f'  const WRITE_LINE = (id, w_addr, val) => {{ DRAM[(ptr + w_addr) & 0x3fff] = val; }};\n')
+    local_vars = ['Acc'] + [delay_line_storage.get_tmp_name(addr) for addr in delay_line_storage.tmp_addrs if addr in used_locations]
+    local_vars_str = ', '.join(local_vars)
+    f.write(f'  let {local_vars_str}, out_left, out_right;\n')
+
+    addrs_written = dict()
+    acc = None
+    def flush_acc():
+        nonlocal acc
+        if acc is not None:
+            # Use javascript_truncate=True to truncate each term individually
+            acc_str = acc.to_string(integer_arithmetic=True, javascript_truncate=True)
+            f.write(f'  Acc = {acc_str};\n')
+            acc = None
+    def default_acc():
+        nonlocal acc
+        if acc is None:
+            acc = Accumulator.term('Acc', 1, 1)
+
+    i = 0
+    while i < len(pass3_instructions):
+        instr = pass3_instructions[i]
+        s = None
+        if instr.addr is not None:
+            read_addr_str = delay_line_storage.format_read_address(instr.addr, instr.addr in addrs_written, instr.lfo_num)
+            write_addr_str = delay_line_storage.format_write_address(instr.addr, instr.lfo_num)
+        else:
+            read_addr_str = None
+            write_addr_str = None
+
+        # If instruction is patched (for LFO effects)
+        if instr.patched is not None:
+            lfo_num = instr.patched[0]
+            num_patched = 0
+            while pass3_instructions[i + num_patched].patched is not None and pass3_instructions[i + num_patched].patched[0] == lfo_num:
+                num_patched += 1
+
+            flush_acc()
+            f.write(f"  switch ((lfo{lfo_num}_value >> 4) & 15) {{\n")
+            for k in range(16):
+                f.write(f"  case {k}:\n")
+                for j in range(num_patched):
+                    instr = pass3_instructions[i + j]
+                    addr = instr.patched[1][k]
+                    read_addr_str = delay_line_storage.format_read_address(addr, addr in addrs_written, instr.lfo_num)
+                    if instr.opcode == DSPInstruction.SUMHLF:
+                        default_acc()
+                        acc += Accumulator.term(read_addr_str, 1, 2)
+                    elif instr.opcode == DSPInstruction.LDHLF:
+                        acc = Accumulator.term(read_addr_str, 1, 2)
+                    else:
+                        raise Exception("unsupported instr")
+                f.write(f"  ")
+                flush_acc()
+                f.write(f"    break;\n")
+
+            f.write(f"  }}\n")
+
+            i += num_patched
+            continue
+
+        # Helper to generate JavaScript write statement
+        def js_write(addr, value, lfo_num=None):
+            if addr in delay_line_storage.tmp_addrs:
+                # Write to temp variable
+                tmp_name = delay_line_storage.get_tmp_name(addr)
+                return f"{tmp_name} = {value}"
+            else:
+                # Write to DRAM via WRITE_LINE (Int16Array auto-truncates)
+                if lfo_num is not None:
+                    return f"WRITE_LINE(0, ({addr} - (lfo{lfo_num}_value >> 8)), {value})"
+                else:
+                    return f"WRITE_LINE(0, {addr}, {value})"
+
+        if instr.opcode == DSPInstruction.SUMHLF:
+            default_acc()
+            acc += Accumulator.term(read_addr_str, 1, 2)
+        elif instr.opcode == DSPInstruction.LDHLF:
+            acc = Accumulator.term(read_addr_str, 1, 2)
+        elif instr.opcode == DSPInstruction.INPUT:
+            flush_acc()
+            s = js_write(instr.addr, "input", instr.lfo_num)
+            addrs_written[instr.addr] = True
+        elif instr.opcode == DSPInstruction.OUTPUT_LEFT:
+            s = f"out_left = {read_addr_str}"
+        elif instr.opcode == DSPInstruction.OUTPUT_RIGHT:
+            s = f"out_right = {read_addr_str}"
+        elif instr.opcode == DSPInstruction.STORE:
+            flush_acc()
+            s = js_write(instr.addr, "Acc", instr.lfo_num)
+            addrs_written[instr.addr] = True
+        elif instr.opcode == DSPInstruction.STOREN:
+            flush_acc()
+            s = js_write(instr.addr, "-Acc", instr.lfo_num)
+            addrs_written[instr.addr] = True
+        elif instr.opcode == DSPInstruction.ADDHLF:
+            default_acc()
+            acc += acc / 2
+        elif instr.opcode == DSPInstruction.NEGHLF:
+            default_acc()
+            acc = (-acc) / 2
+        else:
+            raise Exception('unhandled instruction')
+            pass
+        if s is not None:
+            f.write(f"  {s};\n")
+        i += 1
+
+    flush_acc()
+    f.write('  return [out_left, out_right];\n')
+    f.write('}\n')
+
+
 def main():
     parser = argparse.ArgumentParser(description="Disassemble MidiVerb program and optionally decompile it to C.")
     parser.add_argument("-d", "--decompile", metavar="output.c", help="Decompile effect program to C and save to the specified filename")
+    parser.add_argument("-j", "--javascript", metavar="output.js", help="Decompile effect program to JavaScript and save to the specified filename")
     parser.add_argument("-U", "--unoptimized", action='store_true', help="Do not optimize the resulting C function with dead-code elimination and constant-folding")
     parser.add_argument("-i", "--integer-arithmetic", action='store_true', help="Use integer arithmetic instead of float-point arithmetic")
     parser.add_argument("-2", "--midiverb2", action='store_true', help="Assume the byte order is same as Midiverb 2, and start at 0x1c00 from program 0")
@@ -779,6 +1000,13 @@ def main():
     else:
         decompiler_output = None
 
+    if args.javascript is not None:
+        javascript_output = open(args.javascript, 'w')
+        javascript_output.write('// Auto-generated JavaScript DSP code from disasm.py\n')
+        javascript_output.write('// These functions share the same DRAM array with the emulator\n\n')
+    else:
+        javascript_output = None
+
     for program_number in decode:
         program = programs.get(program_number)
         if program is None:
@@ -813,12 +1041,28 @@ def main():
             effect_name = effect_names.get(program_number)
             decompile(end_address, encoded_instructions, function_name, decompiler_output, args.unoptimized, args.integer_arithmetic, program_number, effect_name, args.unit_name)
 
+        if javascript_output is not None:
+            if len(decode) > 1:
+                function_name = f'{args.prefix}effect_{program_number}'
+            else:
+                function_name = f'{args.prefix}effect'
+            effect_name = effect_names.get(program_number)
+            decompile_javascript(end_address, encoded_instructions, function_name, javascript_output, args.unoptimized, args.integer_arithmetic, program_number, effect_name, args.unit_name)
+
     if decompiler_output is not None and len(decode) > 1:
         f = decompiler_output
         f.write(f'void (*{args.prefix}effects[])(int16_t input, int16_t *out_left, int16_t *out_right, int16_t *DRAM, int ptr, uint32_t lfo1_value, uint32_t lfo2_value) = {{\n')
         for program_number in decode:
             f.write(f'\t{args.prefix}effect_{program_number},\n')
         f.write('};\n')
+
+    if javascript_output is not None and len(decode) > 1:
+        f = javascript_output
+        f.write(f'\nconst {args.prefix}effects = {{\n')
+        for program_number in decode:
+            f.write(f'  {program_number}: {args.prefix}effect_{program_number},\n')
+        f.write('};\n')
+        javascript_output.close()
 
 if __name__ == "__main__":
     main()

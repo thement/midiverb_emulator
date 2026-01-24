@@ -12,7 +12,12 @@
   <button id="pauseButton">Mute effect input</button>
   <button id="stopButton">Stop Audio</button>
   <br><br>
-  <label for="deviceSelect">Device: </label>
+  <label for="engineSelect">Engine: </label>
+  <select id="engineSelect">
+    <option value="emulated" selected>Emulated (ROM)</option>
+    <option value="decompiled">Decompiled (native JS)</option>
+  </select>
+  <label for="deviceSelect"> Device: </label>
   <select id="deviceSelect">
     <option value="midiverb">MIDIVerb</option>
     <option value="midifex">MIDIFex</option>
@@ -51,6 +56,9 @@ code by thement at ibawizard do net
 </pre>
 <button id="fillDramButton">Fill DRAM with Random Numbers</button> - LOUD! Check how it sounds right after Power-On
   <script src="sound-generators.js"></script>
+  <script src="decompiled-midiverb.js"></script>
+  <script src="decompiled-midifex.js"></script>
+  <script src="decompiled-midiverb2.js"></script>
   <script>
   // ROM type definitions
   const ROM_TYPES = {
@@ -163,6 +171,13 @@ code by thement at ibawizard do net
         "Regenerated Delay 3 Sec", "Regenerated Delay 4 Sec"
       ]
     }
+  };
+
+  // Decompiled effect functions lookup
+  const DECOMPILED_EFFECTS = {
+    midiverb: typeof midiverb_effects !== 'undefined' ? midiverb_effects : {},
+    midifex: typeof midifex_effects !== 'undefined' ? midifex_effects : {},
+    midiverb2: typeof midiverb2_effects !== 'undefined' ? midiverb2_effects : {}
   };
 
   // LFO patches for MIDIVerb 2 (programs 50-69)
@@ -449,12 +464,25 @@ code by thement at ibawizard do net
       return output;
     }
 
-    runEffect(leftIn, rightIn, feedbackAmount) {
+    runEffect(leftIn, rightIn, feedbackAmount, useDecompiled = false, decompiledFunc = null, lfo1Value = 0, lfo2Value = 0) {
       const mono_sample = (leftIn + rightIn + this.last_output * feedbackAmount) >> 5;
-      const output = this.runMachineTick(mono_sample);
 
-      const left_out = this.clip(output.s[0] * 16);
-      const right_out = this.clip(output.s[1] * 16);
+      let left_out, right_out;
+
+      if (useDecompiled && decompiledFunc) {
+        // Run decompiled JavaScript function
+        // Note: decompiled functions use ptr directly (not address) and share the same DRAM
+        const [outLeft, outRight] = decompiledFunc(mono_sample, this.dram, this.address, lfo1Value, lfo2Value);
+        left_out = this.clip((outLeft || 0) * 16);
+        right_out = this.clip((outRight || 0) * 16);
+        // Advance address by 1 (same as emulator does at end of tick)
+        this.address = (this.address + 1) % this.DramLength;
+      } else {
+        // Run emulated ROM code
+        const output = this.runMachineTick(mono_sample);
+        left_out = this.clip(output.s[0] * 16);
+        right_out = this.clip(output.s[1] * 16);
+      }
 
       this.last_output = (left_out + right_out) / 2;
 
@@ -540,11 +568,14 @@ code by thement at ibawizard do net
   // Configuration - default device and effect
   const DEFAULT_DEVICE = 'midiverb2';
   const DEFAULT_PROGRAM = 1;
+  const DEFAULT_ENGINE = 'emulated';
 
   // Global state
   let currentSoundSource = 'example.wav';
   let currentDevice = DEFAULT_DEVICE;
   let currentProgram = DEFAULT_PROGRAM;
+  let currentEngine = DEFAULT_ENGINE;
+  let currentDecompiledFunc = null;
   const machine = new Machine();
   let audioCtx = null;
   let source = null;
@@ -577,14 +608,31 @@ code by thement at ibawizard do net
     currentProgram = romType.firstProgram;
   }
 
+  function getDecompiledFunc(device, program) {
+    const effects = DECOMPILED_EFFECTS[device];
+    if (effects && effects[program]) {
+      return effects[program];
+    }
+    return null;
+  }
+
   async function startAudio() {
     if (audioCtx !== null) {
       audioCtx.close();
     }
 
     const romType = ROM_TYPES[currentDevice];
-    await machine.loadRom(romType);
-    machine.loadProgram(romType, currentProgram);
+
+    // For emulated mode, load ROM; for decompiled, we still need ROM for LFO patches
+    if (currentEngine === 'emulated' || romType.hasLfo) {
+      await machine.loadRom(romType);
+      machine.loadProgram(romType, currentProgram);
+    }
+
+    // Get decompiled function if available
+    currentDecompiledFunc = getDecompiledFunc(currentDevice, currentProgram);
+
+    // Reset machine state (shared DRAM)
     machine.resetMachine();
 
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -602,6 +650,7 @@ code by thement at ibawizard do net
     processor.onaudioprocess = (audioProcessingEvent) => {
       const inputBuffer = audioProcessingEvent.inputBuffer;
       const outputBuffer = audioProcessingEvent.outputBuffer;
+      const useDecompiled = currentEngine === 'decompiled' && currentDecompiledFunc !== null;
 
       for (let sample = 0; sample < inputBuffer.length; sample++) {
         let left = inputBuffer.numberOfChannels > 0 ? inputBuffer.getChannelData(0)[sample] : 0;
@@ -613,15 +662,17 @@ code by thement at ibawizard do net
         const left_ds = downSamplingFilter0.run(left);
         const right_ds = downSamplingFilter1.run(right);
         if (sample % 2 == 0) {
-          const [left_out, right_out] = machine.runEffect((left_ds * 32767.0)|0, (right_ds * 32767.0)|0, feedbackAmount);
-          last_left = left_out / 32767.0;
-          last_right = right_out / 32767.0;
+          // Get LFO values for both modes
+          let lfo1Value = 0, lfo2Value = 0;
 
           // Run LFO every ~8 samples (matching C code timing)
           if (machine.hasActiveLfo && lfoTickCounter % 8 === 0) {
-            const lfo1Value = machine.lfo1.update();
-            const lfo2Value = machine.lfo2.update();
-            machine.patchMachine(lfo1Value, lfo2Value);
+            lfo1Value = machine.lfo1.update();
+            lfo2Value = machine.lfo2.update();
+            // For emulated mode, patch the machine; for decompiled, pass values to function
+            if (!useDecompiled) {
+              machine.patchMachine(lfo1Value, lfo2Value);
+            }
 
             // Throttled disassembly update
             const now = performance.now();
@@ -630,7 +681,24 @@ code by thement at ibawizard do net
               requestAnimationFrame(() => displayDisassembly(currentProgram));
             }
           }
+          // Get current LFO values for decompiled mode
+          if (useDecompiled && machine.hasActiveLfo) {
+            lfo1Value = machine.lfo1 ? machine.lfo1.value || 0 : 0;
+            lfo2Value = machine.lfo2 ? machine.lfo2.value || 0 : 0;
+          }
           lfoTickCounter++;
+
+          const [left_out, right_out] = machine.runEffect(
+            (left_ds * 32767.0)|0,
+            (right_ds * 32767.0)|0,
+            feedbackAmount,
+            useDecompiled,
+            currentDecompiledFunc,
+            lfo1Value,
+            lfo2Value
+          );
+          last_left = left_out / 32767.0;
+          last_right = right_out / 32767.0;
         }
         let left_us = upSamplingFilter0.run(last_left);
         let right_us = upSamplingFilter1.run(last_right);
@@ -673,9 +741,12 @@ code by thement at ibawizard do net
     const romType = ROM_TYPES[currentDevice];
     const effectName = romType.effectNames[programNumber - romType.firstProgram] || '';
     const lfoInfo = machine.hasActiveLfo ? ' [LFO Active]' : '';
+    const engineInfo = currentEngine === 'decompiled'
+      ? (currentDecompiledFunc ? ' [Decompiled JS]' : ' [Decompiled - Not Available, Using Emulated]')
+      : ' [Emulated ROM]';
     const disassembled = machine.disassemble().disassembledInstructions;
     const disassemblyContainer = document.getElementById('disassemblyContainer');
-    disassemblyContainer.innerHTML = `<h3>${romType.name} Program #${programNumber}: ${effectName}${lfoInfo}</h3><pre>${disassembled.join('\n')}</pre>`;
+    disassemblyContainer.innerHTML = `<h3>${romType.name} Program #${programNumber}: ${effectName}${lfoInfo}${engineInfo}</h3><pre>${disassembled.join('\n')}</pre>`;
   }
 
   // Event listeners
@@ -683,13 +754,22 @@ code by thement at ibawizard do net
   document.getElementById('stopButton').addEventListener('click', stopAudio);
   document.getElementById('pauseButton').addEventListener('click', pauseAudio);
 
+  document.getElementById('engineSelect').addEventListener('change', (event) => {
+    currentEngine = event.target.value;
+    currentDecompiledFunc = getDecompiledFunc(currentDevice, currentProgram);
+    displayDisassembly(currentProgram);
+  });
+
   document.getElementById('deviceSelect').addEventListener('change', async (event) => {
     currentDevice = event.target.value;
     populateEffectList(currentDevice);
 
     const romType = ROM_TYPES[currentDevice];
-    await machine.loadRom(romType);
-    machine.loadProgram(romType, currentProgram);
+    if (currentEngine === 'emulated' || romType.hasLfo) {
+      await machine.loadRom(romType);
+      machine.loadProgram(romType, currentProgram);
+    }
+    currentDecompiledFunc = getDecompiledFunc(currentDevice, currentProgram);
     machine.resetMachine();
     displayDisassembly(currentProgram);
   });
@@ -697,8 +777,11 @@ code by thement at ibawizard do net
   document.getElementById('effectProgram').addEventListener('change', async (event) => {
     currentProgram = parseInt(event.target.value);
     const romType = ROM_TYPES[currentDevice];
-    await machine.loadRom(romType);
-    machine.loadProgram(romType, currentProgram);
+    if (currentEngine === 'emulated' || romType.hasLfo) {
+      await machine.loadRom(romType);
+      machine.loadProgram(romType, currentProgram);
+    }
+    currentDecompiledFunc = getDecompiledFunc(currentDevice, currentProgram);
     machine.resetMachine();
     displayDisassembly(currentProgram);
   });
