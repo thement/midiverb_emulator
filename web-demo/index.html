@@ -16,6 +16,7 @@
   <select id="engineSelect">
     <option value="emulated" selected>Emulated (ROM)</option>
     <option value="decompiled">Decompiled (native JS)</option>
+    <option value="decompiled_vst">Decompiled (native JS) with VST resampling</option>
   </select>
   <label for="deviceSelect"> Device: </label>
   <select id="deviceSelect">
@@ -265,6 +266,62 @@ code by thement at ibawizard do net
 
       // Convert signed to unsigned
       return (this.x ^ 0x8000) & 0xffff;
+    }
+  }
+
+  // VST-style Biquad filter (transposed direct form II)
+  class BiquadFilter {
+    constructor() {
+      this.b0 = 1; this.b1 = 0; this.b2 = 0;
+      this.a1 = 0; this.a2 = 0;
+      this.z1 = 0; this.z2 = 0;
+    }
+    reset() { this.z1 = this.z2 = 0; }
+    process(x) {
+      const y = this.b0 * x + this.z1;
+      this.z1 = this.b1 * x - this.a1 * y + this.z2;
+      this.z2 = this.b2 * x - this.a2 * y;
+      return y;
+    }
+    setLowpass(sampleRate, cutoff, Q) {
+      const w0 = 2.0 * Math.PI * cutoff / sampleRate;
+      const cosw0 = Math.cos(w0);
+      const sinw0 = Math.sin(w0);
+      const alpha = sinw0 / (2.0 * Q);
+      const a0 = 1.0 + alpha;
+      this.b0 = ((1.0 - cosw0) / 2.0) / a0;
+      this.b1 = (1.0 - cosw0) / a0;
+      this.b2 = ((1.0 - cosw0) / 2.0) / a0;
+      this.a1 = (-2.0 * cosw0) / a0;
+      this.a2 = (1.0 - alpha) / a0;
+    }
+  }
+
+  // 8th order Butterworth lowpass (4 cascaded biquads)
+  class LowpassFilter8th {
+    constructor() {
+      this.sections = [new BiquadFilter(), new BiquadFilter(), new BiquadFilter(), new BiquadFilter()];
+    }
+    reset() { for (const s of this.sections) s.reset(); }
+    setCutoff(sampleRate, cutoff) {
+      const Qs = [0.5097956518, 0.6013448869, 0.8999197654, 2.5629154478];
+      for (let i = 0; i < 4; i++) this.sections[i].setLowpass(sampleRate, cutoff, Qs[i]);
+    }
+    process(x) {
+      for (const s of this.sections) x = s.process(x);
+      return x;
+    }
+  }
+
+  // Linear interpolation buffer for resampling (matches VST InputInterpBuffer/OutputInterpBuffer)
+  class InterpBuffer {
+    constructor() { this.data = [0, 0]; this.writePos = 0; }
+    reset() { this.data = [0, 0]; this.writePos = 0; }
+    push(x) { this.data[this.writePos] = x; this.writePos = (this.writePos + 1) % 2; }
+    interpolate(frac) {
+      const i0 = this.writePos;
+      const i1 = (this.writePos + 1) % 2;
+      return this.data[i0] + frac * (this.data[i1] - this.data[i0]);
     }
   }
 
@@ -588,6 +645,22 @@ code by thement at ibawizard do net
   let upSamplingFilter0 = new Filterx2();
   let upSamplingFilter1 = new Filterx2();
 
+  // VST-style resampling state
+  const EFFECT_SAMPLE_RATE = 24000.0;
+  const FILTER_CUTOFF = 10000.0;
+  let vstAntiAliasFilter = new LowpassFilter8th();
+  let vstInputBuffer = new InterpBuffer();
+  let vstOutputBufferL = new InterpBuffer();
+  let vstOutputBufferR = new InterpBuffer();
+  let vstReconstructFilterL = new LowpassFilter8th();
+  let vstReconstructFilterR = new LowpassFilter8th();
+  let vstPhase = 0.0;
+  let vstPhaseIncrement = 0.5;
+  let vstLastWetL = 0.0;
+  let vstLastWetR = 0.0;
+  let vstLastLfo1 = 0;
+  let vstLastLfo2 = 0;
+
   // Disassembly update throttling
   let lastDisassemblyUpdate = 0;
   const DISASSEMBLY_UPDATE_INTERVAL = 100; // 10 fps = 100ms interval
@@ -636,6 +709,23 @@ code by thement at ibawizard do net
     machine.resetMachine();
 
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Initialize VST-style resampling filters at host sample rate
+    const hostRate = audioCtx.sampleRate;
+    vstPhaseIncrement = EFFECT_SAMPLE_RATE / hostRate;
+    vstPhase = 0.0;
+    vstAntiAliasFilter.setCutoff(hostRate, FILTER_CUTOFF);
+    vstAntiAliasFilter.reset();
+    vstReconstructFilterL.setCutoff(hostRate, FILTER_CUTOFF);
+    vstReconstructFilterL.reset();
+    vstReconstructFilterR.setCutoff(hostRate, FILTER_CUTOFF);
+    vstReconstructFilterR.reset();
+    vstInputBuffer.reset();
+    vstOutputBufferL.reset();
+    vstOutputBufferR.reset();
+    vstLastWetL = 0; vstLastWetR = 0;
+    vstLastLfo1 = 0; vstLastLfo2 = 0;
+
     const audioBuffer = await getAudioBuffer(audioCtx, currentSoundSource);
 
     source = audioCtx.createBufferSource();
@@ -651,6 +741,7 @@ code by thement at ibawizard do net
       const inputBuffer = audioProcessingEvent.inputBuffer;
       const outputBuffer = audioProcessingEvent.outputBuffer;
       const useDecompiled = currentEngine === 'decompiled' && currentDecompiledFunc !== null;
+      const useVstResampling = currentEngine === 'decompiled_vst' && currentDecompiledFunc !== null;
 
       for (let sample = 0; sample < inputBuffer.length; sample++) {
         let left = inputBuffer.numberOfChannels > 0 ? inputBuffer.getChannelData(0)[sample] : 0;
@@ -659,52 +750,112 @@ code by thement at ibawizard do net
           left = 0;
           right = 0;
         }
-        const left_ds = downSamplingFilter0.run(left);
-        const right_ds = downSamplingFilter1.run(right);
-        if (sample % 2 == 0) {
-          // Get LFO values for both modes
-          let lfo1Value = 0, lfo2Value = 0;
 
-          // Run LFO every ~8 samples (matching C code timing)
-          if (machine.hasActiveLfo && lfoTickCounter % 8 === 0) {
-            lfo1Value = machine.lfo1.update();
-            lfo2Value = machine.lfo2.update();
-            // For emulated mode, patch the machine; for decompiled, pass values to function
-            if (!useDecompiled) {
-              machine.patchMachine(lfo1Value, lfo2Value);
+        if (useVstResampling) {
+          // VST-style resampling: 8th-order Butterworth + phase accumulator + linear interpolation
+          // Sum to mono with feedback (matching VST PluginProcessor.cpp)
+          let monoIn = (left + right) * 0.5 + (vstLastWetL + vstLastWetR) * 0.5 * feedbackAmount;
+          let filtered = vstAntiAliasFilter.process(monoIn);
+          vstInputBuffer.push(filtered);
+
+          vstPhase += vstPhaseIncrement;
+          while (vstPhase >= 1.0) {
+            vstPhase -= 1.0;
+
+            // Interpolate input at the exact fractional position
+            let inputFrac = 1.0 - vstPhase / vstPhaseIncrement;
+            let interpolatedInput = vstInputBuffer.interpolate(inputFrac);
+
+            // Saturate and scale to 13-bit (±4095, matching VST's 0x0fff)
+            if (interpolatedInput > 1.0) interpolatedInput = 1.0;
+            if (interpolatedInput < -1.0) interpolatedInput = -1.0;
+            let inputInt = (interpolatedInput * 0x0fff) | 0;
+
+            // LFO handling (every 8 effect samples, matching VST LFO_UPDATE_INTERVAL)
+            if (machine.hasActiveLfo) {
+              if (lfoTickCounter % 8 === 0) {
+                vstLastLfo1 = machine.lfo1.update();
+                vstLastLfo2 = machine.lfo2.update();
+                const now = performance.now();
+                if (now - lastDisassemblyUpdate >= DISASSEMBLY_UPDATE_INTERVAL) {
+                  lastDisassemblyUpdate = now;
+                  requestAnimationFrame(() => displayDisassembly(currentProgram));
+                }
+              }
             }
+            lfoTickCounter++;
 
-            // Throttled disassembly update
-            const now = performance.now();
-            if (now - lastDisassemblyUpdate >= DISASSEMBLY_UPDATE_INTERVAL) {
-              lastDisassemblyUpdate = now;
-              requestAnimationFrame(() => displayDisassembly(currentProgram));
+            // Run decompiled effect directly (bypassing machine.runEffect)
+            const [outL, outR] = currentDecompiledFunc(inputInt, machine.dram, machine.address, vstLastLfo1, vstLastLfo2);
+            machine.address = (machine.address + 1) % machine.DramLength;
+
+            // Scale output back to float (13-bit to [-1, 1])
+            vstOutputBufferL.push((outL || 0) / 0x0fff);
+            vstOutputBufferR.push((outR || 0) / 0x0fff);
+          }
+
+          // Interpolate output at host sample rate
+          let wetL = vstOutputBufferL.interpolate(vstPhase);
+          let wetR = vstOutputBufferR.interpolate(vstPhase);
+
+          // Reconstruction filter
+          wetL = vstReconstructFilterL.process(wetL);
+          wetR = vstReconstructFilterR.process(wetR);
+
+          vstLastWetL = wetL;
+          vstLastWetR = wetR;
+
+          outputBuffer.getChannelData(0)[sample] = (1 - dryWetMix) * left + dryWetMix * wetL;
+          outputBuffer.getChannelData(1)[sample] = (1 - dryWetMix) * right + dryWetMix * wetR;
+        } else {
+          // Original resampling: 4th-order filter + 2x decimation
+          const left_ds = downSamplingFilter0.run(left);
+          const right_ds = downSamplingFilter1.run(right);
+          if (sample % 2 == 0) {
+            // Get LFO values for both modes
+            let lfo1Value = 0, lfo2Value = 0;
+
+            // Run LFO every ~8 samples (matching C code timing)
+            if (machine.hasActiveLfo && lfoTickCounter % 8 === 0) {
+              lfo1Value = machine.lfo1.update();
+              lfo2Value = machine.lfo2.update();
+              // For emulated mode, patch the machine; for decompiled, pass values to function
+              if (!useDecompiled) {
+                machine.patchMachine(lfo1Value, lfo2Value);
+              }
+
+              // Throttled disassembly update
+              const now = performance.now();
+              if (now - lastDisassemblyUpdate >= DISASSEMBLY_UPDATE_INTERVAL) {
+                lastDisassemblyUpdate = now;
+                requestAnimationFrame(() => displayDisassembly(currentProgram));
+              }
             }
-          }
-          // Get current LFO values for decompiled mode
-          if (useDecompiled && machine.hasActiveLfo) {
-            lfo1Value = machine.lfo1 ? machine.lfo1.value || 0 : 0;
-            lfo2Value = machine.lfo2 ? machine.lfo2.value || 0 : 0;
-          }
-          lfoTickCounter++;
+            // Get current LFO values for decompiled mode
+            if (useDecompiled && machine.hasActiveLfo) {
+              lfo1Value = machine.lfo1 ? machine.lfo1.value || 0 : 0;
+              lfo2Value = machine.lfo2 ? machine.lfo2.value || 0 : 0;
+            }
+            lfoTickCounter++;
 
-          const [left_out, right_out] = machine.runEffect(
-            (left_ds * 32767.0)|0,
-            (right_ds * 32767.0)|0,
-            feedbackAmount,
-            useDecompiled,
-            currentDecompiledFunc,
-            lfo1Value,
-            lfo2Value
-          );
-          last_left = left_out / 32767.0;
-          last_right = right_out / 32767.0;
+            const [left_out, right_out] = machine.runEffect(
+              (left_ds * 32767.0)|0,
+              (right_ds * 32767.0)|0,
+              feedbackAmount,
+              useDecompiled,
+              currentDecompiledFunc,
+              lfo1Value,
+              lfo2Value
+            );
+            last_left = left_out / 32767.0;
+            last_right = right_out / 32767.0;
+          }
+          let left_us = upSamplingFilter0.run(last_left);
+          let right_us = upSamplingFilter1.run(last_right);
+
+          outputBuffer.getChannelData(0)[sample] = (1 - dryWetMix) * left + dryWetMix * left_us;
+          outputBuffer.getChannelData(1)[sample] = (1 - dryWetMix) * right + dryWetMix * right_us;
         }
-        let left_us = upSamplingFilter0.run(last_left);
-        let right_us = upSamplingFilter1.run(last_right);
-
-        outputBuffer.getChannelData(0)[sample] = (1 - dryWetMix) * left + dryWetMix * left_us;
-        outputBuffer.getChannelData(1)[sample] = (1 - dryWetMix) * right + dryWetMix * right_us;
       }
     };
 
@@ -743,6 +894,8 @@ code by thement at ibawizard do net
     const lfoInfo = machine.hasActiveLfo ? ' [LFO Active]' : '';
     const engineInfo = currentEngine === 'decompiled'
       ? (currentDecompiledFunc ? ' [Decompiled JS]' : ' [Decompiled - Not Available, Using Emulated]')
+      : currentEngine === 'decompiled_vst'
+      ? (currentDecompiledFunc ? ' [Decompiled JS + VST Resampling]' : ' [VST Resampling - Not Available, Using Emulated]')
       : ' [Emulated ROM]';
     const disassembled = machine.disassemble().disassembledInstructions;
     const disassemblyContainer = document.getElementById('disassemblyContainer');
