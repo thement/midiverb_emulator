@@ -40,6 +40,7 @@
     <option value="chord_sweep">Maj7 Chord Sweep</option>
     <option value="custom">Custom WAV...</option>
   </select>
+  <button id="uploadButton">Custom WAV</button>
   <input type="file" id="fileInput" accept=".wav" style="display: none;">
 <br>
 <br>
@@ -734,6 +735,10 @@ code by thement at ibawizard do net
       // User cancelled, revert to previous selection
       document.getElementById('soundSelect').value = currentSoundSource;
     }
+  });
+
+  document.getElementById('uploadButton').addEventListener('click', () => {
+    document.getElementById('fileInput').click();
   });
 
   document.getElementById('fillDramButton').addEventListener('click', () => {
